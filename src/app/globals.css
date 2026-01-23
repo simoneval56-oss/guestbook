@@ -1,0 +1,6790 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,400;1,500;1,700;1,900&family=Poppins:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&family=Quicksand:wght@500;600&family=Roboto+Mono:wght@500;600;700&family=Nanum+Gothic:wght@400;700;800&family=Lora:wght@400;600&family=Roboto+Condensed:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #dbe7ea;
+  --card: #ffffff;
+  --brand-light: #59b8b2;
+  --brand-dark: #0e4b58;
+  --accent: var(--brand-light);
+  --accent-2: var(--brand-dark);
+  --text: #f7fafc;
+  --muted: #5d7780;
+  --border: #dbe7ea;
+  --aurora-accent: #62c3c4;
+  --essenziale-accent: #1b4c60;
+  --boutique-accent: #e7b46a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+@font-face {
+  font-family: "ABeeZee";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/ABeeZee/ABeeZee-Regular.ttf") format("truetype");
+}
+
+.hero-typeface {
+  font-family: "ABeeZee", "Inter", system-ui, -apple-system, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+.shell {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 16px 40px rgba(140, 118, 92, 0.95);
+}
+
+.auth-page--login .card {
+  box-shadow: 0 16px 40px #ffffff;
+}
+
+.auth-page {
+  color: #0e4b58;
+}
+
+.auth-page a,
+.auth-page .pill,
+.auth-page label span {
+  color: #0e4b58;
+}
+
+.auth-page input::placeholder {
+  color: #0e4b58;
+  opacity: 0.8;
+}
+
+.auth-page input {
+  color: #0e4b58 !important;
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.btn {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--brand-dark);
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  font-weight: 700;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(89, 184, 178, 0.35);
+  background: #66c2bb;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--brand-dark);
+  border: 1px solid var(--brand-dark);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: #f1f7f9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(14, 75, 88, 0.12);
+}
+
+.tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltip-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%) translateY(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  background: #0e4b58;
+  color: #f7fafc;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 500;
+  text-align: left;
+  max-width: min(220px, 80vw);
+  white-space: normal;
+  box-shadow: 0 12px 26px rgba(14, 75, 88, 0.2);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.tooltip-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #0e4b58;
+}
+
+.tooltip-wrap:hover .tooltip-bubble,
+.tooltip-wrap:focus-within .tooltip-bubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.homebook-action {
+  min-width: 120px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.pill {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #eef6f5;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.structure-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 6px;
+  color: #0e4b58;
+}
+
+.structure-summary__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.structure-summary__name {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: "Playfair Display", serif;
+}
+
+.structure-summary__layout {
+  font-size: 0.85rem;
+  color: var(--muted);
+  flex-basis: 100%;
+}
+
+.dashboard-page .card {
+  box-shadow: none;
+}
+
+.dashboard-page .card::before,
+.dashboard-page .card::after {
+  box-shadow: none !important;
+}
+
+.dashboard-page {
+  position: relative;
+}
+
+.classico-editor-page {
+  position: relative;
+  color: #0e4b58;
+}
+
+.moderno-editor-page {
+  position: relative;
+  color: #0e4b58;
+}
+
+.oro-editor-page {
+  position: relative;
+  color: #0e4b58;
+}
+
+.moderno-editor-page a,
+.moderno-editor-page .btn,
+.moderno-editor-page .pill,
+.moderno-editor-page .text-muted,
+.moderno-editor-page label,
+.moderno-editor-page input,
+.moderno-editor-page select,
+.moderno-editor-page textarea {
+  color: #0e4b58;
+}
+
+.moderno-editor-page input::placeholder,
+.moderno-editor-page textarea::placeholder {
+  color: #0e4b58;
+  opacity: 0.8;
+}
+
+.illustrativo-editor-page a,
+.illustrativo-editor-page .btn,
+.illustrativo-editor-page .pill,
+.illustrativo-editor-page .text-muted,
+.illustrativo-editor-page label,
+.illustrativo-editor-page input,
+.illustrativo-editor-page select,
+.illustrativo-editor-page textarea {
+  color: #0e4b58;
+}
+
+.illustrativo-editor-page input::placeholder,
+.illustrativo-editor-page textarea::placeholder {
+  color: #0e4b58;
+  opacity: 0.8;
+}
+
+.oro-editor-page a,
+.oro-editor-page .btn,
+.oro-editor-page .pill,
+.oro-editor-page .text-muted,
+.oro-editor-page label,
+.oro-editor-page input,
+.oro-editor-page select,
+.oro-editor-page textarea {
+  color: #0e4b58;
+}
+
+.oro-editor-page input::placeholder,
+.oro-editor-page textarea::placeholder {
+  color: #0e4b58;
+  opacity: 0.8;
+}
+
+.classico-editor-page a,
+.classico-editor-page .btn,
+.classico-editor-page .pill,
+.classico-editor-page .text-muted {
+  color: #0e4b58;
+}
+
+.dashboard-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #eef6f5;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.classico-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.moderno-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #ccebe9;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.illustrativo-editor-page {
+  position: relative;
+  color: #0e4b58;
+}
+
+.illustrativo-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: #faf3e0 !important;
+  background-image: url("/Icons/Illustrativo/sfondo.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  opacity: 1;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.oro-editor-page {
+  position: relative;
+}
+
+.oro-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: #1D5767;
+  background-image: url("/Icons/Oro/sfondo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.dashboard-page .btn,
+.dashboard-page .btn:hover,
+.dashboard-page .btn:focus,
+.dashboard-page .btn:active,
+.dashboard-page .btn-secondary,
+.dashboard-page .btn-secondary:hover {
+  box-shadow: none;
+}
+
+.tag {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #eef6f5;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--brand-dark);
+}
+
+.input::placeholder {
+  color: #0e4b58;
+  opacity: 0.7;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 0 0 20px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(12, 79, 92, 0.08);
+}
+
+.topbar .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.topbar .brand .brand-wordmark {
+  margin-left: 6px;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--brand-dark);
+  gap: 2px;
+}
+
+.wordmark .light {
+  color: var(--brand-light);
+}
+
+.wordmark .dark {
+  color: var(--brand-dark);
+}
+
+.brand-wordmark-img {
+  display: block;
+  width: clamp(300px, 30vw, 360px);
+  height: 40px;
+  object-fit: fill;
+}
+
+@media (max-width: 640px) {
+  .brand-wordmark-img {
+    width: clamp(240px, 46vw, 280px);
+    height: 32px;
+  }
+}
+
+.hero-guestbook {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(120px, 12vw, 180px) clamp(20px, 6vw, 64px) clamp(220px, 16vw, 300px);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: 0 18px 50px rgba(14, 75, 88, 0.08);
+  min-height: 760px;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  row-gap: clamp(36px, 6vw, 52px);
+  margin-bottom: clamp(24px, 4vw, 56px);
+}
+
+.hero-guestbook__content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: clamp(18px, 3vw, 28px);
+  max-width: 760px;
+  width: 100%;
+  text-align: center;
+  margin: clamp(60px, 8vw, 120px) auto 0;
+}
+
+.hero-guestbook__title {
+  position: relative;
+  z-index: 2;
+  margin: clamp(-80px, -8vw, -32px) auto 0;
+  font-size: clamp(34px, 5.5vw, 42px);
+  font-weight: 800;
+  color: #1e6ca6;
+  letter-spacing: 0.01em;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.hero-guestbook__lead {
+  position: relative;
+  z-index: 2;
+  max-width: 550px;
+  margin: 140px auto 0;
+  font-size: clamp(20px, 1.3vw + 16px, 20px);
+  line-height: 1.6;
+  color: #1a4f6c;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.hero-guestbook__bg {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.95;
+}
+
+.hero-guestbook__bg--left {
+  width: min(180px, 22vw);
+  height: min(440px, 64vh);
+  top: clamp(340px, 28vw, 420px);
+  left: clamp(0%, 3vw, 7%);
+}
+
+.hero-guestbook__bg--right {
+  width: min(180px, 22vw);
+  height: min(420px, 60vh);
+  top: clamp(340px, 28vw, 420px);
+  right: clamp(0%, 3vw, 7%);
+}
+
+.hero-guestbook__bg-image {
+  object-fit: contain;
+}
+
+.section-2 {
+  padding: clamp(30px, 8vw, 90px) clamp(20px, 8vw, 80px);
+  background: linear-gradient(180deg, #dbe7ea 0%, #f1f8f9 18%, #f1f8f9 100%);
+}
+
+.section-2__inner {
+  max-width: 1100px;
+  margin: 0 auto 0 clamp(-64px, -8vw, -32px);
+  display: grid;
+  grid-template-columns: minmax(280px, 620px) minmax(260px, 1fr);
+  align-items: center;
+  gap: clamp(8px, 3vw, 24px);
+}
+
+.section-2__image {
+  position: relative;
+  width: min(620px, 60vw);
+  aspect-ratio: 1.3;
+}
+
+.section-2__image-asset {
+  object-fit: contain;
+}
+
+.section-2__text {
+  display: grid;
+  gap: 14px;
+  color: #0f5a86;
+  margin-top: clamp(10px, 2vw, 26px);
+  margin-left: clamp(-44px, -5vw, -18px);
+}
+
+.section-2__title {
+  margin: 0;
+  font-size: clamp(20px, 2.8vw, 22px);
+  color: #1b6aa8;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.section-2__copy {
+  margin: 0;
+  font-size: clamp(16px, 1vw + 14px, 18px);
+  line-height: 1.6;
+  color: #0d4f76;
+  font-style: italic;
+  max-width: 520px;
+}
+
+.section-3 {
+  padding: clamp(70px, 12vw, 140px) clamp(24px, 8vw, 100px);
+  padding-top: calc(clamp(70px, 12vw, 140px) + 50px);
+  background: #f1f8f9;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin-top: -300px;
+}
+
+.section-3__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(280px, 520px) minmax(260px, 1fr);
+  align-items: center;
+  gap: clamp(18px, 4vw, 40px);
+}
+
+.section-3__text {
+  display: grid;
+  gap: 16px;
+  color: #0d4f76;
+}
+
+.section-3__title {
+  margin: 0;
+  font-size: clamp(20px, 2.8vw, 22px);
+  line-height: 1.25;
+  font-weight: 800;
+  color: #1b6aa8;
+}
+
+.section-3__subtitle {
+  margin: 0;
+  font-size: clamp(17px, 1vw + 14px, 18px);
+  line-height: 1.7;
+  font-style: italic;
+  max-width: 520px;
+}
+
+.section-3__image {
+  position: relative;
+  width: min(640px, 64vw);
+  aspect-ratio: 1.6;
+  justify-self: center;
+}
+
+.section-3__image-asset {
+  object-fit: contain;
+}
+
+.section-4 {
+  padding: clamp(28px, 8vw, 80px) clamp(24px, 9vw, 110px);
+  margin-top: clamp(-200px, -18vw, -100px);
+  background: #f1f8f9;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.section-4__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(320px, 540px) minmax(520px, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 48px);
+  transform: translateX(clamp(-8px, -1vw, 0px));
+}
+
+.section-4__image {
+  position: relative;
+  width: min(560px, 60vw);
+  aspect-ratio: 1.2;
+  justify-self: center;
+}
+
+.section-4__image-asset {
+  object-fit: contain;
+}
+
+.section-4__text {
+  display: grid;
+  gap: 12px;
+  color: #0d4f76;
+  max-width: 980px;
+  transform: translateX(clamp(28px, 4vw, 48px));
+}
+
+.section-4__title {
+  margin: 0;
+  font-size: clamp(20px, 2.8vw, 22px);
+  line-height: 1.25;
+  font-weight: 800;
+  color: #1b6aa8;
+}
+
+.section-4__copy {
+  margin: 0;
+  font-size: clamp(17px, 1vw + 14px, 18px);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.section-5 {
+  padding: clamp(30px, 9vw, 90px) clamp(24px, 9vw, 110px);
+  background: linear-gradient(180deg, #f1f8f9 0%, #f1f8f9 55%, var(--bg) 100%);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin-top: clamp(-140px, -14vw, -60px);
+}
+
+.section-5__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(320px, 520px) minmax(460px, 1fr);
+  align-items: center;
+  gap: clamp(20px, 4vw, 60px);
+}
+
+.section-5__text {
+  display: grid;
+  gap: 14px;
+  color: #0d4f76;
+  max-width: 520px;
+  transform: translateY(clamp(12px, 3vw, 32px));
+}
+
+.section-5__title {
+  margin: 0;
+  font-size: clamp(20px, 2.8vw, 22px);
+  line-height: 1.35;
+  font-weight: 800;
+  color: #1b6aa8;
+}
+
+.section-5__copy {
+  margin: 0;
+  font-size: clamp(17px, 1vw + 14px, 18px);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.section-5__image {
+  position: relative;
+  width: min(660px, 64vw);
+  aspect-ratio: 1.6;
+  justify-self: center;
+}
+
+.section-5__image-asset {
+  object-fit: contain;
+}
+
+.cta-section {
+  display: grid;
+  gap: 18px;
+  padding: clamp(18px, 2.5vw, 28px);
+  margin-top: clamp(36px, 7vw, 90px);
+  background: linear-gradient(135deg, #f6fbfa 0%, #edf3f6 100%);
+  border: 1px solid rgba(25, 102, 154, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(14, 75, 88, 0.08);
+}
+
+.cta-section__inner {
+  display: grid;
+  gap: 18px;
+  align-items: center;
+}
+
+.cta-section__text {
+  display: grid;
+  gap: 8px;
+}
+
+.cta-section__title {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: 0.01em;
+  color: #195f8f;
+}
+
+.cta-section__copy {
+  margin: 0;
+  color: #3a506b;
+  line-height: 1.6;
+  max-width: 760px;
+}
+
+.cta-section__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.demo-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 2px dashed rgba(37, 74, 84, 0.35);
+  background: rgba(255, 255, 255, 0.78);
+  color: #254a54;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.demo-placeholder--cover {
+  min-width: 220px;
+  min-height: 78px;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.demo-placeholder--text {
+  padding: 6px 12px;
+}
+
+.demo-nav {
+  width: min(960px, 92vw);
+  margin: 0 auto 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (min-width: 900px) {
+  .cta-section__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .cta-section__actions {
+    justify-content: flex-end;
+  }
+}
+
+.layout-section {
+  display: grid;
+  gap: 18px;
+  padding: clamp(18px, 2vw, 26px);
+  margin-top: clamp(32px, 4vw, 64px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(14, 75, 88, 0.08);
+  overflow: hidden;
+}
+
+.layout-section__header {
+  display: grid;
+  gap: 8px;
+}
+
+.layout-section__title {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: 0.01em;
+  color: #19669a;
+}
+
+.layout-section__subtitle {
+  margin: 0;
+  color: #3a506b;
+  line-height: 1.6;
+  max-width: 960px;
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.layout-carousel {
+  display: grid;
+  gap: 10px;
+  position: relative;
+}
+
+.layout-carousel__viewport {
+  position: relative;
+  overflow: hidden;
+}
+
+.layout-carousel__controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.layout-carousel__nav {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--brand-dark);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(14, 75, 88, 0.08);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.layout-carousel__nav:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(14, 75, 88, 0.12);
+}
+
+.layout-carousel__track {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding: 10px clamp(72px, 8vw, 110px) 14px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scroll-padding: 0 clamp(72px, 8vw, 110px);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.layout-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.layout-card--carousel {
+  width: clamp(240px, 42vw, 320px);
+  min-width: 240px;
+  max-width: 340px;
+  scroll-snap-align: center;
+  position: relative;
+  margin-left: -28px;
+  z-index: 1;
+  overflow: visible;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.2s ease, border-width 0.2s ease;
+}
+
+.layout-card--carousel:first-child {
+  margin-left: 0;
+}
+
+.layout-card--carousel:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -28px;
+  width: 56px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(247, 251, 251, 0.85) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.layout-card--carousel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.layout-card--carousel.is-active {
+  transform: translateY(-4px) scale(1.02);
+  border-color: #7ac9c3;
+  border-width: 2px;
+  box-shadow: 0 24px 52px rgba(14, 75, 88, 0.14);
+}
+
+.layout-card--carousel.is-near {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.layout-carousel__dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.layout-carousel__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid #7ac9c3;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.layout-carousel__dot.is-active {
+  width: 22px;
+  background: #7ac9c3;
+  border-color: #2f7f8a;
+}
+
+.layout-carousel__fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(60px, 7vw, 90px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.layout-carousel__fade--left {
+  left: 0;
+  background: linear-gradient(90deg, #f7fbfb 35%, rgba(247, 251, 251, 0) 100%);
+}
+
+.layout-carousel__fade--right {
+  right: 0;
+  background: linear-gradient(270deg, #f7fbfb 35%, rgba(247, 251, 251, 0) 100%);
+}
+
+.layout-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbfb 120%);
+  border: 1px solid rgba(219, 231, 234, 0.7);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(14, 75, 88, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, border-width 0.2s ease;
+  cursor: pointer;
+}
+
+.layout-card:hover {
+  transform: translateY(-3px);
+  border-color: #7ac9c3;
+  border-width: 2px;
+  box-shadow: 0 18px 44px rgba(14, 75, 88, 0.14);
+}
+
+.layout-card--carousel:nth-child(odd) .layout-badge {
+  background: #e6f3f2;
+  color: #2f7f8a;
+  border: 1px solid #cfe4e3;
+}
+
+.layout-card--carousel:nth-child(2n) {
+  background: linear-gradient(180deg, #d9f3ef 0%, #e9f7f4 100%);
+  border-color: #9fd7d1;
+}
+
+.layout-card--carousel:nth-child(2n) .layout-badge {
+  background: #ffffff;
+  color: var(--brand-dark);
+  border: 1px solid #bcdedc;
+}
+
+.layout-thumbnail {
+  width: 80px;
+  height: 60px;
+  border-radius: 14px;
+  border: 1px solid #cfe4e3;
+  background: linear-gradient(180deg, #eef6f5, #ffffff);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-thumbnail--image {
+  padding: 0;
+  overflow: hidden;
+}
+
+.layout-thumbnail--image::after {
+  content: none;
+}
+
+.layout-thumbnail--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
+.layout-thumbnail::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 40px;
+  border-radius: 10px;
+  border: 2px solid #2f7f8a;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.85;
+}
+
+.icon-grid::after {
+  background-image: linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0);
+  background-size: 100% 2px, 2px 100%, 2px 100%;
+  background-position: 50% 50%, 33% 50%, 67% 50%;
+}
+
+.icon-list::after {
+  background-image: linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0);
+  background-size: 80% 2px;
+  background-position: 50% 35%, 50% 50%, 50% 65%;
+}
+
+.icon-waves::after {
+  background-image: radial-gradient(circle at 10% 30%, #2f7f8a 22%, transparent 0), radial-gradient(circle at 60% 60%, #2f7f8a 22%, transparent 0), radial-gradient(circle at 30% 75%, #2f7f8a 18%, transparent 0);
+  background-size: 12px 12px, 10px 10px, 8px 8px;
+  background-position: 18px 14px, 36px 28px, 28px 38px;
+}
+
+.icon-sun::after {
+  background-image: radial-gradient(circle, #2f7f8a 35%, transparent 36%), linear-gradient(#2f7f8a 0 0);
+  background-size: 12px 12px, 26px 2px;
+  background-position: 50% 50%, 50% 80%;
+}
+
+.icon-spark::after {
+  background-image: linear-gradient(135deg, #2f7f8a 0 0), linear-gradient(-135deg, #2f7f8a 0 0);
+  background-size: 2px 26px, 2px 26px;
+  background-position: 50% 50%, 50% 50%;
+}
+
+.icon-diamond::after {
+  transform: rotate(45deg);
+  border-radius: 6px;
+}
+
+.icon-illustrated::after {
+  background-image: linear-gradient(90deg, #2f7f8a 0 0), radial-gradient(circle, #2f7f8a 38%, transparent 39%);
+  background-size: 24px 2px, 12px 12px;
+  background-position: 50% 60%, 50% 35%;
+}
+
+.icon-circuit::after {
+  background-image: radial-gradient(circle, #2f7f8a 25%, transparent 26%), linear-gradient(#2f7f8a 0 0);
+  background-size: 8px 8px, 50% 2px;
+  background-position: 32px 18px, 50% 70%;
+}
+
+.icon-heart::after {
+  background-image: radial-gradient(circle at 30% 40%, #2f7f8a 40%, transparent 41%), radial-gradient(circle at 70% 40%, #2f7f8a 40%, transparent 41%), linear-gradient(135deg, transparent 50%, #2f7f8a 50%), linear-gradient(225deg, transparent 50%, #2f7f8a 50%);
+  background-size: 16px 16px, 16px 16px, 16px 16px, 16px 16px;
+  background-position: 30% 40%, 70% 40%, 50% 68%, 50% 68%;
+}
+
+.icon-moon::after {
+  background-image: radial-gradient(circle at 60% 40%, #2f7f8a 55%, transparent 56%), radial-gradient(circle at 70% 40%, #eef6f5 58%, transparent 60%);
+  background-size: 22px 22px, 22px 22px;
+  background-position: 50% 50%, 58% 44%;
+}
+
+.layout-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e6f3f2;
+  color: #2f7f8a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.layout-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--brand-dark);
+}
+
+.layout-title--classic {
+  font-family: "Montserrat", "Inter", system-ui, sans-serif;
+  font-weight: 500;
+}
+
+.layout-title--moderno {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+}
+
+.layout-title--rustico {
+  font-family: "Outfit", "Inter", system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.layout-desc {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+.layout-desc--classic {
+  font-family: "Playfair Display", "Inter", serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.layout-desc--moderno {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.layout-desc--rustico {
+  font-family: "Outfit", "Inter", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.layout-title--mediterraneo {
+  font-family: "Quicksand", "Inter", system-ui, sans-serif;
+  font-weight: 600;
+}
+
+.layout-desc--mediterraneo {
+  font-family: "Quicksand", "Inter", system-ui, sans-serif;
+  font-weight: 500;
+}
+
+.layout-title--pastello {
+  font-family: "Playfair Display", "Inter", serif;
+  font-weight: 600;
+}
+
+.layout-desc--pastello {
+  font-family: "Playfair Display", "Inter", serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.layout-title--oro {
+  font-family: "Montserrat", "Inter", system-ui, sans-serif;
+  font-weight: 500;
+}
+
+.layout-desc--oro {
+  font-family: "Montserrat", "Inter", system-ui, sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Oro editor: testi del titolo e del link back leggibili sullo sfondo scuro */
+.oro-editor-page .layout-title,
+.oro-editor-page .layout-desc,
+.oro-editor-page .layout-title--oro,
+.oro-editor-page .layout-desc--oro,
+.oro-editor-page .layout-header,
+.oro-editor-page .layout-header a,
+.oro-editor-page .layout-header h1,
+.oro-editor-page .section-panel > a {
+  color: #59b8b2 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.layout-card--oro {
+  background: #1d5767;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.layout-title--illustrativo {
+  font-family: "Roboto Mono", "Inter", system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.layout-desc--illustrativo {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.layout-title--futuristico {
+  font-family: "Nanum Gothic", "Inter", system-ui, sans-serif;
+  font-weight: 800;
+}
+
+.layout-desc--futuristico {
+  font-family: "Nanum Gothic", "Inter", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.layout-title--romantico {
+  font-family: "Lora", "Inter", serif;
+  font-weight: 600;
+}
+
+.layout-desc--romantico {
+  font-family: "Lora", "Inter", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.layout-title--notturno {
+  font-family: "Roboto Condensed", "Inter", system-ui, sans-serif;
+  font-weight: 900;
+}
+
+.layout-desc--notturno {
+  font-family: "Roboto Condensed", "Inter", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+}
+
+@media (max-width: 860px) {
+  .hero-guestbook {
+    padding-top: clamp(110px, 14vw, 150px);
+    padding-bottom: 190px;
+    min-height: 620px;
+    row-gap: clamp(30px, 6vw, 44px);
+  }
+
+  .hero-guestbook__content {
+    margin-top: clamp(40px, 8vw, 90px);
+  }
+
+  .hero-guestbook__lead {
+    text-align: center;
+  }
+
+  .hero-guestbook__bg--left,
+  .hero-guestbook__bg--right {
+    width: min(180px, 40vw);
+    height: min(360px, 55vh);
+    opacity: 0.8;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-guestbook__bg--left {
+    left: clamp(0%, 3vw, 8%);
+    top: clamp(320px, 34vw, 380px);
+  }
+
+  .hero-guestbook__bg--right {
+    right: clamp(0%, 3vw, 8%);
+    top: clamp(320px, 34vw, 380px);
+  }
+}
+
+@media (max-width: 900px) {
+  .section-2__inner {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .section-2__text {
+    justify-items: center;
+    margin-left: 0;
+  }
+
+  .section-2__copy {
+    max-width: 620px;
+  }
+}
+
+@media (max-width: 900px) {
+  .section-3__inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .section-3__text {
+    text-align: center;
+    max-width: 560px;
+  }
+
+  .section-3__image {
+    width: min(520px, 88vw);
+  }
+}
+
+@media (max-width: 900px) {
+  .section-4__inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+    transform: none;
+  }
+
+  .section-4__text {
+    text-align: center;
+    transform: none;
+  }
+
+  .section-4__image {
+    width: min(580px, 96vw);
+  }
+}
+
+@media (max-width: 900px) {
+  .section-5__inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+    gap: clamp(12px, 6vw, 28px);
+  }
+
+  .section-5__text {
+    max-width: 640px;
+    transform: none;
+  }
+
+  .section-5__image {
+    width: min(540px, 96vw);
+  }
+}
+
+.public-homebook-wrapper {
+  width: 100%;
+  padding-bottom: 48px;
+}
+
+.offline-banner {
+  position: sticky;
+  top: 12px;
+  z-index: 120;
+  margin: 12px auto 16px;
+  width: min(960px, 92vw);
+  background: #fff7e6;
+  color: #6b3f00;
+  border: 1px solid rgba(179, 105, 0, 0.2);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+  box-shadow: 0 12px 28px rgba(179, 105, 0, 0.15);
+}
+
+.offline-banner__title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.offline-banner__meta {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.public-homebook {
+  display: grid;
+  gap: 22px;
+}
+
+.public-homebook-cover__body {
+  padding: 20px 20px 12px;
+  text-align: center;
+}
+
+.public-homebook-cover__title {
+  margin: 0 0 18px;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  font-style: italic;
+  color: #1f3f45;
+}
+
+.public-homebook-cover__meta {
+  display: grid;
+  gap: 36px;
+  justify-items: center;
+}
+
+.public-homebook-cover__address {
+  margin: 0;
+  font-family: "Work Sans", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: #274a52;
+}
+
+.public-homebook-cover__description {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: 16px;
+  color: #3c5e65;
+}
+
+.media-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 4px;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #eef6f5;
+  color: var(--text);
+  font-size: 13px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.media-chip__type {
+  font-weight: 800;
+  color: var(--brand-dark);
+  font-size: 12px;
+}
+
+.media-chip__url {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.media-chip__desc {
+  display: block;
+  flex-basis: 100%;
+  font-size: 12px;
+  color: #3c5e65;
+}
+
+.media-chip__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.media-thumb {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 0;
+  display: inline-flex;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.media-thumb img {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  display: block;
+}
+
+.media-thumb-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.media-thumb__desc {
+  font-size: 12px;
+  line-height: 1.3;
+  color: #3c5e65;
+  max-width: 120px;
+}
+
+.media-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.media-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 12, 18, 0.72);
+}
+
+.media-lightbox__image {
+  position: relative;
+  max-width: min(1100px, 94vw);
+  max-height: 90vh;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(6, 24, 44, 0.45);
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.media-lightbox__close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f3f45;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.media-lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f3f45;
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.media-lightbox__prev {
+  left: 20px;
+}
+
+.media-lightbox__next {
+  right: 20px;
+}
+
+.media-chip__group--dense {
+  gap: 6px;
+}
+
+.subsection-block {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fbff 0%, #f0f6f5 100%);
+  border: 1px solid rgba(219, 231, 234, 0.7);
+}
+
+.moderno-layout .subsection-block,
+.moderno-preview .classico-editor-modal__sub {
+  background: linear-gradient(145deg, #f4f5ef 0%, #ccebe9 100%);
+}
+
+.subsection-block__text {
+  margin: 0;
+  white-space: pre-wrap;
+  color: #2a4252;
+  line-height: 1.6;
+}
+
+.illustrativo-preview .subsection-block__text {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  font-style: italic;
+  color: #1da7aa;
+}
+
+.illustrativo-preview .classico-editor-modal textarea,
+.illustrativo-preview .classico-editor-modal input,
+.illustrativo-preview .classico-editor-modal .classico-editor-modal__title {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: italic;
+  color: #1da7aa;
+}
+
+.illustrativo-preview .classico-editor-modal textarea::placeholder,
+.illustrativo-preview .classico-editor-modal input::placeholder {
+  color: rgba(29, 167, 170, 0.8);
+}
+
+.illustrativo-preview .classico-editor-modal .classico-editor-modal__title {
+  font-family: "Poppins", "Inter", system-ui, sans-serif !important;
+  font-size: 20px;
+  font-weight: 700;
+  font-style: italic;
+  color: #1da7aa !important;
+}
+
+.illustrativo-preview .classico-editor-modal .section-modal__title,
+.illustrativo-editor-page .classico-editor-modal .section-modal__title {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  color: #1da7aa;
+}
+
+.illustrativo-preview .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__title {
+  color: #f59a4b !important;
+}
+
+.illustrativo-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__title {
+  color: #f59a4b !important;
+}
+
+.illustrativo-preview .classico-editor-modal__card--dove-bere .classico-editor-modal__title {
+  color: #f59a4b !important;
+}
+
+.illustrativo-preview .classico-editor-modal__card--esperienze .classico-editor-modal__title {
+  color: #f59a4b !important;
+}
+
+.illustrativo-preview .classico-editor-modal__card--shopping .classico-editor-modal__title {
+  color: #f59a4b !important;
+}
+
+.illustrativo-preview .classico-editor-modal__card--spiagge .classico-editor-modal__title {
+  color: #f59a4b !important;
+}
+
+.illustrativo-preview .classico-editor-modal .classico-editor-modal__sub-title {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  font-style: italic;
+  color: #1da7aa;
+}
+
+.illustrativo-preview .classico-editor-modal__sub-heading {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  font-style: italic;
+  color: #1da7aa;
+}
+
+.empty-card {
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px dashed var(--border);
+  background: #ffffff;
+  color: var(--muted);
+  text-align: center;
+}
+
+.public-homebook--aurora {
+  gap: 20px;
+}
+
+.aurora-hero {
+  position: relative;
+  padding: clamp(24px, 5vw, 36px);
+  border-radius: 18px;
+  background: linear-gradient(130deg, #0d1836, #125b6c 65%, #228c94 100%);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.aurora-hero::after {
+  content: "";
+  position: absolute;
+  inset: -60% auto -60% 40%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(122, 201, 195, 0.45), rgba(17, 89, 106, 0));
+  filter: blur(12px);
+}
+
+.aurora-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.aurora-hero__eyebrow {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+}
+
+.aurora-hero__title {
+  margin: 10px 0 8px;
+  font-size: clamp(28px, 4vw, 38px);
+  letter-spacing: 0.01em;
+}
+
+.aurora-hero__subtitle {
+  margin: 0 0 10px;
+  max-width: 820px;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.5;
+}
+
+.aurora-hero__meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-weight: 700;
+}
+
+.aurora-hero__meta span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.aurora-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 280px) 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.aurora-nav {
+  position: sticky;
+  top: 16px;
+  align-self: start;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #0f1b39, #0c2f3a);
+  color: #e1f0f3;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 30px rgba(8, 23, 52, 0.3);
+}
+
+.aurora-nav__title {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+
+.aurora-nav__items {
+  display: grid;
+  gap: 10px;
+}
+
+.aurora-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.1s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.aurora-nav__link:hover {
+  transform: translateX(2px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.aurora-nav__badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.aurora-nav__empty {
+  color: rgba(225, 240, 243, 0.8);
+  margin: 0;
+}
+
+.aurora-content {
+  display: grid;
+  gap: 14px;
+}
+
+.aurora-section {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbfb 100%);
+  box-shadow: 0 14px 32px rgba(14, 75, 88, 0.08);
+}
+
+.aurora-section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.aurora-section__pill {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #e6f3f2;
+  color: #1b5f75;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.aurora-section__title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.01em;
+  color: #123c4e;
+}
+
+.aurora-section__body {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.public-homebook--essenziale {
+  gap: 18px;
+}
+
+.essenziale-hero {
+  padding: 18px 18px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: 0 12px 24px rgba(14, 75, 88, 0.08);
+  display: grid;
+  gap: 8px;
+}
+
+.essenziale-hero__eyebrow {
+  color: #1d6b7a;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.essenziale-hero__title {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 32px);
+}
+
+.essenziale-hero__subtitle {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.essenziale-hero__meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.essenziale-list {
+  display: grid;
+  gap: 12px;
+}
+
+.essenziale-card {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(20, 92, 108, 0.16);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fcfc 100%);
+  box-shadow: 0 14px 30px rgba(14, 75, 88, 0.08);
+  display: grid;
+  gap: 10px;
+}
+
+.essenziale-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.essenziale-card__badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #dff1ef;
+  border: 1px solid #9fd7d1;
+  color: #15586a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.essenziale-card__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  color: #2f7f8a;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.essenziale-card__title {
+  margin: 0;
+  font-size: 18px;
+  color: #1b4c60;
+}
+
+.essenziale-card__body {
+  display: grid;
+  gap: 10px;
+}
+
+.essenziale-card__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.public-homebook--boutique {
+  gap: 20px;
+}
+
+.boutique-hero {
+  position: relative;
+  padding: clamp(26px, 5vw, 40px);
+  border-radius: 20px;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.25), transparent 55%),
+    linear-gradient(120deg, #132537 0%, #1b5e68 60%, #103c47 100%);
+  color: #f7fbfb;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 40px rgba(15, 63, 74, 0.3);
+}
+
+.boutique-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -80px -120px auto;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
+  filter: blur(18px);
+}
+
+.boutique-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.boutique-hero__eyebrow {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+}
+
+.boutique-hero__title {
+  margin: 12px 0 8px;
+  font-size: clamp(28px, 4vw, 36px);
+}
+
+.boutique-hero__subtitle {
+  margin: 0 0 10px;
+  color: rgba(247, 251, 251, 0.92);
+  line-height: 1.55;
+}
+
+.boutique-hero__meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-weight: 700;
+}
+
+.boutique-hero__meta span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.boutique-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.boutique-gallery__item {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  min-height: 140px;
+  box-shadow: 0 14px 30px rgba(14, 75, 88, 0.14);
+}
+
+.boutique-gallery__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(17, 35, 53, 0.16), rgba(20, 68, 76, 0.32));
+}
+
+.boutique-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.boutique-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #ffffff 0%, #f3f9f9 100%);
+  border: 1px solid rgba(20, 92, 108, 0.16);
+  box-shadow: 0 18px 36px rgba(14, 75, 88, 0.1);
+  display: grid;
+  gap: 10px;
+}
+
+.boutique-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.boutique-card__label {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #e6f3f2;
+  color: #1d6b7a;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.boutique-card__title {
+  margin: 0;
+  font-size: 19px;
+  color: #103c47;
+}
+
+.boutique-card__body {
+  display: grid;
+  gap: 8px;
+}
+
+.public-homebook--oro {
+  --oro-ink: #2c1a0d;
+  --oro-muted: #5d4834;
+  --oro-accent: #d8a653;
+  --oro-border: rgba(216, 166, 83, 0.6);
+  background: #1D5767;
+  color: #f8fbfc;
+}
+
+.public-homebook--oro .base-hero {
+  background: linear-gradient(140deg, #2c1b0f 0%, #512916 45%, #d8a653 100%);
+  border-color: rgba(216, 166, 83, 0.5);
+  box-shadow: 0 24px 60px rgba(40, 19, 6, 0.45);
+}
+
+.public-homebook--oro .base-hero::after {
+  background: radial-gradient(circle, rgba(255, 234, 177, 0.65), rgba(34, 18, 8, 0));
+}
+
+.public-homebook--oro .base-hero__content h1,
+.public-homebook--oro .base-hero__content p {
+  color: #fff8ef;
+}
+
+.public-homebook--oro .base-hero__eyebrow {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffe9c5;
+}
+
+.public-homebook--oro .base-hero__meta span {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 225, 158, 0.6);
+  color: #312312;
+}
+
+.public-homebook--oro .section-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 238, 220, 0.95));
+  border-color: var(--oro-border);
+  box-shadow: 0 22px 48px rgba(88, 47, 20, 0.18);
+}
+
+.public-homebook--oro .section-panel__title {
+  color: #3c270f;
+}
+
+.public-homebook--oro .section-button {
+  border-color: rgba(195, 153, 82, 0.5);
+  background: linear-gradient(180deg, #fffaf2 0%, #f7ebd0 100%);
+  box-shadow: 0 12px 28px rgba(88, 47, 20, 0.1);
+}
+
+.public-homebook--oro .section-button:hover {
+  border-color: var(--oro-accent);
+  box-shadow: 0 18px 38px rgba(147, 89, 27, 0.25);
+}
+
+.public-homebook--oro .section-button.is-active {
+  border-color: var(--oro-accent);
+  background: linear-gradient(180deg, rgba(214, 146, 48, 0.25), rgba(255, 255, 255, 0.95));
+  box-shadow: 0 20px 46px rgba(146, 74, 8, 0.28);
+}
+
+.public-homebook--oro .section-button__meta,
+.public-homebook--oro .section-button__title {
+  color: #3b2510;
+}
+
+.public-homebook--oro .section-button__hint {
+  color: var(--oro-muted);
+}
+
+.public-homebook--oro .section-button__badge {
+  background: rgba(250, 229, 190, 0.6);
+  border-color: rgba(234, 176, 67, 0.8);
+  color: #4a2a0c;
+}
+
+.public-homebook--oro .media-chip {
+  border-color: rgba(216, 166, 83, 0.4);
+  background: #fffaf0;
+  color: #1d5767;
+}
+
+.public-homebook--oro .media-chip__type {
+  color: #4a2a0c;
+}
+
+.public-homebook--oro .media-chip__url {
+  color: #1d5767;
+}
+
+.oro-editor-page .classico-editor-modal__chips .classico-editor-modal__muted,
+.classico-editor-modal__card--oro .classico-editor-modal__chips .classico-editor-modal__muted {
+  color: #ffffff;
+}
+
+.public-homebook--oro .section-modal__card {
+  background: url("/Icons/Oro/sfondo.png") center/cover no-repeat, #1d5767;
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 30px 70px rgba(4, 22, 32, 0.45);
+}
+
+.public-homebook--oro .section-modal__card--boutique {
+  border-top-color: var(--oro-accent);
+}
+
+.public-homebook--oro .section-modal__title,
+.public-homebook--oro .section-modal__sub-title {
+  color: #ffffff !important;
+}
+
+.public-homebook--oro .section-modal__eyebrow {
+  color: #f0d8a6;
+}
+
+.public-homebook--oro .section-modal__body {
+  color: #e8f1f4;
+}
+
+.public-homebook--oro .section-modal__media-title {
+  color: #cfe6ef;
+}
+
+.oro-editor-page header a,
+.oro-editor-page header h1,
+.oro-editor-page header .text-muted {
+  color: #ffffff;
+}
+
+.public-homebook--oro .classico-sections__grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 18px 20px;
+  justify-content: stretch;
+}
+
+.public-homebook--oro .classico-sections__grid::before {
+  content: none;
+}
+
+.public-homebook--oro .classico-sections__grid .classico-card,
+.public-homebook--oro .classico-sections__grid .classico-card--struttura {
+  padding: 16px 18px !important;
+  min-height: 110px;
+  border-radius: 18px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none;
+  font-size: 16px;
+  font-style: normal;
+  letter-spacing: 0.01em;
+}
+
+.public-homebook--oro .classico-sections__grid .classico-card:nth-of-type(3n),
+.public-homebook--oro .classico-sections__grid .classico-card.classico-card--center,
+.public-homebook--oro .classico-sections__grid .classico-card--struttura {
+  grid-column: auto !important;
+  justify-self: stretch;
+  width: 100% !important;
+}
+
+.public-homebook--oro .classico-card--slug-come-raggiungerci .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 18px;
+}
+
+.public-homebook--oro .classico-card--slug-come-raggiungerci .classico-card__icon-img {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.public-homebook--oro .classico-card--slug-check-in .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-bottom: 18px;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--oro .classico-card--slug-check-in .classico-card__icon-img {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.25);
+  transform-origin: center;
+  object-fit: contain;
+}
+
+.public-homebook--oro .classico-card--slug-funzionamento .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-funzionamento .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-la-nostra-struttura .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-la-nostra-struttura .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-cosa-visitare .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-cosa-visitare .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-esperienze .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-esperienze .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-servizi .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-servizi .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-spiagge .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-spiagge .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-shopping .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-shopping .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-numeri-utili .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-numeri-utili .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-check-out .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-check-out .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-dove-bere .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-dove-bere .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-regole-struttura .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-regole-struttura .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 1024px) {
+  .public-homebook--oro .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .public-homebook--oro .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.public-homebook--pastello {
+  --pastello-ink: #2e2738;
+  --pastello-muted: #6f6479;
+  --pastello-rose: #f7b7d2;
+  --pastello-sky: #a6dff4;
+  --pastello-gold: #f2d070;
+  --pastello-cream: #fff8ef;
+  color: var(--pastello-ink);
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.public-homebook--pastello .base-hero {
+  background: url("/Icons/Pastello/sfondo.png");
+  color: var(--pastello-ink);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 46px rgba(64, 70, 83, 0.16);
+}
+
+.public-homebook--pastello .base-hero::after {
+  background: radial-gradient(circle, rgba(247, 183, 210, 0.35), rgba(146, 212, 244, 0));
+  opacity: 0.9;
+}
+
+.public-homebook--pastello .base-hero__content {
+  gap: 12px;
+}
+
+.public-homebook--pastello .base-hero__eyebrow {
+  background: rgba(247, 183, 210, 0.35);
+  border-color: rgba(247, 183, 210, 0.5);
+  color: var(--pastello-ink);
+}
+
+.public-homebook--pastello .base-hero__title {
+  color: var(--pastello-ink);
+  font-family: "Playfair Display", "Inter", serif;
+  letter-spacing: 0.01em;
+}
+
+.public-homebook--pastello .base-hero__subtitle {
+  color: var(--pastello-muted);
+}
+
+.public-homebook--pastello .base-hero__meta span {
+  background: rgba(166, 223, 244, 0.38);
+  border-color: rgba(166, 223, 244, 0.65);
+  color: var(--pastello-ink);
+}
+
+.public-homebook--pastello .section-panel {
+  background: rgba(255, 248, 239, 0.9);
+  border: 1px solid rgba(247, 183, 210, 0.5);
+  box-shadow: 0 18px 42px rgba(70, 77, 94, 0.12);
+}
+
+.public-homebook--pastello .section-panel__title {
+  color: var(--pastello-ink);
+}
+
+.public-homebook--pastello .section-panel__subtitle {
+  color: var(--pastello-muted);
+}
+
+.public-homebook--pastello .section-button {
+  border-color: rgba(166, 223, 244, 0.8);
+  background: linear-gradient(180deg, #ffffff 0%, #f9f4ff 50%, #f8ffff 100%);
+}
+
+.public-homebook--pastello .section-button__badge {
+  background: rgba(242, 208, 112, 0.5);
+  border: 1px solid rgba(242, 208, 112, 0.75);
+  color: var(--pastello-ink);
+}
+
+.public-homebook--pastello .section-button__meta,
+.public-homebook--pastello .section-button__title {
+  color: var(--pastello-ink);
+}
+
+.public-homebook--pastello .section-button__hint {
+  color: var(--pastello-muted);
+}
+
+.public-homebook--pastello .section-button.is-active {
+  border-color: var(--pastello-rose);
+  background: linear-gradient(180deg, rgba(247, 183, 210, 0.3) 0%, rgba(166, 223, 244, 0.28) 100%);
+  box-shadow: 0 20px 46px rgba(64, 70, 83, 0.16);
+}
+
+.public-homebook--pastello .section-modal__backdrop {
+  background: rgba(46, 39, 56, 0.35);
+}
+
+.public-homebook--pastello .section-modal__card {
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  border-top: 4px solid var(--pastello-rose);
+  box-shadow: 0 24px 52px rgba(64, 70, 83, 0.18);
+}
+
+.public-homebook--pastello .section-modal__title {
+  color: var(--pastello-ink);
+}
+
+.public-homebook--pastello .section-modal__sub-title,
+.public-homebook--pastello .subsection-block__text {
+  color: var(--pastello-muted);
+}
+
+.public-homebook--pastello .media-chip {
+  background: rgba(166, 223, 244, 0.28);
+  border-color: rgba(166, 223, 244, 0.7);
+  color: var(--pastello-ink);
+}
+
+.public-homebook--pastello .media-chip__type {
+  color: var(--pastello-ink);
+}
+
+@media (max-width: 920px) {
+  .aurora-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aurora-nav {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .aurora-section__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .media-chip__url {
+    max-width: 180px;
+  }
+}
+
+/* Base layout (unico scheletro per tutti i template) */
+.base-layout {
+  display: grid;
+  gap: 20px;
+}
+
+.base-hero {
+  position: relative;
+  padding: clamp(22px, 4vw, 32px);
+  border-radius: 22px;
+  background: linear-gradient(140deg, #0f2438 0%, #115964 60%, #1c8b8f 100%);
+  color: #f7fbfb;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, 320px);
+  gap: clamp(16px, 4vw, 28px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 44px rgba(10, 38, 52, 0.32);
+  overflow: hidden;
+}
+
+.base-hero::after {
+  content: "";
+  position: absolute;
+  inset: -30% auto -30% 55%;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(122, 201, 195, 0.48), rgba(17, 89, 106, 0));
+  filter: blur(16px);
+  opacity: 0.7;
+}
+
+.base-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.base-hero__content {
+  display: grid;
+  gap: 10px;
+}
+
+.base-hero__eyebrow {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+}
+
+.base-hero__title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 38px);
+  letter-spacing: 0.01em;
+}
+
+.base-hero__subtitle {
+  margin: 0;
+  max-width: 800px;
+  color: rgba(247, 251, 251, 0.9);
+  line-height: 1.6;
+}
+
+.base-hero__meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.base-hero__meta span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  font-weight: 700;
+}
+
+.base-hero__photo {
+  position: relative;
+  border-radius: 16px;
+  min-height: 220px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.25);
+}
+
+.base-layout--essenziale .base-hero {
+  background: linear-gradient(140deg, #0f1f32 0%, #113c4a 58%, #0f5a86 100%);
+}
+
+.base-layout--boutique .base-hero {
+  background: linear-gradient(135deg, #132537 0%, #1b5e68 58%, #103c47 100%);
+}
+
+.section-panel {
+  background: #faf3e0;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 16px 38px rgba(14, 75, 88, 0.08);
+  display: grid;
+  gap: 14px;
+}
+
+/* Extra spazio tra il pannello superiore e l'anteprima illustrativa */
+.section-panel + .illustrativo-layout,
+.section-panel + .illustrativo-preview {
+  margin-top: clamp(40px, 6vw, 110px);
+}
+
+.illustrativo-editor-page .section-panel {
+  margin-bottom: clamp(32px, 5vw, 96px);
+}
+
+/* Spazio tra card "Sezioni predefinite del layout" e anteprima layout */
+.card + .classico-editor-preview {
+  margin-top: clamp(72px, 10vw, 180px);
+}
+
+.section-panel__title {
+  margin: 6px 0 0;
+  font-size: clamp(22px, 3vw, 26px);
+  letter-spacing: 0.01em;
+  color: #1a5c6c;
+}
+
+.section-panel__subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 820px;
+}
+
+.homebook-search {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.homebook-search__field {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.homebook-search__input {
+  flex: 1;
+  min-width: 0;
+}
+
+.homebook-search__clear {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.homebook-search__meta {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .homebook-search__field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .homebook-search__clear {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.section-button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.section-button {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff 0%, #f5fbfb 100%);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: left;
+  display: grid;
+  gap: 8px;
+  box-shadow: 0 12px 28px rgba(14, 75, 88, 0.08);
+  transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.section-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(14, 75, 88, 0.12);
+  border-color: #7ac9c3;
+}
+
+.section-button.is-active {
+  border-color: #7ac9c3;
+  background: linear-gradient(180deg, #e9f7f4 0%, #ffffff 100%);
+  box-shadow: 0 20px 46px rgba(14, 75, 88, 0.16);
+}
+
+.base-layout--aurora .section-button.is-active {
+  border-color: var(--aurora-accent);
+  box-shadow: 0 20px 46px rgba(98, 195, 196, 0.25);
+}
+
+.base-layout--essenziale .section-button.is-active {
+  border-color: var(--essenziale-accent);
+  box-shadow: 0 20px 46px rgba(27, 76, 96, 0.22);
+}
+
+.base-layout--boutique .section-button.is-active {
+  border-color: var(--boutique-accent);
+  box-shadow: 0 20px 46px rgba(231, 180, 106, 0.24);
+}
+
+.illustrativo-theme {
+  background-color: var(--bg);
+  background-image: url("/Icons/Illustrativo/sfondo.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.section-button__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1b5f75;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.section-button__badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: #e6f3f2;
+  border: 1px solid #cfe4e3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.section-button__title {
+  font-size: 17px;
+  font-weight: 500;
+  color: #123c4e;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+}
+
+.public-homebook--oro .section-button .classico-card__icon {
+  margin-bottom: 10px;
+  width: 80px;
+  height: 80px;
+  justify-content: center;
+  overflow: visible;
+}
+
+.public-homebook--oro .section-button .classico-card__icon-img {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.25);
+  transform-origin: center;
+  object-fit: contain;
+}
+
+.public-homebook--oro .section-button--check-in {
+  padding-top: 12px;
+}
+
+.public-homebook--oro .section-button--check-in .classico-card__icon {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.public-homebook--oro .section-button--check-in .classico-card__icon-img {
+  transform: scale(1.25) translateY(-4px);
+  transform-origin: center;
+}
+
+.section-button__hint {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.section-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.section-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 12, 26, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.section-modal__card {
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(6, 24, 44, 0.35);
+  padding: clamp(16px, 3vw, 22px);
+  max-width: min(920px, 92vw);
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: grid;
+  gap: 12px;
+}
+
+.oro-editor-page .section-modal__card,
+.oro-editor-page .classico-editor-modal__card,
+.classico-editor-modal__card--oro {
+  background: url("/Icons/Oro/sfondo.png") center/cover no-repeat, #1d5767 !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 28px 60px rgba(4, 22, 32, 0.45) !important;
+  color: #e8f1f4 !important;
+}
+
+.oro-editor-page .section-modal__title,
+.oro-editor-page .section-modal__sub-title,
+.oro-editor-page .classico-editor-modal__title,
+.oro-editor-page .classico-editor-modal__sub-heading,
+.classico-editor-modal__card--oro .classico-editor-modal__title,
+.classico-editor-modal__card--oro .classico-editor-modal__sub-heading {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #ffffff !important;
+  letter-spacing: 0;
+  font-size: 23px;
+}
+
+.oro-editor-page .classico-editor-modal__body,
+.oro-editor-page .section-modal__body,
+.classico-editor-modal__card--oro .classico-editor-modal__body {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #e8f1f4;
+}
+
+.oro-editor-page .classico-editor-modal__muted,
+.oro-editor-page .classico-editor-modal__chip,
+.classico-editor-modal__card--oro .classico-editor-modal__muted,
+.classico-editor-modal__card--oro .classico-editor-modal__chip {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #1d5767;
+}
+
+.oro-editor-page .classico-editor-modal__controls .input,
+.oro-editor-page .classico-editor-modal__textarea,
+.classico-editor-modal__card--oro .classico-editor-modal__controls .input,
+.classico-editor-modal__card--oro .classico-editor-modal__textarea {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #1d5767;
+}
+
+.oro-editor-page .classico-editor-modal__controls .input::placeholder,
+.oro-editor-page .classico-editor-modal__textarea::placeholder,
+.classico-editor-modal__card--oro .classico-editor-modal__controls .input::placeholder,
+.classico-editor-modal__card--oro .classico-editor-modal__textarea::placeholder {
+  color: #5b889b;
+}
+
+.classico-editor-modal__card--readonly .classico-editor-modal__save,
+.classico-editor-modal__card--readonly .classico-editor-modal__unsaved,
+.classico-editor-modal__card--readonly .classico-editor-modal__controls,
+.classico-editor-modal__card--readonly .classico-editor-modal__textarea {
+  display: none;
+}
+
+.oro-editor-page .section-modal__eyebrow {
+  color: #f0d8a6;
+}
+
+.oro-editor-page .section-modal__media-title {
+  color: #cfe6ef;
+}
+
+.moderno-layout .section-modal__card {
+  background: linear-gradient(145deg, #f4f5ef 0%, #ccebe9 100%);
+}
+
+.section-modal__card--aurora {
+  border-top: 4px solid var(--aurora-accent);
+}
+
+.section-modal__card--essenziale {
+  border-top: 4px solid var(--essenziale-accent);
+}
+
+.section-modal__card--boutique {
+  border-top: 4px solid var(--boutique-accent);
+}
+
+.section-modal__card--pastello {
+  border-top: 4px solid var(--pastello-rose, #f7b7d2);
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  color: var(--pastello-ink, #2e2738);
+}
+
+.section-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-modal__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  color: #2f7f8a;
+  font-weight: 800;
+}
+
+.section-modal__title {
+  margin: 4px 0 0;
+  font-size: 22px;
+  color: #000000;
+  font-family: "Playfair Display", "Inter", serif;
+  font-weight: 400;
+}
+
+.section-modal__card--illustrativo .section-modal__title,
+.section-modal__card--illustrativo .section-modal__sub-title {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  color: #1da7aa;
+}
+
+.section-modal__title--come-raggiungerci {
+  color: #f59a4b !important;
+}
+
+.section-modal__close {
+  white-space: nowrap;
+}
+
+.section-modal__body {
+  display: grid;
+  gap: 10px;
+}
+
+.section-modal__sub-title {
+  font-family: "Playfair Display", "Inter", serif;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 6px;
+}
+
+.section-modal__media {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.section-modal__media-title {
+  font-weight: 800;
+  color: #1a5c6c;
+}
+
+/* Colore arancione solo per il layout illustrativo */
+.illustrativo-layout .section-modal__card--come-raggiungerci .section-modal__title,
+.illustrativo-layout .section-modal__card--come-raggiungerci .section-modal__sub-title,
+.illustrativo-preview .section-modal__card--come-raggiungerci .section-modal__title,
+.illustrativo-preview .section-modal__card--come-raggiungerci .section-modal__sub-title {
+  color: #f59a4b;
+}
+
+.section-modal__card--classico {
+  border-top: 4px solid #1f5a63;
+}
+
+.moderno-layout .section-modal__card,
+.moderno-preview .classico-editor-modal__card {
+  background: linear-gradient(145deg, #f4f5ef 0%, #ccebe9 100%);
+}
+
+/* Layout classico */
+.classico-layout {
+  display: grid;
+  gap: clamp(20px, 4vw, 32px);
+  padding: clamp(28px, 4vw, 44px);
+  background: radial-gradient(circle at 50% 38%, #dfe7e2 0%, #d8e4df 45%, #c6d6d0 100%);
+  color: #1f3f45;
+  min-height: 100vh;
+  place-items: center;
+  position: relative;
+}
+
+.illustrativo-layout.classico-layout,
+.illustrativo-preview.classico-layout {
+  background: rgba(250, 243, 224, 0.55);
+  color: #1c9ba7;
+  box-shadow: none;
+  padding: clamp(18px, 3vw, 28px);
+  align-content: start;
+}
+
+.illustrativo-layout .classico-sections,
+.illustrativo-preview .classico-sections {
+  margin-top: clamp(500px, 36vw, 760px);
+}
+
+.classico-hero {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  margin-top: clamp(12px, 3vw, 18px);
+}
+
+.classico-cover {
+  position: relative;
+  width: min(1040px, 96vw);
+  aspect-ratio: 1.45;
+  background: #dedede;
+  border-radius: 28px;
+  box-shadow: 0 18px 42px rgba(34, 47, 58, 0.25);
+  border: 1px solid #d2d2d2;
+  position: relative;
+  overflow: hidden;
+}
+
+.classico-cover__placeholder {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #5e5e5e;
+  opacity: 0.92;
+}
+
+.classico-heading {
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.classico-title {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(26px, 4.4vw, 32px);
+  font-style: italic;
+  font-weight: 700;
+  text-decoration: underline;
+  letter-spacing: 0.01em;
+  color: #1f3f45;
+}
+
+.classico-title-playfair {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.classico-subtitle {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(16px, 3.6vw, 18px);
+  color: #6c6c6c;
+}
+
+.classico-sections {
+  display: grid;
+  justify-items: center;
+}
+
+.classico-sections__panel {
+  width: 100%;
+  position: relative;
+  overflow: visible;
+  padding: clamp(72px, 10vw, 112px) clamp(44px, 7vw, 72px);
+  background: #faf3e0;
+  border-radius: 36px;
+  box-shadow: 0 32px 76px rgba(140, 118, 92, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 0 0 1px rgba(20, 70, 78, 0.1);
+  border: 1px solid rgba(20, 70, 78, 0.12);
+}
+
+.classico-layout .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: #f6eadf;
+}
+
+.oro-editor-page .classico-layout .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.oro-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: #1D5767;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0px 150px rgba(183, 151, 100, 1);
+}
+
+.public-homebook--pastello .classico-sections__panel,
+.public-homebook--pastello .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.pastello-layout.classico-layout .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.pastello-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: url("/Icons/Pastello/sfondo.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border: 1px solid rgba(247, 183, 210, 0.45) !important;
+  box-shadow: none !important;
+}
+
+.pastello-layout .classico-sections__panel,
+.pastello-editor-page .classico-sections__panel,
+.pastello-editor-page .classico-editor-preview .classico-sections__panel {
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.pastello-layout.classico-layout
+  .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.pastello-editor-page
+  .classico-editor-preview
+  .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: url("/Icons/Pastello/sfondo.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+.classico-sections__panel::before {
+  content: none;
+}
+
+.classico-sections__content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+}
+
+.classico-sections__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 360px));
+  justify-content: center;
+  gap: 22px 26px;
+}
+
+.classico-sections__grid .classico-empty {
+  grid-column: 1 / -1;
+}
+
+.classico-layout .classico-sections__grid,
+.classico-editor-page .classico-sections__grid,
+.classico-preview .classico-sections__grid {
+  align-items: start;
+  grid-template-columns: repeat(2, minmax(360px, 440px));
+}
+
+.illustrativo-sections__grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 46px 18px;
+  justify-content: stretch;
+}
+
+@media (max-width: 1080px) {
+  .illustrativo-sections__grid {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .illustrativo-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.classico-sections__grid .classico-card:nth-of-type(3n),
+.classico-sections__grid .classico-card.classico-card--center {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(100%, 360px);
+  box-shadow: none;
+}
+
+.classico-sections__grid .classico-card--slug-colazione {
+  background: linear-gradient(135deg, rgb(246, 234, 223) 20%, rgb(224, 205, 187) 100%);
+}
+
+.public-homebook .classico-card--slug-colazione,
+.public-homebook--classico .classico-card--slug-colazione {
+  background: linear-gradient(135deg, rgb(246, 234, 223) 20%, rgb(224, 205, 187) 100%);
+}
+
+.classico-layout .classico-sections__grid .classico-card:nth-of-type(3n),
+.classico-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+.classico-preview .classico-sections__grid .classico-card:nth-of-type(3n) {
+  width: min(100%, 440px);
+}
+
+.classico-layout .classico-sections__grid .classico-card.classico-card--center,
+.classico-editor-page .classico-sections__grid .classico-card.classico-card--center,
+.classico-preview .classico-sections__grid .classico-card.classico-card--center {
+  width: min(100%, 440px);
+}
+
+.classico-layout .classico-sections__grid .classico-card--struttura {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(100%, 360px);
+  background: #f6eadf !important;
+  box-shadow: none !important;
+}
+
+.classico-layout .classico-sections__grid .classico-card--struttura,
+.classico-editor-page .classico-sections__grid .classico-card--struttura,
+.classico-preview .classico-sections__grid .classico-card--struttura {
+  width: min(100%, 440px);
+}
+
+.classico-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  width: 100%;
+  min-height: 128px;
+  border-radius: 22px;
+  background: #eaeaea;
+  border: 1px solid rgba(19, 84, 90, 0.12);
+  box-shadow: none;
+  color: #214c55;
+  font-family: "Playfair Display", serif;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 600;
+  text-align: left;
+  transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  position: relative;
+  overflow: visible;
+}
+
+.classico-layout .classico-card--slug-colazione,
+.classico-editor-page .classico-card--slug-colazione,
+.classico-preview .classico-card--slug-colazione,
+.public-homebook--classico .classico-card--slug-colazione,
+.public-homebook .classico-card--slug-colazione {
+  background: linear-gradient(135deg, rgb(246, 234, 223) 20%, rgb(224, 205, 187) 100%);
+}
+
+.classico-layout .classico-card--slug-cosa-visitare,
+.classico-editor-page .classico-card--slug-cosa-visitare,
+.classico-preview .classico-card--slug-cosa-visitare,
+.public-homebook--classico .classico-card--slug-cosa-visitare,
+.public-homebook .classico-card--slug-cosa-visitare {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+}
+.classico-sections__grid .classico-card:nth-child(4n),
+.classico-sections__grid .classico-card:nth-child(4n + 1) {
+}
+
+.oro-editor-page .classico-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 18px !important;
+  min-height: 140px;
+  text-align: center;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.oro-editor-page .classico-card:hover {
+  transform: translateY(0);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  border-color: rgba(19, 84, 90, 0.2);
+}
+
+.oro-editor-page .classico-card__icon,
+.oro-editor-page .classico-editor-modal__icon,
+.classico-editor-modal__card--oro .classico-editor-modal__icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  padding: 6px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+  background: #1d5767;
+  border-radius: 14px;
+}
+
+.oro-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon {
+  width: 80px;
+  height: 80px;
+}
+
+.oro-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-check-in .classico-card__icon {
+  width: 64px;
+  height: 64px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-check-in .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-funzionamento .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-funzionamento .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-la-nostra-struttura .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-la-nostra-struttura .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-regole-struttura .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-regole-struttura .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-dove-mangiare .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-dove-mangiare .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card__icon-img,
+.oro-editor-page .classico-editor-modal__icon img,
+.classico-editor-modal__card--oro .classico-editor-modal__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.oro-editor-page .classico-card--slug-dove-bere .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-dove-bere .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-esperienze .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-esperienze .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-servizi .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-servizi .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-spiagge .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-spiagge .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-shopping .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-shopping .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-numeri-utili .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-numeri-utili .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-check-out .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-check-out .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.oro-editor-page .classico-card--slug-cosa-visitare .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-cosa-visitare .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+.public-homebook--oro .classico-card--slug-check-in .classico-card__title,
+.oro-editor-page .classico-card--slug-check-in .classico-card__title {
+  margin-top: 0;
+}
+
+.oro-editor-page .classico-card__title {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #fff;
+  font-size: 23px;
+}
+
+.oro-editor-page .classico-card__chevron {
+  color: rgba(27, 27, 27, 0.5);
+}
+
+.oro-editor-page .classico-card::before,
+.oro-editor-page .classico-card::after {
+  content: none;
+}
+
+.oro-editor-page .classico-sections__grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 18px 20px;
+  justify-content: stretch;
+}
+
+.oro-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+.oro-editor-page .classico-sections__grid .classico-card--struttura {
+  grid-column: auto !important;
+  justify-self: stretch;
+  width: 100% !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 1024px) {
+  .oro-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .oro-editor-page .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.oro-editor-page .classico-sections__panel {
+  background: #1D5767;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 32px 76px rgba(0, 0, 0, 0.35);
+}
+
+/* Illustrativo layout (preview + pubblico) */
+.illustrativo-layout,
+.illustrativo-preview {
+  background: rgba(250, 243, 224, 0.55);
+  opacity: 1;
+}
+
+.illustrativo-layout .classico-card,
+.illustrativo-preview .classico-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100%;
+}
+
+.illustrativo-layout .classico-card::after,
+.illustrativo-preview .classico-card::after {
+  content: none !important;
+}
+
+.illustrativo-layout .classico-card--slug-check-in,
+.illustrativo-preview .classico-card--slug-check-in {
+  background: transparent !important;
+  border: none !important;
+}
+
+.illustrativo-sections__grid .classico-card {
+  grid-column: auto !important;
+  justify-self: stretch;
+}
+
+.illustrativo-sections__grid .classico-card:nth-of-type(3n),
+.illustrativo-sections__grid .classico-card.classico-card--center,
+.illustrativo-sections__grid .classico-card:nth-child(4n),
+.illustrativo-sections__grid .classico-card:nth-child(4n + 1) {
+  grid-column: auto !important;
+  width: 100%;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.illustrativo-sections__panel {
+  background: rgba(250, 243, 224, 0.55) !important;
+  box-shadow: none;
+  border: none;
+  padding: clamp(8px, 1.6vw, 14px);
+}
+
+.illustrativo-sections__content {
+  gap: 12px;
+}
+
+.classico-layout .classico-card--struttura {
+  background: linear-gradient(140deg, #e5d7c8 0%, #d5c3b3 100%) !important;
+  box-shadow: none !important;
+}
+
+.classico-card--white {
+  background: #eaeaea !important;
+}
+
+.classico-card::after {
+  content: none;
+}
+
+.classico-card:nth-child(-n + 2)::after {
+  display: none;
+}
+
+
+.classico-card:hover {
+  transform: translateY(-3px);
+  box-shadow: none;
+  border-color: rgba(19, 84, 90, 0.2);
+}
+
+/* Layout pastello (stessa struttura del classico, look pastello dedicato) */
+.pastello-editor-page {
+  position: relative;
+  color: #0e4b58;
+}
+
+.pastello-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.pastello-layout {
+  --pastello-ink: #2e2738;
+  --pastello-muted: #6f6479;
+  --pastello-rose: #f7b7d2;
+  --pastello-sky: #a6dff4;
+  --pastello-gold: #f2d070;
+  --pastello-cream: #fff8ef;
+  display: grid;
+  gap: clamp(18px, 4vw, 30px);
+  padding: clamp(32px, 5vw, 56px);
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  color: var(--pastello-ink);
+  min-height: calc(100vh + 200px);
+  place-items: center;
+  position: relative;
+}
+
+.pastello-sections {
+  display: grid;
+  justify-items: center;
+}
+
+.pastello-sections__panel {
+  width: 100%;
+  position: relative;
+  padding: clamp(22px, 3.6vw, 34px);
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 28px;
+  border: 1px solid rgba(247, 183, 210, 0.45);
+  box-shadow: 0 26px 60px rgba(64, 70, 83, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.pastello-sections__content {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  padding: clamp(36px, 5vw, 64px) clamp(12px, 3vw, 24px);
+}
+
+.pastello-sections__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  justify-content: stretch;
+  align-items: start;
+  gap: 36px 28px !important;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .pastello-sections__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .pastello-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Reset neutro delle card solo per layout pastello (preview/editor/pubblico) */
+.pastello-card,
+.pastello-layout .classico-card,
+.pastello-editor-page .classico-card,
+.public-homebook--pastello .classico-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: var(--pastello-ink);
+  font-family: "Inter", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  padding: 36px 8px 8px;
+  cursor: pointer;
+  width: 220px;
+  max-width: 220px;
+  justify-self: center;
+  min-width: 0;
+  min-height: 140px;
+  height: 140px;
+  border-radius: 0;
+  text-align: center;
+}
+
+.pastello-card.classico-card {
+  max-width: 100%;
+}
+
+.public-homebook--pastello .classico-card__title,
+.pastello-card .classico-card__title,
+.pastello-layout .classico-card__title,
+.pastello-editor-page .classico-card__title {
+  font-family: "Playfair Display", "Inter", system-ui, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  margin: 0;
+  text-align: center;
+  color: #3f3833;
+}
+
+.public-homebook--pastello .classico-card__icon {
+  width: 83.22px;
+  height: 124.88px;
+  min-width: 83.22px;
+  min-height: 124.88px;
+  max-width: none;
+  max-height: none;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: none;
+  transform-origin: center;
+}
+
+.pastello-card .classico-card__chevron {
+  display: none;
+}
+
+.pastello-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.pastello-layout .classico-card--struttura,
+.pastello-editor-page .classico-card--struttura,
+.pastello-preview .classico-card--struttura,
+.public-homebook--pastello .classico-card--struttura {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.pastello-layout .classico-sections__grid .classico-card,
+.pastello-editor-page .classico-sections__grid .classico-card,
+.public-homebook--pastello .classico-sections__grid .classico-card {
+  grid-column: auto;
+  justify-self: center;
+  width: 220px;
+  max-width: 220px;
+  height: 140px;
+}
+
+.pastello-layout .classico-sections__grid,
+.pastello-editor-page .classico-sections__grid,
+.public-homebook--pastello .classico-sections__grid {
+  grid-template-columns: repeat(4, 220px);
+  justify-content: center;
+  justify-items: center;
+  align-items: start;
+  row-gap: 10px;
+  column-gap: 40px;
+  grid-auto-rows: 140px;
+}
+
+/* Pastello: card "Dove Bere" con background trasparente */
+.pastello-layout .classico-card--slug-dove-bere,
+.pastello-editor-page .classico-card--slug-dove-bere,
+.pastello-preview .classico-card--slug-dove-bere,
+.public-homebook--pastello .classico-card--slug-dove-bere {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+/* Pastello: sposta "Check-in" più a destra (colonna 3) */
+.pastello-layout .classico-card--slug-check-in,
+.pastello-editor-page .classico-card--slug-check-in,
+.pastello-preview .classico-card--slug-check-in,
+.public-homebook--pastello .classico-card--slug-check-in {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+  align-self: start;
+}
+
+.pastello-layout .classico-card--slug-la-nostra-struttura,
+.pastello-editor-page .classico-card--slug-la-nostra-struttura,
+.pastello-preview .classico-card--slug-la-nostra-struttura,
+.public-homebook--pastello .classico-card--slug-la-nostra-struttura {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: center;
+  align-self: center;
+}
+
+.pastello-layout .classico-card--slug-regole-struttura,
+.pastello-editor-page .classico-card--slug-regole-struttura,
+.pastello-preview .classico-card--slug-regole-struttura,
+.public-homebook--pastello .classico-card--slug-regole-struttura {
+  grid-column: 1;
+  grid-row: 3;
+  justify-self: center;
+  align-self: center;
+}
+
+.pastello-layout .classico-card--slug-dove-bere,
+.pastello-editor-page .classico-card--slug-dove-bere,
+.pastello-preview .classico-card--slug-dove-bere,
+.public-homebook--pastello .classico-card--slug-dove-bere {
+  grid-column: 1;
+  grid-row: 4;
+  justify-self: center;
+  align-self: center;
+}
+
+.pastello-layout .classico-card--slug-shopping,
+.pastello-editor-page .classico-card--slug-shopping,
+.pastello-preview .classico-card--slug-shopping,
+.public-homebook--pastello .classico-card--slug-shopping {
+  grid-column: 1;
+  grid-row: 5;
+  justify-self: center;
+  align-self: center;
+}
+
+@media (max-width: 900px) {
+  .pastello-layout .classico-sections__grid,
+  .pastello-editor-page .classico-sections__grid,
+  .public-homebook--pastello .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .pastello-layout .classico-sections__grid,
+  .pastello-editor-page .classico-sections__grid,
+  .public-homebook--pastello .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pastello: centra gli elementi della colonna sinistra (asse x) */
+.pastello-layout .classico-card--slug-regole-struttura,
+.pastello-editor-page .classico-card--slug-regole-struttura,
+.pastello-preview .classico-card--slug-regole-struttura,
+.public-homebook--pastello .classico-card--slug-regole-struttura,
+.pastello-layout .classico-card--slug-dove-bere,
+.pastello-editor-page .classico-card--slug-dove-bere,
+.pastello-preview .classico-card--slug-dove-bere,
+.public-homebook--pastello .classico-card--slug-dove-bere,
+.pastello-layout .classico-card--slug-shopping,
+.pastello-editor-page .classico-card--slug-shopping,
+.pastello-preview .classico-card--slug-shopping,
+.public-homebook--pastello .classico-card--slug-shopping {
+  margin-left: auto;
+  margin-right: auto;
+  align-self: center;
+}
+
+/* Pastello: posizionamento specifico */
+.pastello-layout .classico-card--slug-dove-bere,
+.pastello-editor-page .classico-card--slug-dove-bere,
+.pastello-preview .classico-card--slug-dove-bere,
+.public-homebook--pastello .classico-card--slug-dove-bere {
+  grid-column: 2;
+  grid-row: 4;
+  justify-self: center;
+}
+
+.pastello-editor-page a,
+.pastello-editor-page .btn,
+.pastello-editor-page .pill,
+.pastello-editor-page .text-muted,
+.pastello-editor-page label,
+.pastello-editor-page input,
+.pastello-editor-page select,
+.pastello-editor-page textarea {
+  color: #0e4b58;
+}
+
+.pastello-editor-page input::placeholder,
+.pastello-editor-page textarea::placeholder {
+  color: #0e4b58;
+  opacity: 0.8;
+}
+
+.pastello-layout .classico-card--slug-shopping,
+.pastello-editor-page .classico-card--slug-shopping,
+.pastello-preview .classico-card--slug-shopping,
+.public-homebook--pastello .classico-card--slug-shopping {
+  grid-column: 3;
+  grid-row: 4;
+  justify-self: center;
+}
+
+.pastello-sections__grid .classico-card:nth-of-type(3n),
+.pastello-sections__grid .classico-card.classico-card--center,
+.pastello-sections__grid .classico-card:nth-child(4n),
+.pastello-sections__grid .classico-card:nth-child(4n + 1),
+.pastello-layout .classico-sections__grid .classico-card:nth-of-type(3n),
+.pastello-layout .classico-sections__grid .classico-card.classico-card--center,
+.pastello-layout .classico-sections__grid .classico-card:nth-child(4n),
+.pastello-layout .classico-sections__grid .classico-card:nth-child(4n + 1),
+.pastello-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+.pastello-editor-page .classico-sections__grid .classico-card.classico-card--center,
+.pastello-editor-page .classico-sections__grid .classico-card:nth-child(4n),
+.pastello-editor-page .classico-sections__grid .classico-card:nth-child(4n + 1),
+.public-homebook--pastello .classico-sections__grid .classico-card:nth-of-type(3n),
+.public-homebook--pastello .classico-sections__grid .classico-card.classico-card--center,
+.public-homebook--pastello .classico-sections__grid .classico-card:nth-child(4n),
+.public-homebook--pastello .classico-sections__grid .classico-card:nth-child(4n + 1) {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+
+.pastello-card:not(.classico-card--slug-come-raggiungerci) .classico-card__title {
+  font-family: "Playfair Display", "Inter", system-ui, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  font-size: 23px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+  color: #3f3833 !important;
+}
+
+/* Pastello titoli: override uniforme (tutte le varianti) */
+.public-homebook--pastello .classico-card:not(.classico-card--slug-come-raggiungerci) .classico-card__title,
+.pastello-card:not(.classico-card--slug-come-raggiungerci) .classico-card__title,
+.pastello-layout .classico-card:not(.classico-card--slug-come-raggiungerci) .classico-card__title,
+.pastello-editor-page .classico-card:not(.classico-card--slug-come-raggiungerci) .classico-card__title {
+  font-family: "Playfair Display", "Inter", system-ui, serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  font-size: 23px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  color: #3f3833 !important;
+}
+
+/* Pastello: "Come raggiungerci" - evita tagli e lascia spazio al toggle */
+.public-homebook--pastello .classico-card--slug-come-raggiungerci,
+.pastello-layout .classico-card--slug-come-raggiungerci,
+.pastello-editor-page .classico-card--slug-come-raggiungerci,
+.pastello-preview .classico-card--slug-come-raggiungerci {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  padding: 24px 20px 22px;
+  width: min(360px, 100%);
+  max-width: 100%;
+  min-height: 260px;
+  height: auto;
+  grid-row: span 2;
+  grid-column: 1 / -1;
+  justify-self: center;
+  text-align: center;
+}
+
+.public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__title,
+.pastello-layout .classico-card--slug-come-raggiungerci .classico-card__title,
+.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__title,
+.pastello-preview .classico-card--slug-come-raggiungerci .classico-card__title {
+  font-family: "Playfair Display", "Inter", system-ui, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: 0;
+  margin: -24px 0 0;
+  text-align: center;
+  color: rgb(63, 56, 51);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.pastello-card:not(.classico-card--slug-come-raggiungerci) .classico-card__icon {
+  width: 83.22px !important;
+  height: 124.88px !important;
+  min-width: 83.22px !important;
+  min-height: 124.88px !important;
+  max-width: none !important;
+  max-height: none !important;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.pastello-card:not(.classico-card--slug-come-raggiungerci) .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  filter: none !important;
+  transform: none !important;
+  transform-origin: center !important;
+}
+
+/* Pastello: icone sempre alla dimensione reale anche con .icon-thicker */
+.public-homebook--pastello .classico-card__icon-img.icon-thicker,
+.pastello-card:not(.classico-card--slug-come-raggiungerci) .classico-card__icon-img.icon-thicker {
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  transform-origin: center !important;
+  filter: none !important;
+}
+
+.pastello-layout .classico-card::after,
+.pastello-editor-page .classico-card::after,
+.public-homebook--pastello .classico-card::after {
+  content: none !important;
+}
+
+.pastello-layout .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci),
+.public-homebook--pastello .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci) {
+  grid-column: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.pastello-layout .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci):nth-of-type(3n),
+.pastello-layout .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci):nth-child(4n),
+.pastello-layout .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci):nth-child(4n + 1),
+.public-homebook--pastello .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci):nth-of-type(3n),
+.public-homebook--pastello .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci):nth-child(4n),
+.public-homebook--pastello .classico-sections__grid .classico-card:not(.classico-card--slug-come-raggiungerci):nth-child(4n + 1) {
+  grid-column: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.pastello-hero {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.pastello-cover {
+  position: relative;
+  width: min(1040px, 96vw);
+  aspect-ratio: 1.25;
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 26px;
+  box-shadow: 0 18px 44px rgba(64, 70, 83, 0.2);
+  border: 1px solid rgba(247, 183, 210, 0.5);
+  overflow: hidden;
+  padding: clamp(56px, 8vw, 92px) clamp(28px, 4vw, 44px);
+  box-sizing: border-box;
+  display: grid;
+  align-content: center;
+}
+
+.pastello-cover__placeholder {
+  color: var(--pastello-muted);
+  opacity: 0.9;
+}
+
+.pastello-heading {
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.pastello-title {
+  margin: 0;
+  font-family: "Playfair Display", "Inter", serif;
+  font-size: clamp(26px, 4.4vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--pastello-ink);
+}
+
+.pastello-subtitle {
+  margin: 0;
+  font-family: "Playfair Display", "Inter", serif;
+  font-size: clamp(16px, 3.6vw, 18px);
+  color: var(--pastello-muted);
+}
+
+.illustrativo-card {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  padding: 8px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-align: center;
+  min-height: 96px;
+}
+
+.classico-card__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: grid;
+  place-items: center;
+  color: #24545c;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.illustrativo-card .classico-card__icon {
+  width: 64px;
+  height: 64px;
+}
+
+.classico-card__icon-img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  filter: grayscale(12%);
+}
+
+.illustrativo-card .classico-card__icon-img {
+  filter: none;
+  width: 100%;
+  height: 100%;
+}
+
+.classico-card__icon-img[src*="bagno"] {
+  transform: scale(0.9);
+}
+
+.classico-card__icon-img[src*="/Moderno/accesso"] {
+  transform: scale(0.84);
+}
+
+img[src*="/Moderno/servizi"] {
+  transform: scale(0.74);
+  filter: grayscale(12%) contrast(0.9);
+}
+
+/* Icone: sfondo sempre trasparente in ogni layout/variante */
+.classico-card__icon,
+.moderno-card .classico-card__icon,
+.illustrativo-card .classico-card__icon,
+.public-homebook--pastello .classico-card__icon,
+.pastello-layout .classico-card__icon,
+.pastello-editor-page .classico-card__icon {
+  background: transparent !important;
+  box-shadow: none !important;
+  place-items: center;
+}
+
+
+/* Layout illustrativo: riporta il check-in alla scala regolare */
+.illustrativo-card.classico-card--slug-check-in .classico-card__icon-img {
+  transform: scale(1) !important;
+  transform-origin: center !important;
+}
+
+/* Layout moderno: stessa scala delle altre icone */
+.moderno-card.classico-card--slug-check-in .classico-card__icon-img {
+  width: 78% !important;
+  height: 78% !important;
+  transform: scale(1.1) !important;
+}
+
+.classico-card--checkin,
+.classico-card--halo {
+  position: relative;
+}
+
+.classico-editor-page .classico-card--checkin,
+.classico-preview .classico-card--checkin {
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.illustrativo-card .classico-card__chevron {
+  display: none;
+}
+
+.illustrativo-card .classico-card__title {
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: italic;
+  color: #1da7aa;
+}
+
+.illustrativo-card.classico-card--slug-come-raggiungerci .classico-card__title,
+.illustrativo-card.classico-card--slug-regole-struttura .classico-card__title,
+.illustrativo-card.classico-card--slug-dove-bere .classico-card__title,
+.illustrativo-card.classico-card--slug-esperienze .classico-card__title,
+.illustrativo-card.classico-card--slug-shopping .classico-card__title,
+.illustrativo-card.classico-card--slug-spiagge .classico-card__title {
+  color: #f59a4b;
+}
+
+.illustrativo-card.classico-card--slug-dove-mangiare .classico-card__title,
+.illustrativo-card.classico-card--slug-servizi .classico-card__title,
+.illustrativo-card.classico-card--slug-cosa-visitare .classico-card__title {
+  color: #1da7aa;
+}
+
+.classico-layout .classico-card--funz,
+.classico-editor-page .classico-card--funz,
+.classico-preview .classico-card--funz {
+  position: relative;
+  background: #f6eadf !important;
+}
+
+.classico-layout .classico-card--struttura,
+.classico-editor-page .classico-card--struttura,
+.classico-preview .classico-card--struttura {
+  box-shadow: none !important;
+}
+
+.moderno-layout {
+  background: linear-gradient(180deg, #ffffff 0%, #e9f8f6 32%, #d0efea 70%, #b7e0da 100%);
+  padding: clamp(28px, 4vw, 40px);
+  min-height: 100vh;
+  display: grid;
+  gap: clamp(18px, 4vw, 28px);
+  align-content: start;
+}
+
+.moderno-hero {
+  display: none;
+}
+
+.moderno-cover,
+.moderno-cover__placeholder {
+  display: none;
+}
+
+.moderno-heading {
+  display: none;
+}
+
+.moderno-sections {
+  width: 100%;
+}
+
+.moderno-sections__panel {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: clamp(10px, 3vw, 18px);
+  margin-top: clamp(24px, 4vw, 56px);
+}
+
+.moderno-sections__content {
+  gap: 18px;
+}
+
+.moderno-sections__grid {
+  --moderno-row-gap: clamp(18px, 4vw, 28px);
+  --moderno-col-gap: clamp(26px, 6vw, 42px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  justify-content: start;
+  gap: var(--moderno-row-gap) var(--moderno-col-gap);
+}
+
+.moderno-layout .classico-sections__panel {
+  box-shadow: none !important;
+}
+
+.moderno-layout .classico-card,
+.moderno-layout .classico-card::after {
+  box-shadow: none !important;
+}
+
+.classico-sections__panel.moderno-sections__panel,
+.moderno-layout .classico-sections__panel {
+  box-shadow: none !important;
+  border: none;
+  background: linear-gradient(145deg, #ffffff 25%, #7ac9c38f 100%);
+}
+
+.classico-sections__panel.moderno-sections__panel::before,
+.moderno-layout .classico-sections__panel::before {
+  content: none;
+}
+
+.moderno-layout .classico-sections__panel,
+.moderno-layout .section-panel {
+  box-shadow: none !important;
+  border: none;
+  background: linear-gradient(145deg, #ffffff 25%, #7ac9c38f 100%);
+}
+
+.moderno-layout .card,
+.moderno-layout .card::before,
+.moderno-layout .card::after {
+  box-shadow: none !important;
+}
+
+.moderno-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 4px;
+  min-height: auto;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  transition: none;
+  flex: 1 1 calc(32% - var(--moderno-col-gap));
+  max-width: 340px;
+  min-width: 220px;
+}
+
+/* centra le ultime due card (es. Numeri utili e Check-out) */
+.moderno-sections__grid .classico-card {
+  grid-column: auto !important;
+  width: 100%;
+  max-width: none;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 980px) {
+  .moderno-sections__grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .moderno-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.moderno-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.moderno-card .classico-card__icon {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  border: 1px solid #1f3f45;
+  background: transparent;
+  box-shadow: none;
+}
+
+.moderno-card .classico-card__icon-img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  filter: grayscale(100%) contrast(0.9) drop-shadow(0 0 0 #1f3f45) drop-shadow(0 0 0 #1f3f45);
+  transform: scale(1.1);
+}
+
+.moderno-card.classico-card--slug-polizia .classico-card__icon-img {
+  filter: grayscale(100%) contrast(0.9)
+    drop-shadow(0 0 1px #1f3f45)
+    drop-shadow(0 0 1px #1f3f45)
+    drop-shadow(0 0 1px #1f3f45);
+  transform: scale(1.12);
+}
+
+.moderno-card .icon-thicker {
+  filter: none;
+  transform: scale(1.1);
+}
+
+/* Layout moderno: riallinea il check-in alla stessa scala delle altre icone */
+.moderno-card.classico-card--slug-check-in .classico-card__icon {
+  width: 74px;
+  height: 74px;
+  border: 1px solid #1f3f45;
+  border-radius: 50%;
+}
+
+.moderno-card.classico-card--slug-check-in .classico-card__icon-img {
+  width: 78% !important;
+  height: 78% !important;
+  transform: scale(1) !important;
+  filter: grayscale(100%) contrast(0.9) drop-shadow(0 0 0 #1f3f45) drop-shadow(0 0 0 #1f3f45);
+}
+
+.moderno-card.classico-card--checkin .classico-card__icon {
+  width: 74px;
+  height: 74px;
+  border: 1px solid #1f3f45;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.moderno-card.classico-card--checkin .classico-card__icon-img {
+  width: 78% !important;
+  height: 78% !important;
+  transform: scale(1) !important;
+  filter: grayscale(100%) contrast(0.9) drop-shadow(0 0 0 #1f3f45) drop-shadow(0 0 0 #1f3f45);
+}
+
+.moderno-card .icon-bolder {
+  filter: drop-shadow(0 0 0 #1f3f45) drop-shadow(0 0 0 #1f3f45) drop-shadow(0 0 0 #1f3f45);
+  transform: scale(1.14);
+}
+
+.moderno-card .classico-card__title {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(20px, 2.6vw, 26px);
+  letter-spacing: 0.01em;
+  color: #23343c;
+}
+
+.moderno-card .classico-card__chevron {
+  display: none;
+}
+
+.moderno-sections__grid {
+  align-items: stretch;
+}
+
+@media (max-width: 1100px) {
+  .moderno-card {
+    flex-basis: calc(50% - var(--moderno-col-gap));
+  }
+}
+
+@media (max-width: 720px) {
+  .moderno-card {
+    flex-basis: 100%;
+  }
+}
+
+.classico-layout .classico-card--checkin,
+.classico-editor-page .classico-card--checkin,
+.classico-preview .classico-card--checkin {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+  background: #f6eadf !important;
+  align-self: stretch;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  gap: 18px;
+  padding: 22px 24px;
+  min-height: 128px;
+  max-height: none;
+  text-align: left;
+}
+
+.classico-layout .classico-card--slug-numeri-utili,
+.classico-editor-page .classico-card--slug-numeri-utili,
+.classico-preview .classico-card--slug-numeri-utili {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+}
+
+.classico-layout .classico-card--slug-servizi,
+.classico-editor-page .classico-card--slug-servizi,
+.classico-preview .classico-card--slug-servizi {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+}
+
+.classico-layout .classico-card--slug-servizi,
+.classico-editor-page .classico-card--slug-servizi,
+.classico-preview .classico-card--slug-servizi,
+.public-homebook--classico .classico-card--slug-servizi,
+.public-homebook .classico-card--slug-servizi {
+  background: #f6eadf;
+}
+
+.classico-layout .classico-card--slug-shopping,
+.classico-editor-page .classico-card--slug-shopping,
+.classico-preview .classico-card--slug-shopping {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+}
+
+.classico-layout .classico-card--slug-esperienze,
+.classico-editor-page .classico-card--slug-esperienze,
+.classico-preview .classico-card--slug-esperienze {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+}
+
+.classico-layout .classico-card--slug-dove-bere,
+.classico-editor-page .classico-card--slug-dove-bere,
+.classico-preview .classico-card--slug-dove-bere {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+}
+
+.classico-layout .classico-card--slug-dove-bere,
+.classico-editor-page .classico-card--slug-dove-bere,
+.classico-preview .classico-card--slug-dove-bere,
+.public-homebook--classico .classico-card--slug-dove-bere,
+.public-homebook .classico-card--slug-dove-bere {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+.classico-layout .classico-card--slug-shopping,
+.classico-editor-page .classico-card--slug-shopping,
+.classico-preview .classico-card--slug-shopping {
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+.classico-layout .classico-card--slug-shopping,
+.classico-editor-page .classico-card--slug-shopping,
+.classico-preview .classico-card--slug-shopping,
+.public-homebook--classico .classico-card--slug-shopping,
+.public-homebook .classico-card--slug-shopping {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+}
+
+/* Layout classico: sfondo dedicato per "Numeri utili" (solo classico + anteprima/editor) */
+.classico-layout .classico-card--slug-numeri-utili,
+.classico-editor-page .classico-card--slug-numeri-utili,
+.classico-preview .classico-card--slug-numeri-utili {
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+.classico-layout .classico-card--slug-numeri-utili,
+.classico-editor-page .classico-card--slug-numeri-utili,
+.classico-preview .classico-card--slug-numeri-utili,
+.public-homebook--classico .classico-card--slug-numeri-utili,
+.public-homebook .classico-card--slug-numeri-utili {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+}
+
+/* Layout classico: sfondo dedicato per "Come Raggiungerci" (solo classico + anteprima/editor) */
+.classico-layout .classico-card--slug-come-raggiungerci,
+.classico-editor-page .classico-card--slug-come-raggiungerci,
+.classico-preview .classico-card--slug-come-raggiungerci,
+.public-homebook--classico .classico-card--slug-come-raggiungerci,
+.public-homebook .classico-card--slug-come-raggiungerci {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+.classico-layout .classico-card--slug-come-raggiungerci .classico-card__title,
+.classico-editor-page .classico-card--slug-come-raggiungerci .classico-card__title,
+.classico-preview .classico-card--slug-come-raggiungerci .classico-card__title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  line-height: 1.2;
+  max-width: 100%;
+}
+
+/* Layout classico: sfondo dedicato per "Regole Struttura" (solo classico + anteprima/editor) */
+.classico-layout .classico-card--slug-regole-struttura,
+.classico-editor-page .classico-card--slug-regole-struttura,
+.classico-preview .classico-card--slug-regole-struttura,
+.public-homebook--classico .classico-card--slug-regole-struttura,
+.public-homebook .classico-card--slug-regole-struttura {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+  min-height: 128px;
+  max-height: 128px;
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+/* Layout classico: sfondo dedicato per "Cosa visitare" (solo classico + anteprima/editor) */
+.classico-layout .classico-card--slug-cosa-visitare,
+.classico-editor-page .classico-card--slug-cosa-visitare,
+.classico-preview .classico-card--slug-cosa-visitare {
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+/* Layout classico: sfondo dedicato per "Spiagge" (solo classico + anteprima/editor) */
+.classico-layout .classico-card--slug-spiagge,
+.classico-editor-page .classico-card--slug-spiagge,
+.classico-preview .classico-card--slug-spiagge,
+.public-homebook--classico .classico-card--slug-spiagge,
+.public-homebook .classico-card--slug-spiagge {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+}
+/* Layout classico: sfondo dedicato per "Check-out" (solo classico + anteprima/editor) */
+.classico-layout .classico-card--slug-check-out,
+.classico-editor-page .classico-card--slug-check-out,
+.classico-preview .classico-card--slug-check-out,
+.public-homebook--classico .classico-card--slug-check-out,
+.public-homebook .classico-card--slug-check-out {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+/* Layout classico: colore titoli sezioni e sottosezioni */
+.classico-layout .classico-card__title,
+.classico-editor-page .classico-card__title,
+.classico-preview .classico-card__title,
+.classico-layout .section-modal__title,
+.classico-layout .section-modal__sub-title,
+.classico-editor-page .section-modal__title,
+.classico-editor-page .section-modal__sub-title,
+.classico-preview .section-modal__title,
+.classico-preview .section-modal__sub-title,
+.classico-editor-page .classico-editor-modal__title,
+.classico-editor-page .classico-editor-modal__sub-heading,
+.classico-preview .classico-editor-modal__title,
+.classico-preview .classico-editor-modal__sub-heading {
+  color: #214c55 !important;
+}
+
+.classico-layout .classico-card--slug-dove-mangiare,
+.classico-editor-page .classico-card--slug-dove-mangiare,
+.classico-preview .classico-card--slug-dove-mangiare {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+}
+
+.classico-layout .classico-card--slug-funzionamento,
+.classico-editor-page .classico-card--slug-funzionamento,
+.classico-preview .classico-card--slug-funzionamento {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+}
+
+.classico-layout .classico-card--slug-la-nostra-struttura,
+.classico-editor-page .classico-card--slug-la-nostra-struttura,
+.classico-preview .classico-card--slug-la-nostra-struttura {
+  box-shadow: 0 32px 90px rgba(140, 118, 92, 0.95) !important;
+  min-height: 128px;
+  max-height: 128px;
+}
+
+.classico-layout .classico-card--slug-cosa-visitare,
+.classico-editor-page .classico-card--slug-cosa-visitare,
+.classico-preview .classico-card--slug-cosa-visitare {
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+.classico-layout .classico-card--slug-la-nostra-struttura,
+.classico-editor-page .classico-card--slug-la-nostra-struttura,
+.classico-preview .classico-card--slug-la-nostra-struttura {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+}
+
+.classico-layout .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura,
+.classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura,
+.classico-preview .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+}
+
+/* Layout classico: sfumatura dedicata per "La Nostra Struttura" (anche anteprima/editor) */
+.classico-layout .classico-card--slug-la-nostra-struttura,
+.classico-editor-page .classico-card--slug-la-nostra-struttura,
+.classico-preview .classico-card--slug-la-nostra-struttura,
+.classico-layout .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura,
+.classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura,
+.classico-preview .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%) !important;
+}
+
+.classico-layout .classico-card--slug-dove-mangiare,
+.classico-editor-page .classico-card--slug-dove-mangiare,
+.classico-preview .classico-card--slug-dove-mangiare,
+.public-homebook--classico .classico-card--slug-dove-mangiare,
+.public-homebook .classico-card--slug-dove-mangiare,
+.classico-layout .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
+.classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
+.classico-preview .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
+.public-homebook .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare {
+  background: #f6eadf;
+}
+
+.classico-layout .classico-card--slug-esperienze,
+.classico-editor-page .classico-card--slug-esperienze,
+.classico-preview .classico-card--slug-esperienze {
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+.classico-layout .classico-card--slug-esperienze,
+.classico-editor-page .classico-card--slug-esperienze,
+.classico-preview .classico-card--slug-esperienze,
+.public-homebook--classico .classico-card--slug-esperienze,
+.public-homebook .classico-card--slug-esperienze,
+.classico-layout .classico-sections__grid .classico-card.classico-card--slug-esperienze,
+.classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-esperienze,
+.classico-preview .classico-sections__grid .classico-card.classico-card--slug-esperienze,
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-esperienze,
+.public-homebook .classico-sections__grid .classico-card.classico-card--slug-esperienze {
+  background: #f6eadf;
+}
+
+.classico-layout .classico-card--slug-servizi,
+.classico-editor-page .classico-card--slug-servizi,
+.classico-preview .classico-card--slug-servizi,
+.public-homebook--classico .classico-card--slug-servizi,
+.public-homebook .classico-card--slug-servizi,
+.classico-layout .classico-sections__grid .classico-card.classico-card--slug-servizi,
+.classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-servizi,
+.classico-preview .classico-sections__grid .classico-card.classico-card--slug-servizi,
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-servizi,
+.public-homebook .classico-sections__grid .classico-card.classico-card--slug-servizi {
+  background: #f6eadf;
+}
+
+.classico-layout .classico-card--slug-numeri-utili,
+.classico-editor-page .classico-card--slug-numeri-utili,
+.classico-preview .classico-card--slug-numeri-utili,
+.public-homebook--classico .classico-card--slug-numeri-utili,
+.public-homebook .classico-card--slug-numeri-utili,
+.classico-layout .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
+.classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
+.classico-preview .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
+.public-homebook .classico-sections__grid .classico-card.classico-card--slug-numeri-utili {
+  background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
+  border-color: rgba(19, 84, 90, 0.12);
+}
+
+.classico-card--reach {
+  position: relative;
+  overflow: hidden;
+}
+
+.classico-card--reach::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: none;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  filter: none;
+}
+
+.classico-card--checkin::before,
+.classico-card--halo::before {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  border-radius: 28px;
+  background: none;
+  z-index: -1;
+  filter: none;
+  opacity: 0;
+  transition: none;
+}
+
+.classico-card--checkin:hover::before,
+.classico-card--halo:hover::before {
+  opacity: 0;
+  filter: blur(0);
+  transition-delay: 0s;
+}
+
+.classico-card--funz::before {
+  content: "";
+  position: absolute;
+  inset: -28px -16px -16px -16px;
+  border-radius: 28px;
+  background: none;
+  z-index: -1;
+  filter: none;
+  opacity: 0;
+  transition: none;
+}
+
+.classico-card--funz:hover::before {
+  opacity: 0;
+  filter: blur(0);
+  transition-delay: 0s;
+}
+
+.classico-card--reach::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: none;
+  pointer-events: none;
+  z-index: 1;
+  filter: none;
+  opacity: 0;
+}
+
+.classico-card__icon-fallback {
+  font-weight: 800;
+  font-family: "Montserrat", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.icon-thicker {
+  filter: drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55);
+  transform: scale(1.08);
+}
+
+.icon-bolder {
+  filter: drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55);
+  transform: scale(1.12);
+}
+
+/* Layout illustrativo: ridimensiona solo il check-in */
+.illustrativo-card.classico-card--slug-check-in .classico-card__icon {
+  overflow: hidden !important;
+  width: 64px;
+  height: 64px;
+}
+
+.illustrativo-card.classico-card--slug-check-in .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1) !important;
+  transform-origin: center !important;
+}
+
+/* Layout moderno: riportiamo il check-in alla stessa scala delle altre icone (solo layout moderno, anche in anteprima) */
+.moderno-layout .moderno-card.classico-card--slug-check-in .classico-card__icon,
+.moderno-layout .moderno-card.classico-card--checkin .classico-card__icon,
+.moderno-preview .moderno-card.classico-card--slug-check-in .classico-card__icon,
+.moderno-preview .moderno-card.classico-card--checkin .classico-card__icon {
+  width: 74px;
+  height: 74px;
+  border: 1px solid #1f3f45;
+  border-radius: 50%;
+  overflow: hidden !important;
+}
+
+.moderno-layout .moderno-card.classico-card--slug-check-in .classico-card__icon-img,
+.moderno-layout .moderno-card.classico-card--checkin .classico-card__icon-img,
+.moderno-preview .moderno-card.classico-card--slug-check-in .classico-card__icon-img,
+.moderno-preview .moderno-card.classico-card--checkin .classico-card__icon-img {
+  width: 78% !important;
+  height: 78% !important;
+  transform: scale(1.1) !important;
+  transform-origin: center !important;
+  /* Tratto più spesso solo per il check-in nel layout moderno */
+  filter: grayscale(100%) contrast(1.05)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45) !important;
+}
+
+/* Layout moderno: linee più sottili per l'icona Servizi */
+.moderno-layout .moderno-card.classico-card--slug-servizi .classico-card__icon-img,
+.moderno-preview .moderno-card.classico-card--slug-servizi .classico-card__icon-img {
+  transform: scale(1) !important;
+  filter: grayscale(100%) contrast(0.85) drop-shadow(0 0 0 #1f3f45) !important;
+}
+
+.classico-card__title {
+  flex: 1;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(26px, 3.2vw, 34px);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.classico-card__chevron {
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  opacity: 0.5;
+}
+
+.classico-editor-preview {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.classico-editor-modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 200;
+}
+
+.classico-editor-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 38, 44, 0.5);
+  backdrop-filter: blur(1px);
+}
+
+.classico-editor-modal__card {
+  position: relative;
+  width: min(940px, 94vw);
+  max-height: 88vh;
+  background: linear-gradient(145deg, #f4f5ef 0%, #b9a28c 100%);
+  border-radius: 28px;
+  box-shadow: 0 36px 80px rgba(12, 79, 92, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(20, 70, 78, 0.12);
+  padding: clamp(18px, 3vw, 28px);
+  overflow: hidden;
+  color: #1f3f45;
+}
+
+.moderno-preview .classico-editor-modal__card {
+  background: linear-gradient(145deg, #f4f5ef 0%, #ccebe9 100%);
+  box-shadow: 0 36px 80px rgba(12, 79, 92, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.illustrativo-preview .classico-editor-modal__card {
+  background: linear-gradient(145deg, #ffffff 0%, #e9d08d 100%);
+}
+
+.pastello-preview .classico-editor-modal__card,
+.pastello-editor-page .classico-editor-modal__card {
+  background: url("/Icons/Pastello/sfondo.png");
+  background-size: cover;
+  background-position: center;
+  border-top: 4px solid var(--pastello-rose, #f7b7d2);
+}
+
+.classico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--classico .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.pastello-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--pastello .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.illustrativo-preview .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.illustrativo-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--illustrativo .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.moderno-preview .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.moderno-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--moderno .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.oro-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--oro .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.classico-editor-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(33, 90, 94, 0.28);
+  margin-inline: 0;
+  position: relative;
+}
+
+.classico-editor-modal__title-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto;
+}
+
+.classico-editor-modal__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 16px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: grid;
+  place-items: center;
+  color: #24545c;
+  flex-shrink: 0;
+}
+
+.classico-editor-modal__icon img,
+.classico-editor-modal__icon .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+}
+
+.classico-editor-modal__icon .classico-card__icon-img {
+  transform: scale(1) !important;
+  transform-origin: center !important;
+}
+
+/* Titolo popup: mantieni icona più grande (come prima) */
+.classico-editor-modal__title-block .classico-editor-modal__icon {
+  width: 48px;
+  height: 48px;
+}
+
+.classico-editor-modal__title-block .classico-editor-modal__icon .classico-card__icon-img {
+  transform: scale(1.5) !important;
+}
+
+.classico-editor-modal__icon svg {
+  width: 72%;
+  height: 72%;
+}
+
+.classico-editor-modal__title {
+  margin: 0;
+  font-family: "Playfair Display", "Inter", serif;
+  font-size: clamp(26px, 2vw + 16px, 34px);
+  color: #000000;
+  font-weight: 400;
+}
+
+.section-modal__title,
+.section-modal__sub-title,
+.classico-editor-modal__title,
+.classico-editor-modal__sub-heading {
+  color: #000000 !important;
+}
+
+/* Layout illustrativo: riallinea titoli e sottotitoli al colore del popup */
+.illustrativo-editor-page .section-modal__title,
+.illustrativo-preview .section-modal__title,
+.illustrativo-editor-page .section-modal__sub-title,
+.illustrativo-preview .section-modal__sub-title,
+.illustrativo-editor-page .classico-editor-modal__title,
+.illustrativo-preview .classico-editor-modal__title,
+.illustrativo-editor-page .classico-editor-modal__sub-heading,
+.illustrativo-preview .classico-editor-modal__sub-heading {
+  color: #1da7aa !important;
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.illustrativo-editor-page .classico-editor-modal__title--come-raggiungerci,
+.illustrativo-preview .classico-editor-modal__title--come-raggiungerci {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__title,
+.illustrativo-editor-page .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading,
+.illustrativo-preview .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__title,
+.illustrativo-preview .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__title--dove-bere,
+.illustrativo-preview .classico-editor-modal__title--dove-bere {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__card--dove-bere .classico-editor-modal__title,
+.illustrativo-editor-page .classico-editor-modal__card--dove-bere .classico-editor-modal__sub-heading,
+.illustrativo-preview .classico-editor-modal__card--dove-bere .classico-editor-modal__title,
+.illustrativo-preview .classico-editor-modal__card--dove-bere .classico-editor-modal__sub-heading {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__title--esperienze,
+.illustrativo-preview .classico-editor-modal__title--esperienze {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__card--esperienze .classico-editor-modal__title,
+.illustrativo-editor-page .classico-editor-modal__card--esperienze .classico-editor-modal__sub-heading,
+.illustrativo-preview .classico-editor-modal__card--esperienze .classico-editor-modal__title,
+.illustrativo-preview .classico-editor-modal__card--esperienze .classico-editor-modal__sub-heading {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__title--shopping,
+.illustrativo-preview .classico-editor-modal__title--shopping {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__card--shopping .classico-editor-modal__title,
+.illustrativo-editor-page .classico-editor-modal__card--shopping .classico-editor-modal__sub-heading,
+.illustrativo-preview .classico-editor-modal__card--shopping .classico-editor-modal__title,
+.illustrativo-preview .classico-editor-modal__card--shopping .classico-editor-modal__sub-heading {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__title--spiagge,
+.illustrativo-preview .classico-editor-modal__title--spiagge {
+  color: #f59a4b !important;
+}
+
+.illustrativo-editor-page .classico-editor-modal__card--spiagge .classico-editor-modal__title,
+.illustrativo-editor-page .classico-editor-modal__card--spiagge .classico-editor-modal__sub-heading,
+.illustrativo-preview .classico-editor-modal__card--spiagge .classico-editor-modal__title,
+.illustrativo-preview .classico-editor-modal__card--spiagge .classico-editor-modal__sub-heading {
+  color: #f59a4b !important;
+}
+
+.illustrativo-layout .section-modal__title--regole-struttura,
+.illustrativo-preview .section-modal__title--regole-struttura {
+  color: #f59a4b !important;
+}
+
+.illustrativo-layout .section-modal__title--dove-bere,
+.illustrativo-preview .section-modal__title--dove-bere {
+  color: #f59a4b !important;
+}
+
+.illustrativo-layout .section-modal__title--esperienze,
+.illustrativo-preview .section-modal__title--esperienze {
+  color: #f59a4b !important;
+}
+
+.section-modal__title--shopping {
+  color: #f59a4b !important;
+}
+
+.section-modal__title--spiagge {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--regole-struttura .section-modal__title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--dove-bere .section-modal__title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--esperienze .section-modal__title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--shopping .section-modal__title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--spiagge .section-modal__title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--regole-struttura .section-modal__sub-title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--dove-bere .section-modal__sub-title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--esperienze .section-modal__sub-title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--shopping .section-modal__sub-title {
+  color: #f59a4b !important;
+}
+
+.section-modal__card--spiagge .section-modal__sub-title {
+  color: #f59a4b !important;
+}
+
+/* Ripristina titoli neri nei layout classico/moderno e relative anteprime (esclude illustrativo/pastello) */
+.classico-layout .section-modal__card .section-modal__title,
+.classico-layout .section-modal__card .section-modal__sub-title,
+.classico-editor-page .section-modal__card .section-modal__title,
+.classico-editor-page .section-modal__card .section-modal__sub-title,
+.classico-preview .section-modal__card .section-modal__title,
+.classico-preview .section-modal__card .section-modal__sub-title,
+.moderno-layout .section-modal__card .section-modal__title,
+.moderno-layout .section-modal__card .section-modal__sub-title,
+.moderno-editor-page .section-modal__card .section-modal__title,
+.moderno-editor-page .section-modal__card .section-modal__sub-title,
+.moderno-preview .section-modal__card .section-modal__title,
+.moderno-preview .section-modal__card .section-modal__sub-title {
+  color: #000000 !important;
+  font-family: "Playfair Display", "Inter", serif;
+  font-weight: 400;
+}
+
+.moderno-layout .section-modal__card .section-modal__title,
+.moderno-layout .section-modal__card .section-modal__sub-title,
+.moderno-editor-page .section-modal__card .section-modal__title,
+.moderno-editor-page .section-modal__card .section-modal__sub-title,
+.moderno-preview .section-modal__card .section-modal__title,
+.moderno-preview .section-modal__card .section-modal__sub-title {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.classico-editor-page .classico-editor-modal__title,
+.classico-editor-page .classico-editor-modal__sub-heading,
+.classico-preview .classico-editor-modal__title,
+.classico-preview .classico-editor-modal__sub-heading {
+  color: #214c55 !important;
+  font-family: "Playfair Display", "Inter", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.moderno-editor-page .classico-editor-modal__title,
+.moderno-editor-page .classico-editor-modal__sub-heading,
+.moderno-preview .classico-editor-modal__title,
+.moderno-preview .classico-editor-modal__sub-heading {
+  color: #000000 !important;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Allinea i titoli pastello al colore di inchiostro del tema */
+.pastello-layout .section-modal__card .section-modal__title,
+.pastello-preview .section-modal__card .section-modal__title,
+.pastello-editor-page .section-modal__card .section-modal__title,
+.public-homebook--pastello .section-modal__card .section-modal__title,
+.pastello-layout .section-modal__card--regole-struttura .section-modal__sub-title,
+.pastello-preview .section-modal__card--regole-struttura .section-modal__sub-title,
+.pastello-editor-page .section-modal__card--regole-struttura .section-modal__sub-title,
+.public-homebook--pastello .section-modal__card--regole-struttura .section-modal__sub-title {
+  color: #000000 !important;
+}
+.pastello-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.pastello-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.pastello-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.pastello-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
+  color: #000000 !important;
+}
+.classico-editor-modal__title--regole-struttura {
+  color: #f59a4b !important;
+}
+
+.classico-editor-modal__card--regole-struttura .classico-editor-modal__title {
+  color: #f59a4b !important;
+}
+
+.classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
+  color: #f59a4b !important;
+}
+
+.oro-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.oro-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.classico-editor-modal__card--oro.classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.classico-editor-modal__card--oro.classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.classico-editor-modal__card--regole-struttura.classico-editor-modal__card--oro .classico-editor-modal__title,
+.classico-editor-modal__card--regole-struttura.classico-editor-modal__card--oro .classico-editor-modal__sub-heading,
+.oro-editor-page .classico-editor-modal__title--regole-struttura,
+.classico-editor-modal__card--oro .classico-editor-modal__title--regole-struttura,
+.classico-editor-modal__card--regole-struttura.classico-editor-modal__card--oro .classico-editor-modal__title--regole-struttura {
+  color: #ffffff !important;
+}
+
+/* Layout classico/moderno: titoli regole in nero (anche in anteprima) */
+.classico-layout .section-modal__title--regole-struttura,
+.classico-layout .section-modal__card--regole-struttura .section-modal__title,
+.classico-layout .section-modal__card--regole-struttura .section-modal__sub-title,
+.classico-editor-page .section-modal__title--regole-struttura,
+.classico-editor-page .section-modal__card--regole-struttura .section-modal__title,
+.classico-editor-page .section-modal__card--regole-struttura .section-modal__sub-title,
+.classico-preview .section-modal__title--regole-struttura,
+.classico-preview .section-modal__card--regole-struttura .section-modal__title,
+.classico-preview .section-modal__card--regole-struttura .section-modal__sub-title,
+.moderno-layout .section-modal__title--regole-struttura,
+.moderno-layout .section-modal__card--regole-struttura .section-modal__title,
+.moderno-layout .section-modal__card--regole-struttura .section-modal__sub-title,
+.moderno-editor-page .section-modal__title--regole-struttura,
+.moderno-editor-page .section-modal__card--regole-struttura .section-modal__title,
+.moderno-editor-page .section-modal__card--regole-struttura .section-modal__sub-title,
+.moderno-preview .section-modal__title--regole-struttura,
+.moderno-preview .section-modal__card--regole-struttura .section-modal__title,
+.moderno-preview .section-modal__card--regole-struttura .section-modal__sub-title {
+  color: #000000 !important;
+}
+
+.classico-editor-page .classico-editor-modal__title--regole-struttura,
+.classico-preview .classico-editor-modal__title--regole-struttura,
+.moderno-editor-page .classico-editor-modal__title--regole-struttura,
+.moderno-preview .classico-editor-modal__title--regole-struttura,
+.classico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.classico-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.moderno-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.moderno-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.classico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.classico-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.moderno-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.moderno-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
+  color: #000000 !important;
+}
+
+.classico-editor-page .classico-editor-modal__title--regole-struttura,
+.classico-preview .classico-editor-modal__title--regole-struttura,
+.classico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.classico-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.classico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.classico-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
+  color: #214c55 !important;
+}
+
+/* Layout classico: riallinea la scala del check-in (solo classico + anteprima) */
+.classico-layout .classico-card--slug-check-in .classico-card__icon,
+.classico-layout .classico-card--checkin .classico-card__icon,
+.classico-editor-page .classico-card--slug-check-in .classico-card__icon,
+.classico-editor-page .classico-card--checkin .classico-card__icon,
+.classico-preview .classico-card--slug-check-in .classico-card__icon,
+.classico-preview .classico-card--checkin .classico-card__icon {
+  width: 62.2px;
+  height: 62.2px;
+  overflow: hidden !important;
+  margin: 0;
+}
+
+.classico-layout .classico-card--slug-check-in .classico-card__icon-img,
+.classico-layout .classico-card--checkin .classico-card__icon-img,
+.classico-editor-page .classico-card--slug-check-in .classico-card__icon-img,
+.classico-editor-page .classico-card--checkin .classico-card__icon-img,
+.classico-preview .classico-card--slug-check-in .classico-card__icon-img,
+.classico-preview .classico-card--checkin .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  transform-origin: center !important;
+  /* tratto più spesso per il check-in nel layout classico (anche anteprima) */
+  filter: contrast(1.3)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45)
+    drop-shadow(0 0 0 #1f3f45) !important;
+}
+
+.classico-editor-modal__close {
+  border: none;
+  background: transparent;
+  color: #1f3f45;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: transform 0.12s ease, color 0.12s ease;
+  position: absolute;
+  right: 6px;
+  top: 4px;
+}
+
+.classico-editor-modal__save {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 84, 90, 0.2);
+  background: #f2fbfb;
+  color: #1f3f45;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.classico-editor-modal__reload {
+  top: 6px;
+  left: 96px;
+}
+
+.classico-editor-modal__save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.classico-editor-modal__unsaved {
+  position: absolute;
+  left: 230px;
+  top: 10px;
+  font-size: 12px;
+  color: #b42318;
+  font-weight: 600;
+}
+
+.classico-editor-modal__saved {
+  position: absolute;
+  left: 230px;
+  top: 10px;
+  font-size: 12px;
+  color: #1b7a48;
+  font-weight: 600;
+}
+
+.classico-editor-modal__error {
+  position: absolute;
+  left: 230px;
+  top: 28px;
+  font-size: 12px;
+  color: #b42318;
+  font-weight: 600;
+}
+
+.classico-editor-modal__close:hover {
+  transform: scale(1.06);
+  color: #214c55;
+}
+
+.classico-editor-modal__body {
+  padding: 26px 8px 12px;
+  max-height: calc(88vh - 120px);
+  overflow: auto;
+  display: grid;
+  gap: 22px;
+}
+
+.classico-editor-modal__empty {
+  font-family: "Playfair Display", serif;
+  font-size: 17px;
+  color: #325760;
+  padding: 12px 6px;
+}
+
+.classico-editor-modal__list {
+  display: grid;
+  gap: 14px;
+}
+
+.classico-editor-modal__sub {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(19, 84, 90, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  display: grid;
+  gap: 6px;
+}
+
+.classico-editor-modal__sub-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.classico-editor-modal__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef4f2;
+  border: 1px solid rgba(19, 84, 90, 0.16);
+  color: #214c55;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+
+.valigia-icon {
+  width: 56px;
+  height: 56px;
+  border: none;
+  box-shadow: none;
+  background: #f4f5ef;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}
+
+.valigia-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55);
+  transform: scale(1.08);
+}
+
+.classico-editor-modal__sub-heading {
+  font-family: "Playfair Display", "Inter", serif;
+  font-style: normal;
+  font-size: 20px;
+  color: #000000;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.classico-editor-modal__sub-heading-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.classico-editor-modal__group {
+  display: grid;
+  gap: 6px;
+}
+
+.classico-editor-modal__group-title {
+  font-family: "Playfair Display", serif;
+  font-style: normal;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #1f3f45;
+  border-bottom: 1px solid rgba(33, 90, 94, 0.2);
+  padding-bottom: 4px;
+}
+
+.classico-editor-modal__sub-text {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 17px;
+  color: #1f3f45;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.classico-editor-modal__muted {
+  margin: 0;
+  color: #3c5e65;
+  font-size: 14px;
+}
+
+.classico-editor-modal__comment-input {
+  width: 100%;
+  min-width: 120px;
+  max-width: 260px;
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
+.classico-editor-modal__link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.classico-editor-modal__hint {
+  font-size: 12px;
+  color: #3c5e65;
+  font-style: italic;
+}
+
+.classico-editor-modal__link-desc {
+  display: block;
+  margin-top: 2px;
+  margin-left: 10px;
+  padding-left: 8px;
+  border-left: 2px solid rgba(19, 84, 90, 0.2);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.oro-editor-page .classico-editor-modal__link-desc,
+.classico-editor-modal__card--oro .classico-editor-modal__link-desc {
+  border-left-color: rgba(29, 87, 103, 0.25);
+}
+
+@keyframes classico-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.classico-editor-modal__chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.classico-editor-modal__chip {
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #eef4f2;
+  border: 1px solid rgba(19, 84, 90, 0.16);
+  color: #214c55;
+  font-size: 13px;
+}
+.classico-empty {
+  text-align: center;
+  font-family: "Playfair Display", serif;
+  font-size: 17px;
+  color: #3d5a60;
+  padding: 18px;
+}
+
+@media (max-width: 720px) {
+  .classico-cover {
+    aspect-ratio: 1.1;
+    border-radius: 22px;
+  }
+
+  .classico-card {
+    font-size: 16px;
+  }
+
+  .classico-card__icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .classico-sections__panel {
+    padding: 16px;
+  }
+
+  .dashboard-page header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .dashboard-page header > div:last-child {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .classico-editor-page header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .classico-editor-page header > div:last-child {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .public-homebook-cover__body {
+    padding: 18px 16px 20px;
+  }
+
+  .public-homebook-cover__title {
+    font-size: 22px;
+  }
+
+  .public-homebook-cover__meta {
+    gap: 12px;
+  }
+
+  .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .classico-card {
+    width: 100%;
+    min-height: 84px;
+    padding: 14px 16px;
+  }
+
+  .classico-editor-modal__card {
+    width: min(96vw, 560px);
+    padding: 18px;
+    max-height: 85vh;
+  }
+
+  .classico-editor-modal__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .classico-editor-modal__controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .classico-editor-modal__controls .input,
+  .classico-editor-modal__controls select,
+  .classico-editor-modal__controls textarea {
+    width: 100%;
+  }
+
+  .classico-editor-modal__chips {
+    gap: 10px;
+  }
+
+  .classico-editor-modal__chip img,
+  .classico-editor-modal__chip video {
+    width: 100px;
+    height: 70px;
+  }
+
+  .section-modal__card {
+    width: min(96vw, 560px);
+    padding: 18px;
+    max-height: 85vh;
+  }
+
+  .section-modal__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .media-lightbox__image {
+    max-width: 90vw;
+    max-height: 70vh;
+  }
+}
+
+@media (max-width: 960px) {
+  .classico-sections__grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .base-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .base-hero__photo {
+    min-height: 180px;
+  }
+
+  .section-modal__card {
+    max-height: 80vh;
+  }
+}
+
+@media (max-width: 620px) {
+  .section-button-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-modal__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .public-homebook-wrapper {
+    padding-bottom: 32px;
+  }
+
+  .public-homebook {
+    gap: 16px;
+  }
+
+  .public-homebook-cover__body {
+    padding: 16px 14px 18px;
+  }
+
+  .public-homebook-cover__title {
+    margin-bottom: 12px;
+    font-size: 22px;
+  }
+
+  .public-homebook-cover__meta {
+    gap: 14px;
+  }
+
+  .public-homebook-cover__address,
+  .public-homebook-cover__description {
+    font-size: 14px;
+  }
+
+  .public-homebook .classico-sections__panel {
+    padding: 14px;
+  }
+
+  .section-panel {
+    padding: 16px;
+  }
+
+  .section-panel__title {
+    font-size: 18px;
+  }
+
+  .section-panel__subtitle {
+    font-size: 14px;
+  }
+
+  .section-button {
+    width: 100%;
+    padding: 12px 14px;
+  }
+
+  .section-button__title {
+    font-size: 16px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  .section-button__meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .section-modal__card {
+    width: min(94vw, 560px);
+    padding: 16px;
+  }
+
+  .section-modal__title {
+    font-size: 20px;
+  }
+
+  .section-modal__sub-title {
+    font-size: 15px;
+  }
+
+  .section-modal__media {
+    gap: 12px;
+  }
+
+  .section-modal__media-title {
+    font-size: 14px;
+  }
+
+  .section-modal .media-chip__group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .section-modal .media-chip {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .section-modal .media-chip__url {
+    max-width: 60vw;
+  }
+
+  .media-thumb img {
+    width: 96px;
+    height: 64px;
+  }
+
+  .media-lightbox__image {
+    max-width: 92vw;
+    max-height: 72vh;
+  }
+
+  .public-homebook--pastello .section-panel,
+  .public-homebook--oro .section-panel {
+    padding: 16px;
+  }
+
+  .public-homebook--aurora .section-panel,
+  .public-homebook--essenziale .section-panel,
+  .public-homebook--boutique .section-panel {
+    padding: 16px;
+  }
+
+  .public-homebook .classico-sections__grid {
+    gap: 12px;
+  }
+
+  .public-homebook .classico-card__title {
+    white-space: normal;
+  }
+
+  .base-hero {
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .base-hero__content {
+    text-align: left;
+  }
+
+  .base-hero__title {
+    font-size: 22px;
+  }
+
+  .base-hero__subtitle {
+    font-size: 14px;
+  }
+
+  .base-hero__meta span {
+    font-size: 13px;
+  }
+
+  .section-modal__sub-title {
+    line-height: 1.3;
+  }
+
+  .section-modal .media-chip__url {
+    max-width: 55vw;
+  }
+}
+
+/* Pastello reset: minimal layout, no legacy overrides */
+.pastello-layout,
+.pastello-editor-page,
+.public-homebook--pastello {
+  --pastello-ink: var(--text);
+  --pastello-muted: var(--muted);
+  background: #f9fafb;
+  color: var(--text);
+  min-height: 120vh;
+  background-size: 100% 140%;
+  background-position: center top;
+}
+
+.public-homebook--pastello .base-hero,
+.pastello-layout .base-hero {
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  color: var(--text);
+}
+
+.public-homebook--pastello .section-panel,
+.pastello-layout .section-panel {
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+.public-homebook--pastello .classico-sections__grid,
+.pastello-layout .classico-sections__grid,
+.pastello-editor-page .classico-sections__grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  justify-items: stretch;
+  row-gap: 34px;
+  column-gap: 16px;
+  grid-auto-rows: 200px;
+}
+
+.public-homebook--pastello .classico-card,
+.pastello-layout .classico-card,
+.pastello-editor-page .classico-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  padding: 28px 18px;
+  min-height: 180px;
+  gap: 8px;
+  justify-self: stretch !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.public-homebook--pastello .classico-card__icon,
+.pastello-layout .classico-card__icon,
+.pastello-editor-page .classico-card__icon {
+  width: 83.22px;
+  height: 124.88px;
+  min-width: 83.22px;
+  min-height: 124.88px;
+  max-width: none;
+  max-height: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.public-homebook--pastello .classico-card__icon,
+.pastello-layout .classico-card__icon,
+.pastello-editor-page .classico-card__icon,
+.public-homebook--pastello .classico-card__icon-img,
+.pastello-layout .classico-card__icon-img,
+/* Check-in (Pastello): mostra l'icona sopra il titolo */
+.public-homebook--pastello .classico-card--slug-check-in .classico-card__icon,
+.pastello-layout .classico-card--slug-check-in .classico-card__icon,
+.pastello-editor-page .classico-card--slug-check-in .classico-card__icon,
+.pastello-preview .classico-card--slug-check-in .classico-card__icon {
+  display: grid;
+  width: 66.58px;
+  height: 99.87px;
+  min-width: 66.58px;
+  min-height: 99.87px;
+  max-width: none;
+  max-height: none;
+  margin-bottom: 0;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-check-in .classico-card__icon-img,
+.pastello-layout .classico-card--slug-check-in .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-check-in .classico-card__icon-img,
+.pastello-preview .classico-card--slug-check-in .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  filter: none;
+  transform: none;
+  transform-origin: center;
+}
+
+/* Pastello: card Check-in con padding/gap ridotti per avvicinare icona e titolo */
+.pastello-layout .classico-card--slug-check-in,
+.pastello-editor-page .classico-card--slug-check-in,
+.public-homebook--pastello .classico-card--slug-check-in,
+.pastello-preview .classico-card--slug-check-in {
+  padding: 16px 8px 8px;
+  gap: 2px;
+}
+
+/* Come Raggiungerci (Pastello): mostra l'icona sopra il titolo */
+.public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__icon,
+.pastello-layout .classico-card--slug-come-raggiungerci .classico-card__icon,
+.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon {
+  display: grid;
+  width: 96px;
+  height: 96px;
+  min-width: 96px;
+  min-height: 96px;
+  max-width: 120px;
+  max-height: 120px;
+  margin: 4px auto 4px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__icon-img,
+.pastello-layout .classico-card--slug-come-raggiungerci .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: none;
+  transform-origin: center;
+}
+
+.public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker {
+  transform: none;
+  transform-origin: center;
+}
+
+/* Funzionamento (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-funzionamento .classico-card__icon,
+.pastello-layout .classico-card--slug-funzionamento .classico-card__icon,
+.pastello-editor-page .classico-card--slug-funzionamento .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-funzionamento .classico-card__icon-img,
+.pastello-layout .classico-card--slug-funzionamento .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-funzionamento .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-funzionamento .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-funzionamento .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-funzionamento .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Regole Struttura (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-regole-struttura .classico-card__icon,
+.pastello-layout .classico-card--slug-regole-struttura .classico-card__icon,
+.pastello-editor-page .classico-card--slug-regole-struttura .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-regole-struttura .classico-card__icon-img,
+.pastello-layout .classico-card--slug-regole-struttura .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-regole-struttura .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-regole-struttura .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-regole-struttura .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-regole-struttura .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Dove Mangiare (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-dove-mangiare .classico-card__icon,
+.pastello-layout .classico-card--slug-dove-mangiare .classico-card__icon,
+.pastello-editor-page .classico-card--slug-dove-mangiare .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-dove-mangiare .classico-card__icon-img,
+.pastello-layout .classico-card--slug-dove-mangiare .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-dove-mangiare .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-dove-mangiare .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-dove-mangiare .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-dove-mangiare .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Cosa Visitare (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-cosa-visitare .classico-card__icon,
+.pastello-layout .classico-card--slug-cosa-visitare .classico-card__icon,
+.pastello-editor-page .classico-card--slug-cosa-visitare .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-cosa-visitare .classico-card__icon-img,
+.pastello-layout .classico-card--slug-cosa-visitare .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-cosa-visitare .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-cosa-visitare .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-cosa-visitare .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-cosa-visitare .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Esperienze (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-esperienze .classico-card__icon,
+.pastello-layout .classico-card--slug-esperienze .classico-card__icon,
+.pastello-editor-page .classico-card--slug-esperienze .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-esperienze .classico-card__icon-img,
+.pastello-layout .classico-card--slug-esperienze .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-esperienze .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-esperienze .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-esperienze .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-esperienze .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Servizi (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-servizi .classico-card__icon,
+.pastello-layout .classico-card--slug-servizi .classico-card__icon,
+.pastello-editor-page .classico-card--slug-servizi .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-servizi .classico-card__icon-img,
+.pastello-layout .classico-card--slug-servizi .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-servizi .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-servizi .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-servizi .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-servizi .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Numeri Utili (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-numeri-utili .classico-card__icon,
+.pastello-layout .classico-card--slug-numeri-utili .classico-card__icon,
+.pastello-editor-page .classico-card--slug-numeri-utili .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-numeri-utili .classico-card__icon-img,
+.pastello-layout .classico-card--slug-numeri-utili .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-numeri-utili .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-numeri-utili .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-numeri-utili .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-numeri-utili .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Check-out (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-check-out .classico-card__icon,
+.pastello-layout .classico-card--slug-check-out .classico-card__icon,
+.pastello-editor-page .classico-card--slug-check-out .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-check-out .classico-card__icon-img,
+.pastello-layout .classico-card--slug-check-out .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-check-out .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-check-out .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-check-out .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-check-out .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Shopping (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-shopping .classico-card__icon,
+.pastello-layout .classico-card--slug-shopping .classico-card__icon,
+.pastello-editor-page .classico-card--slug-shopping .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-shopping .classico-card__icon-img,
+.pastello-layout .classico-card--slug-shopping .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-shopping .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-shopping .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-shopping .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-shopping .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Dove Bere (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-dove-bere .classico-card__icon,
+.pastello-layout .classico-card--slug-dove-bere .classico-card__icon,
+.pastello-editor-page .classico-card--slug-dove-bere .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-dove-bere .classico-card__icon-img,
+.pastello-layout .classico-card--slug-dove-bere .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-dove-bere .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-dove-bere .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-dove-bere .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-dove-bere .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+/* Spiagge (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-spiagge .classico-card__icon,
+.pastello-layout .classico-card--slug-spiagge .classico-card__icon,
+.pastello-editor-page .classico-card--slug-spiagge .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-spiagge .classico-card__icon-img,
+.pastello-layout .classico-card--slug-spiagge .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-spiagge .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-spiagge .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-spiagge .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-spiagge .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+
+
+/* La nostra struttura (Pastello): stessa dimensione icona del Check-in */
+.public-homebook--pastello .classico-card--slug-la-nostra-struttura .classico-card__icon,
+.pastello-layout .classico-card--slug-la-nostra-struttura .classico-card__icon,
+.pastello-editor-page .classico-card--slug-la-nostra-struttura .classico-card__icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  place-items: center;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card--slug-la-nostra-struttura .classico-card__icon-img,
+.pastello-layout .classico-card--slug-la-nostra-struttura .classico-card__icon-img,
+.pastello-editor-page .classico-card--slug-la-nostra-struttura .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transform: scale(1.5) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card--slug-la-nostra-struttura .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card--slug-la-nostra-struttura .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card--slug-la-nostra-struttura .classico-card__icon-img.icon-thicker {
+  transform: scale(1.85) !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card__icon,
+.pastello-layout .classico-card__icon,
+.pastello-editor-page .classico-card__icon,
+.pastello-preview .classico-card__icon {
+  width: 83.22px;
+  height: 124.88px;
+  min-width: 83.22px;
+  min-height: 124.88px;
+  max-width: none;
+  max-height: none;
+  display: grid;
+  place-items: center;
+  margin-bottom: 6px;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card__icon-img,
+.pastello-layout .classico-card__icon-img,
+.pastello-editor-page .classico-card__icon-img,
+.pastello-preview .classico-card__icon-img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  filter: none;
+  transform: none;
+  transform-origin: center;
+  display: block;
+}
+
+/* Pastello: dimensioni uniformi per tutte le icone (eccetto Check-in che resta dedicato) */
+.public-homebook--pastello .classico-card:not(.classico-card--slug-check-in) .classico-card__icon,
+.pastello-layout .classico-card:not(.classico-card--slug-check-in) .classico-card__icon,
+.pastello-editor-page .classico-card:not(.classico-card--slug-check-in) .classico-card__icon,
+.pastello-preview .classico-card:not(.classico-card--slug-check-in) .classico-card__icon {
+  display: grid;
+  width: 83.22px;
+  height: 124.88px;
+  min-width: 83.22px;
+  min-height: 124.88px;
+  max-width: none;
+  max-height: none;
+  place-items: center;
+  margin-bottom: 6px;
+  overflow: visible;
+}
+
+.public-homebook--pastello .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img,
+.pastello-layout .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img,
+.pastello-editor-page .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img,
+.pastello-preview .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  filter: none;
+  transform: none !important;
+  transform-origin: center !important;
+}
+
+.public-homebook--pastello .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img.icon-thicker,
+.pastello-layout .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img.icon-thicker,
+.pastello-editor-page .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img.icon-thicker,
+.pastello-preview .classico-card:not(.classico-card--slug-check-in) .classico-card__icon-img.icon-thicker {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  transform: none !important;
+  transform-origin: center !important;
+  filter: none;
+}
+
+.public-homebook--pastello .classico-card__title,
+.pastello-layout .classico-card__title,
+.pastello-editor-page .classico-card__title {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.public-homebook--pastello .classico-card__chevron,
+.pastello-layout .classico-card__chevron,
+.pastello-editor-page .classico-card__chevron {
+  display: none;
+}
+
+.public-homebook--pastello .classico-card:hover,
+.pastello-layout .classico-card:hover,
+.pastello-editor-page .classico-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.public-homebook--pastello .section-modal__card,
+.pastello-layout .section-modal__card {
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--border);
+  color: var(--text);
+  background: #fff;
+}
+
+.public-homebook--pastello .section-modal__title,
+.pastello-layout .section-modal__title {
+  color: var(--text);
+}
+
+.public-homebook--pastello .section-modal__sub-title,
+.public-homebook--pastello .subsection-block__text,
+.pastello-layout .section-modal__sub-title,
+.pastello-layout .subsection-block__text {
+  color: var(--muted);
+}
+
+@media (max-width: 960px) {
+  .public-homebook--pastello .classico-sections__grid,
+  .pastello-layout .classico-sections__grid,
+  .pastello-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .public-homebook--pastello .classico-sections__grid,
+  .pastello-layout .classico-sections__grid,
+  .pastello-editor-page .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+
+.public-homebook--oro .classico-card--slug-dove-mangiare .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-dove-mangiare .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+/* Pastello: avvicina il titolo all'icona per Check-in */
+.public-homebook--pastello .classico-card--slug-check-in .classico-card__title,
+.pastello-layout .classico-card--slug-check-in .classico-card__title,
+.pastello-editor-page .classico-card--slug-check-in .classico-card__title,
+.pastello-preview .classico-card--slug-check-in .classico-card__title {
+  margin-top: 0;
+}
