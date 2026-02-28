@@ -8,6 +8,9 @@ import { getDefaultSections } from "../../../lib/default-sections";
 import { Database } from "../../../lib/database.types";
 import { generatePublicAccessToken } from "../../../lib/homebook-access";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type NewHomebookPageProps = {
   searchParams?: Promise<{ layout?: string | string[] }>;
 };
@@ -113,3 +116,6 @@ export default async function NewHomebookPage({ searchParams }: NewHomebookPageP
     </div>
   );
 }
+
+
+

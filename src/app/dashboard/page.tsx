@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Buffer } from "node:buffer";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -15,7 +15,10 @@ import { DeletePropertyButton } from "../../components/delete-property-button";
 import { PropertyImagePicker } from "../../components/property-image-picker";
 import { DashboardLayoutShowcase } from "../../components/dashboard-layout-showcase";
 
-const CLASSICO_DEFAULT_SUBSECTIONS = ["Prima di partire", "Orario", "Formalità", "Self check-in", "Check-in in presenza"];
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const CLASSICO_DEFAULT_SUBSECTIONS = ["Prima di partire", "Orario", "FormalitÃ ", "Self check-in", "Check-in in presenza"];
 const CLASSICO_LIKE_LAYOUTS = new Set([
   "classico",
   "mediterraneo",
@@ -434,7 +437,7 @@ export default async function DashboardPage() {
       (supabase.from("properties") as any).select("*").order("created_at", {
         ascending: false
       }),
-      "Proprietà"
+      "ProprietÃ "
     );
 
     const { data: homebooks } = await withTimeout(
@@ -672,7 +675,7 @@ export default async function DashboardPage() {
         <div className="card" style={{ color: "#b42318" }}>
           <div style={{ fontWeight: 700, marginBottom: 6 }}>Impossibile caricare la dashboard</div>
           <div style={{ color: "#0e4b58" }}>
-            Controlla la connessione a Supabase o riprova più tardi.
+            Controlla la connessione a Supabase o riprova piÃ¹ tardi.
           </div>
           <div style={{ color: "#8a2d2d", marginTop: 8, fontSize: 13 }}>{errorMessage}</div>
         </div>
@@ -680,5 +683,8 @@ export default async function DashboardPage() {
     );
   }
 }
+
+
+
 
 

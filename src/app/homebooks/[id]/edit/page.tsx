@@ -1,4 +1,4 @@
-import { Buffer } from "node:buffer";
+﻿import { Buffer } from "node:buffer";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
@@ -14,10 +14,13 @@ import { COVER_FILE_ACCEPT, validateUploadCandidate } from "../../../../lib/uplo
 import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../../lib/storage-media";
 import type { MediaItem, Section, Subsection } from "../../../../components/classico-editor-preview";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const CLASSICO_DEFAULT_SUBSECTIONS = [
   "Prima di partire",
   "Orario",
-  "Formalità",
+  "FormalitÃ ",
   "Self check-in",
   "Check-in in presenza"
 ];
@@ -762,7 +765,7 @@ export default async function EditHomebookPage({ params }: Props) {
                 <span style={{ fontWeight: 600 }}>Oppure carica dal tuo PC</span>
                 <input className="input" type="file" name="main_image_file" accept={COVER_FILE_ACCEPT} />
                 <span className="text-muted" style={{ fontSize: 12 }}>
-                  Se selezioni un file (JPG/PNG/WEBP, max 12MB), verrà usato al posto dell&apos;URL.
+                  Se selezioni un file (JPG/PNG/WEBP, max 12MB), verrÃ  usato al posto dell&apos;URL.
                 </span>
               </label>
               <label className="grid" style={{ gap: 6 }}>
@@ -817,11 +820,11 @@ export default async function EditHomebookPage({ params }: Props) {
       <section className="card">
         <div className="pill">Sezioni predefinite del layout</div>
         <p className="text-muted" style={{ margin: "8px 0 0" }}>
-          Le sezioni sono già impostate dal layout: aggiungi contenuti direttamente nei popup delle sottosezioni.
+          Le sezioni sono giÃ  impostate dal layout: aggiungi contenuti direttamente nei popup delle sottosezioni.
         </p>
         {sections?.length === 0 ? (
           <p className="text-muted" style={{ marginTop: 10 }}>
-            Una volta che le sezioni verranno popolate dalle sottosezioni interattive, qui si rifletterà lo stato attuale.
+            Una volta che le sezioni verranno popolate dalle sottosezioni interattive, qui si rifletterÃ  lo stato attuale.
           </p>
         ) : null}
       </section>
@@ -841,3 +844,6 @@ export default async function EditHomebookPage({ params }: Props) {
     </div>
   );
 }
+
+
+
