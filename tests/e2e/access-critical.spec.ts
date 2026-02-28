@@ -57,6 +57,11 @@ test.describe("Accessi critici", () => {
 
     await expect(page.locator(".structure-summary__name").filter({ hasText: fixture.ownerB.propertyName })).toHaveCount(0);
 
+    const ownEditResponse = await page.goto(`/homebooks/${fixture.ownerA.homebookId}/edit`);
+    expect(ownEditResponse?.status()).toBe(200);
+    await expect(page).toHaveURL(new RegExp(`/homebooks/${fixture.ownerA.homebookId}/edit$`));
+    await expect(page.getByRole("link", { name: "<- Dashboard" })).toBeVisible();
+
     const response = await page.goto(`/homebooks/${fixture.ownerB.homebookId}/edit`);
     expect(response?.status()).toBe(404);
     await expect(page.getByText("This page could not be found.")).toBeVisible();
