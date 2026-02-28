@@ -36,7 +36,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: "Stile minimal con un look contemporaneo.",
     icon: "icon-list",
     template: "essenziale",
-    thumbnail: "/layout-thumbs/anteprima-moderno.png?v=3"
+    thumbnail: "/layout-thumbs/anteprima-moderno.png"
   },
   {
     id: "rustico",
@@ -44,7 +44,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: "Un design caldo ed accogliente.",
     icon: "icon-waves",
     template: "essenziale",
-    thumbnail: "/layout-thumbs/anteprima-rustico.png?v=1"
+    thumbnail: "/layout-thumbs/anteprima-rustico.png"
   },
   {
     id: "mediterraneo",
@@ -52,7 +52,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: "Toni freschi e rilassanti.",
     icon: "icon-sun",
     template: "aurora",
-    thumbnail: "/layout-thumbs/anteprima-mediterraneo.png?v=1"
+    thumbnail: "/layout-thumbs/anteprima-mediterraneo.png"
   },
   {
     id: "pastello",
@@ -84,7 +84,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: "Un design innovativo per un effetto ultramoderno.",
     icon: "icon-circuit",
     template: "essenziale",
-    thumbnail: "/layout-thumbs/anteprima-futuristico.png?v=1"
+    thumbnail: "/layout-thumbs/anteprima-futuristico.png"
   },
   {
     id: "romantico",
@@ -92,7 +92,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: "Palette delicate per un'atmosfera da sogno.",
     icon: "icon-heart",
     template: "boutique",
-    thumbnail: "/layout-thumbs/anteprima-romantico.png?v=1"
+    thumbnail: "/layout-thumbs/anteprima-romantico.png"
   },
   {
     id: "notturno",
@@ -100,7 +100,7 @@ export const LAYOUTS: LayoutDefinition[] = [
     description: "Toni scuri, contrasti eleganti.",
     icon: "icon-moon",
     template: "aurora",
-    thumbnail: "/layout-thumbs/anteprima-notturno.png?v=1"
+    thumbnail: "/layout-thumbs/anteprima-notturno.png"
   }
 ];
 
