@@ -32,8 +32,6 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      // Consent explicit origins for Server Actions; include dev host with port
-      allowedOrigins: ["localhost", "http://localhost:3000"],
       bodySizeLimit: "5mb"
     }
   }
