@@ -1,8 +1,12 @@
-"use client";
+﻿"use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useMemo, useRef, useState, useTransition, type DragEvent } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, type DragEvent, type ReactNode } from "react";
 import { createBrowserSupabaseClient } from "../lib/supabase/client";
+import { getRomanticoIconCandidates } from "../lib/romantico-icons";
+import { getFuturisticoIconCandidates } from "../lib/futuristico-icons";
+import { getNotturnoIconCandidates } from "../lib/notturno-icons";
+import { ATTACHMENT_FILE_ACCEPT, MEDIA_FILE_ACCEPT, validateUploadCandidate } from "../lib/upload-limits";
 
 export type Section = {
   id: string;
@@ -62,7 +66,7 @@ function matchesSearchValue(text: string, queryTokens: string[], queryCompact: s
 }
 
 const SUBSECTION_ORDER_RAW: Record<string, string[]> = {
-  "check-in": ["Prima di partire", "Orario", "Formalità", "Self check-in", "Check-in in presenza"],
+  "check-in": ["Prima di partire", "Orario", "Formalita", "Self check-in", "Check-in in presenza"],
   "come raggiungerci": ["Auto", "Aereo", "Bus", "Traghetto", "Metro", "Treno", "Noleggio"],
   "la nostra struttura": [
     "La casa",
@@ -154,7 +158,26 @@ type LayoutVariantFlags = {
   isIllustrativo?: boolean;
   isPastello?: boolean;
   isOro?: boolean;
+  isRustico?: boolean;
+  rusticoFolder?: RusticoLikeFolder;
 };
+
+type RusticoLikeFolder = "Rustico" | "Mediterraneo";
+
+function getRusticoLikeIconPath(folder: RusticoLikeFolder | undefined, fileName: string) {
+  const resolvedFolder = folder ?? "Rustico";
+  if (resolvedFolder === "Rustico" && fileName === "giardino.png") {
+    return `/Icons/${resolvedFolder}/giardino.png?v=2`;
+  }
+  if (resolvedFolder === "Mediterraneo") {
+    if (fileName === "documenti.png") return `/Icons/${resolvedFolder}/DOCUMENTI.png`;
+    if (fileName === "letto.png") return `/Icons/${resolvedFolder}/lettoclip.png`;
+    if (fileName === "climatizzatore.png") return `/Icons/${resolvedFolder}/condizionatore.png`;
+    if (fileName === "giardino.png") return `/Icons/${resolvedFolder}/giardino.png?v=2`;
+    if (fileName === "spiaggia.png") return `/Icons/${resolvedFolder}/spiaggia.png?v=2`;
+  }
+  return `/Icons/${resolvedFolder}/${fileName}`;
+}
 
 function slugify(value: string, fallback: string) {
   const slug = value
@@ -166,13 +189,143 @@ function slugify(value: string, fallback: string) {
   return slug || fallback;
 }
 
+function RomanticoIcon({
+  slug,
+  fallback,
+  isModerno = false
+}: {
+  slug: string;
+  fallback: ReactNode;
+  isModerno?: boolean;
+}) {
+  const candidates = useMemo(() => getRomanticoIconCandidates(slug), [slug]);
+  const [iconIndex, setIconIndex] = useState(0);
+  const [hasError, setHasError] = useState(false);
+  const iconSrc = candidates[iconIndex] ?? "";
+  const hasThickerStroke = slug === "check-in" || slug === "come-raggiungerci" || slug === "la-nostra-struttura";
+  const className = `classico-card__icon-img${hasThickerStroke ? " icon-thicker" : ""}${isModerno ? " icon-bolder" : ""}`;
+  const candidatesKey = candidates.join("|");
+
+  useEffect(() => {
+    setIconIndex(0);
+    setHasError(false);
+  }, [candidatesKey]);
+
+  if (!iconSrc || hasError) return <>{fallback}</>;
+
+  return (
+    <img
+      src={iconSrc}
+      alt=""
+      className={className}
+      loading="lazy"
+      onError={() => {
+        const nextIndex = iconIndex + 1;
+        if (nextIndex < candidates.length) {
+          setIconIndex(nextIndex);
+        } else {
+          setHasError(true);
+        }
+      }}
+    />
+  );
+}
+
+function FuturisticoIcon({
+  slug,
+  fallback,
+  isModerno = false
+}: {
+  slug: string;
+  fallback: ReactNode;
+  isModerno?: boolean;
+}) {
+  const candidates = useMemo(() => getFuturisticoIconCandidates(slug), [slug]);
+  const [iconIndex, setIconIndex] = useState(0);
+  const [hasError, setHasError] = useState(false);
+  const iconSrc = candidates[iconIndex] ?? "";
+  const hasThickerStroke = slug === "check-in" || slug === "come-raggiungerci" || slug === "la-nostra-struttura";
+  const className = `classico-card__icon-img${hasThickerStroke ? " icon-thicker" : ""}${isModerno ? " icon-bolder" : ""}`;
+  const candidatesKey = candidates.join("|");
+
+  useEffect(() => {
+    setIconIndex(0);
+    setHasError(false);
+  }, [candidatesKey]);
+
+  if (!iconSrc || hasError) return <>{fallback}</>;
+
+  return (
+    <img
+      src={iconSrc}
+      alt=""
+      className={className}
+      loading="lazy"
+      onError={() => {
+        const nextIndex = iconIndex + 1;
+        if (nextIndex < candidates.length) {
+          setIconIndex(nextIndex);
+        } else {
+          setHasError(true);
+        }
+      }}
+    />
+  );
+}
+
+function NotturnoIcon({
+  slug,
+  fallback,
+  isModerno = false
+}: {
+  slug: string;
+  fallback: ReactNode;
+  isModerno?: boolean;
+}) {
+  const candidates = useMemo(() => getNotturnoIconCandidates(slug), [slug]);
+  const [iconIndex, setIconIndex] = useState(0);
+  const [hasError, setHasError] = useState(false);
+  const iconSrc = candidates[iconIndex] ?? "";
+  const hasThickerStroke = slug === "check-in" || slug === "come-raggiungerci" || slug === "la-nostra-struttura";
+  const className = `classico-card__icon-img${hasThickerStroke ? " icon-thicker" : ""}${isModerno ? " icon-bolder" : ""}`;
+  const candidatesKey = candidates.join("|");
+
+  useEffect(() => {
+    setIconIndex(0);
+    setHasError(false);
+  }, [candidatesKey]);
+
+  if (!iconSrc || hasError) return <>{fallback}</>;
+
+  return (
+    <img
+      src={iconSrc}
+      alt=""
+      className={className}
+      loading="lazy"
+      onError={() => {
+        const nextIndex = iconIndex + 1;
+        if (nextIndex < candidates.length) {
+          setIconIndex(nextIndex);
+        } else {
+          setHasError(true);
+        }
+      }}
+    />
+  );
+}
+
 function CheckInImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "check-in.png")
+    : isPastello
     ? "/Icons/Pastello/check-in-1.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/campanella.png"
@@ -240,9 +393,13 @@ function ComeRaggiungerciImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "come-raggiungerci.png")
+    : isPastello
     ? "/Icons/Pastello/come-raggiungerci.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/arrivo.png"
@@ -266,9 +423,13 @@ function LaNostraStrutturaImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "casa.png")
+    : isPastello
     ? "/Icons/Pastello/struttura.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/struttura.png"
@@ -292,9 +453,13 @@ function FunzionamentoImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "funzionamento.png")
+    : isPastello
     ? "/Icons/Pastello/funzionamento.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/scheda.png"
@@ -318,9 +483,13 @@ function RegoleImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "regole.png")
+    : isPastello
     ? "/Icons/Pastello/regole.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/lista-1.png"
@@ -344,9 +513,13 @@ function DoveMangiareImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "ristorante.png")
+    : isPastello
     ? "/Icons/Pastello/ristorante.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/ristorante.png"
@@ -370,17 +543,21 @@ function ColazioneImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
-    ? "/icons/pastello/colazione.png?v=4"
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "colazione.png")
+    : isPastello
+    ? "/Icons/Pastello/colazione.png?v=4"
     : isIllustrativo
-    ? "/icons/illustrativo/colazione.png?v=2"
+    ? "/Icons/Illustrativo/colazione.png?v=2"
     : isOro
-    ? "/icons/oro/colazione.png?v=2"
+    ? "/Icons/Oro/colazione.png?v=2"
     : isModerno
-    ? "/icons/moderno/colazione.png?v=2"
-    : "/icons/classico/colazione.png";
+    ? "/Icons/Moderno/colazione.png?v=2"
+    : "/Icons/Classico/colazione.png";
   const className = `classico-card__icon-img icon-thicker${isModerno ? " icon-bolder" : ""}`;
   return (
     <img
@@ -396,9 +573,13 @@ function DoveBereImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "bar.png")
+    : isPastello
     ? "/Icons/Pastello/pub.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/bar.png"
@@ -415,9 +596,13 @@ function CosaVisitareImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "cosa-visitare.png")
+    : isPastello
     ? "/Icons/Pastello/cosa-visitare.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/mappamondo.png"
@@ -441,9 +626,13 @@ function EsperienzeImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "esperienze.png")
+    : isPastello
     ? "/Icons/Pastello/esperienze-1.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/fotocamera.png"
@@ -462,9 +651,13 @@ function ShoppingImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "shopping.png")
+    : isPastello
     ? "/Icons/Pastello/negozio.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/negozio.png"
@@ -481,9 +674,13 @@ function SpiaggeImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "spiaggia.png")
+    : isPastello
     ? "/Icons/Pastello/spiaggia.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/spiaggia.png"
@@ -500,9 +697,13 @@ function ServiziImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "servizi.png")
+    : isPastello
     ? "/Icons/Pastello/servizi.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/servizi.png"
@@ -519,9 +720,13 @@ function NumeriUtiliImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "telefono.png")
+    : isPastello
     ? "/Icons/Pastello/telefono.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/telefono.png"
@@ -538,9 +743,13 @@ function CheckOutImg({
   isModerno = false,
   isIllustrativo = false,
   isPastello = false,
-  isOro = false
+  isOro = false,
+  isRustico = false,
+  rusticoFolder = "Rustico"
 }: LayoutVariantFlags = {}) {
-  const src = isPastello
+  const src = isRustico
+    ? getRusticoLikeIconPath(rusticoFolder, "check-out.png")
+    : isPastello
     ? "/Icons/Pastello/check-out.png"
     : isIllustrativo
     ? "/Icons/Illustrativo/check-out.png"
@@ -585,6 +794,109 @@ function normalizeTitle(title: string): IconKey | null {
   return (Object.keys(ICONS) as IconKey[]).find((k) => key.includes(k)) ?? null;
 }
 
+function resolveRusticoSubsectionIcon({
+  sectionNormalized,
+  normalized,
+  normalizedKey,
+  normalizedNoHyphen,
+  isTrainSubsection,
+  iconFolder = "Rustico"
+}: {
+  sectionNormalized: string;
+  normalized: string;
+  normalizedKey: string;
+  normalizedNoHyphen: string;
+  isTrainSubsection: boolean;
+  iconFolder?: RusticoLikeFolder;
+}) {
+  const has = (value: string) => normalized.includes(value);
+  const icon = (fileName: string) => getRusticoLikeIconPath(iconFolder, fileName);
+
+  if (sectionNormalized.includes("check-in")) {
+    if (has("prima di partire")) return icon("valigia.png");
+    if (normalizedKey === "formalita" || normalizedKey === "formalit") return icon("documenti1.png");
+    if (normalizedNoHyphen.includes("self check in")) return icon("self-check-in.png");
+    if (has("check-in in presenza") || normalizedNoHyphen.includes("check in in presenza")) {
+      return icon("check-in-di-persona.png");
+    }
+    if (has("orario")) return icon("orario.png");
+    if (has("accoglienza")) return icon("accoglienza.png");
+    if (has("documenti")) return icon("documenti.png");
+  }
+
+  if (sectionNormalized.includes("regole struttura")) {
+    if (normalized === "check-in") return icon("check-in-di-persona.png");
+    if (normalized === "check-out") return icon("check-out.png");
+    if (has("fumare")) return icon("sigaretta.png");
+    if (has("silenzio")) return icon("musica.png");
+    if (has("ospiti") || has("accesso altri ospiti")) return icon("ospiti.png");
+    if (has("animali")) return icon("animali.png");
+    if (has("documenti")) return icon("documenti.png");
+    if (has("chiavi")) return icon("chiavi.png");
+    if (has("inventario")) return icon("inventario.png");
+    if (has("pulizia") || has("pulizie")) return icon("pulizia.png");
+  }
+
+  if (sectionNormalized.includes("check-out")) {
+    if (has("chiavi")) return icon("chiavi1.png");
+    if (has("pulizia") || has("pulizie")) return icon("pulizia1.png");
+    if (has("inventario")) return icon("lista.png");
+    if (has("orario")) return icon("check-out1.png");
+    if (has("check-out") || normalizedKey === "checkout") return icon("check-out.png");
+  }
+
+  if (sectionNormalized.includes("funzionamento")) {
+    if (has("accesso")) return icon("accesso.png");
+    if (has("parcheggio")) return icon("parcheggio.png");
+    if (has("biancheria")) return icon("biancheria.png");
+    if (has("rifiuti")) return icon("rifiuti.png");
+    if (has("wi-fi") || has("wifi")) return icon("wi-fi.png");
+    if (has("climatizzatore") || has("condizionatore")) return icon("condizionatore.png");
+    if (has("riscaldamento")) return icon("riscaldamento.png");
+  }
+
+  if (sectionNormalized.includes("come raggiungerci")) {
+    if (has("auto")) return icon("auto.png");
+    if (has("aereo")) return icon("aereo.png");
+    if (has("bus")) return icon("bus.png");
+    if (has("metro")) return icon("metro.png");
+    if (has("traghetto")) return icon("traghetti.png");
+    if (has("noleggio")) return icon("noleggio.png");
+    if (isTrainSubsection || has("treno")) return icon("treno.png");
+  }
+
+  if (sectionNormalized.includes("numeri utili")) {
+    if (has("accoglienza")) return icon("accoglienza.png");
+    if (has("taxi")) return icon("taxi.png");
+    if (has("polizia")) return icon("polizia.png");
+    if (has("guardia medica")) return icon("ospedale.png");
+    if (has("ambulanza")) return icon("guardia-medica.png");
+    if (has("ospedale")) return icon("ospedale.png");
+    if (has("vigili del fuoco") || has("pompieri")) return icon("estintore.png");
+    if (has("farmacia")) return icon("farmacia.png");
+    return icon("telefono.png");
+  }
+
+  if (sectionNormalized.includes("la nostra struttura")) {
+    if (has("casa")) return icon("casa.png");
+    if (has("cucina")) return icon("cucina.png");
+    if (has("terrazza")) return icon("terrazza.png");
+    if (has("giardino")) return icon("giardino.png");
+    if (has("piscina")) return icon("piscina.png");
+    if (has("camera") || has("letto")) return icon("letto.png");
+    if (has("soggiorno")) return icon("soggiorno.png");
+    if (has("bagno")) return icon("bagno.png");
+  }
+
+  if (sectionNormalized.includes("colazione")) {
+    return icon("colazione.png");
+  }
+
+  if (has("wi-fi") || has("wifi")) return icon("wi-fi.png");
+
+  return null;
+}
+
 type ClassicoEditorPreviewProps = {
   sections: Section[];
   subsectionsBySection: Record<string, Subsection[]>;
@@ -608,14 +920,59 @@ export function ClassicoEditorPreview({
 }: ClassicoEditorPreviewProps) {
   const layoutLabel = layoutName ? layoutName.charAt(0).toUpperCase() + layoutName.slice(1) : "Classico";
   const isClassicLayout = layoutName === "classico";
+  const isRusticoLayout = layoutName === "rustico";
+  const isMediterraneoLayout = layoutName === "mediterraneo";
+  const isRusticoLikeLayout = isRusticoLayout || isMediterraneoLayout;
+  const rusticoIconFolder: RusticoLikeFolder = isMediterraneoLayout ? "Mediterraneo" : "Rustico";
   const isModernoLayout = layoutName === "moderno";
   const isIllustrativo = layoutName === "illustrativo";
   const isPastello = layoutName === "pastello";
   const isPastelloLayout = layoutName === "pastello";
   const isOroLayout = layoutName === "oro";
+  const isRomanticoLayout = layoutName === "romantico";
+  const isFuturisticoLayout = layoutName === "futuristico";
+  const isNotturnoLayout = layoutName === "notturno";
   const isModernoLike = isModernoLayout || isIllustrativo;
   const isReadOnly = readOnly;
   const isVisible = (value: boolean | null) => value !== false;
+  const rusticoLikeIconProps = { isRustico: isRusticoLikeLayout, rusticoFolder: rusticoIconFolder };
+
+  const renderIconForKey = (iconKey: IconKey) => {
+    switch (iconKey) {
+      case "check-in":
+        return <CheckInImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "come raggiungerci":
+        return <ComeRaggiungerciImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "la nostra struttura":
+        return <LaNostraStrutturaImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "funzionamento":
+        return <FunzionamentoImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "dove mangiare":
+        return <DoveMangiareImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "dove bere":
+        return <DoveBereImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "regole struttura":
+        return <RegoleImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "cosa visitare":
+        return <CosaVisitareImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "esperienze":
+        return <EsperienzeImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "spiagge":
+        return <SpiaggeImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "shopping":
+        return <ShoppingImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "servizi":
+        return <ServiziImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "colazione":
+        return <ColazioneImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "check-out":
+        return <CheckOutImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      case "numeri utili":
+        return <NumeriUtiliImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} {...rusticoLikeIconProps} />;
+      default:
+        return ICONS[iconKey];
+    }
+  };
   const [sectionsState, setSectionsState] = useState<Section[]>(sections.map((s) => ({ ...s, visible: isVisible(s.visible) })));
   const ordered = useMemo(
     () => [...sectionsState].sort((a, b) => a.order_index - b.order_index),
@@ -718,6 +1075,7 @@ export function ClassicoEditorPreview({
   }, [activeSection, subsState]);
   const [sectionMediaDrafts, setSectionMediaDrafts] = useState<Record<string, { url: string; type: "link" }>>({});
   const activeSectionSlug = activeSection ? normalizeTitle(activeSection.title)?.replace(/\s+/g, "-") : null;
+  const activeSectionIconSlug = activeSectionSlug ?? (activeSection ? slugify(activeSection.title, `sezione-${activeSection.order_index}`) : "");
   const titleSlugClass = activeSectionSlug ? ` classico-editor-modal__title--${activeSectionSlug}` : "";
   const [sectionDrinkLinkDrafts, setSectionDrinkLinkDrafts] = useState<
     Record<string, { url: string; description: string }>
@@ -929,6 +1287,39 @@ export function ClassicoEditorPreview({
 
     let isCancelled = false;
     const fetchMedia = async () => {
+      if (homebookId) {
+        try {
+          const url = `/api/homebooks/${homebookId}/media?section_id=${encodeURIComponent(activeSectionId)}`;
+          const response = await fetch(url, { cache: "no-store" });
+          if (!response.ok) {
+            const detail = await response.text().catch(() => "");
+            if (isCancelled) return;
+            showMediaError("Errore nel caricamento dei media. Riprova", detail);
+            return;
+          }
+          const payload = await response.json();
+          const data = payload?.data;
+          if (!data || !Array.isArray(data.media)) {
+            if (isCancelled) return;
+            showMediaError("Errore nel caricamento dei media. Riprova");
+            return;
+          }
+          const serverSubIds = Array.isArray(data.subsection_ids)
+            ? data.subsection_ids.filter(Boolean)
+            : [];
+          const fallbackSubIds = (subsState[activeSectionId] ?? []).map((sub) => sub.id).filter(Boolean);
+          const resolvedSubIds = serverSubIds.length ? serverSubIds : fallbackSubIds;
+          if (isCancelled) return;
+          applyMediaUpdate(activeSectionId, resolvedSubIds, data.media);
+          return;
+        } catch (error) {
+          if (isCancelled) return;
+          const message = error instanceof Error ? error.message : null;
+          showMediaError("Errore nel caricamento dei media. Riprova", message);
+          return;
+        }
+      }
+
       const selectFields = "id, section_id, subsection_id, url, type, order_index, description, created_at";
       let query = supabase.from("media").select(selectFields);
       if (subIds.length) {
@@ -943,18 +1334,17 @@ export function ClassicoEditorPreview({
         showMediaError("Errore nel caricamento dei media. Riprova", error.message);
         return;
       }
-      const nextMedia = data ?? [];
-      applyMediaUpdate(activeSectionId, subIds, nextMedia);
+      applyMediaUpdate(activeSectionId, subIds, data ?? []);
     };
 
     fetchMedia();
     return () => {
       isCancelled = true;
     };
-  }, [activeSectionId, disableLiveMediaFetch, isReadOnly, subsState, supabase]);
+  }, [activeSectionId, disableLiveMediaFetch, homebookId, isReadOnly, subsState, supabase]);
 
   const refreshMediaForActiveSection = async () => {
-    if (!homebookId || !activeSectionId || isMediaRefreshing) return;
+    if (!homebookId || !activeSectionId) return;
     setIsMediaRefreshing(true);
     try {
       const url = `/api/homebooks/${homebookId}/media?section_id=${encodeURIComponent(activeSectionId)}`;
@@ -999,9 +1389,36 @@ function parseLinkWithDescription(m: MediaItem) {
 }
 
   const iconKey = activeSection ? normalizeTitle(activeSection.title) : null;
+  const baseModalIcon = iconKey ? renderIconForKey(iconKey) : null;
+  const modalIconNode = iconKey && baseModalIcon
+    ? isRomanticoLayout
+      ? (
+        <RomanticoIcon
+          slug={activeSectionIconSlug}
+          fallback={baseModalIcon}
+          isModerno={isModernoLike}
+        />
+      )
+      : isFuturisticoLayout
+      ? (
+        <FuturisticoIcon
+          slug={activeSectionIconSlug}
+          fallback={baseModalIcon}
+          isModerno={isModernoLike}
+        />
+      )
+      : isNotturnoLayout
+      ? (
+        <NotturnoIcon
+          slug={activeSectionIconSlug}
+          fallback={baseModalIcon}
+          isModerno={isModernoLike}
+        />
+      )
+      : baseModalIcon
+    : baseModalIcon;
   const isColazioneSection = iconKey === "colazione";
-  const showStandardSubsections =
-    !isColazioneSection || isClassicLayout || isPastelloLayout || isIllustrativo || isModernoLayout || isOroLayout;
+  const showStandardSubsections = true;
   const sectionMedia = activeSection ? mediaState[activeSection.id] ?? mediaByParent[activeSection.id] ?? [] : [];
   const sectionLinks = sectionMedia.filter((m) => m.type === "link");
   const foodLinks = iconKey === "dove mangiare" ? sectionLinks.map(parseLinkWithDescription) : [];
@@ -1457,6 +1874,18 @@ function parseLinkWithDescription(m: MediaItem) {
 
   const handleUploadMediaFile = async (subId: string, file: File | null | undefined, orderIndex?: number) => {
     if (!file || !file.name || file.size === 0) return;
+    const validation = validateUploadCandidate(
+      {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      },
+      "media"
+    );
+    if (!validation.ok) {
+      showMediaError(validation.error);
+      return;
+    }
     await markDraftIfNeeded();
     try {
       const safeName = file.name.replace(/\s+/g, "-");
@@ -1468,16 +1897,10 @@ function parseLinkWithDescription(m: MediaItem) {
         showMediaError("Caricamento file non riuscito. Riprova", error?.message ?? null);
         return;
       }
-      const { data: publicData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(data.path);
-      const publicUrl = publicData?.publicUrl;
-      if (!publicUrl) {
-        showMediaError("Impossibile ottenere il link pubblico del file.");
-        return;
-      }
-      const mediaType: "image" | "video" = file.type.startsWith("video") ? "video" : "image";
+      const mediaType: "image" | "video" = validation.kind === "video" ? "video" : "image";
       const { data: inserted, error: insertError } = await insertMediaItem({
         subsection_id: subId,
-        url: publicUrl,
+        url: data.path,
         type: mediaType,
         order_index: orderIndex ?? getNextOrderIndex(subId)
       });
@@ -1512,11 +1935,24 @@ function parseLinkWithDescription(m: MediaItem) {
       }));
       URL.revokeObjectURL(entry.url);
     }
+    await refreshMediaForActiveSection();
     setUploadingSubId((current) => (current === subId ? null : current));
   };
 
   const handleUploadAttachmentFile = async (subId: string, file: File | null | undefined, orderIndex?: number) => {
     if (!file || !file.name || file.size === 0) return;
+    const validation = validateUploadCandidate(
+      {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      },
+      "attachment"
+    );
+    if (!validation.ok) {
+      showMediaError(validation.error);
+      return;
+    }
     await markDraftIfNeeded();
     try {
       const safeName = file.name.replace(/\s+/g, "-");
@@ -1528,15 +1964,9 @@ function parseLinkWithDescription(m: MediaItem) {
         showMediaError("Caricamento allegato non riuscito. Riprova", error?.message ?? null);
         return;
       }
-      const { data: publicData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(data.path);
-      const publicUrl = publicData?.publicUrl;
-      if (!publicUrl) {
-        showMediaError("Impossibile ottenere il link pubblico dell'allegato.");
-        return;
-      }
       const { data: inserted, error: insertError } = await insertMediaItem({
         subsection_id: subId,
-        url: publicUrl,
+        url: data.path,
         type: "file",
         order_index: orderIndex ?? getNextOrderIndex(subId),
         description: file.name
@@ -1562,11 +1992,24 @@ function parseLinkWithDescription(m: MediaItem) {
     for (const [index, file] of files.entries()) {
       await handleUploadAttachmentFile(subId, file, baseIndex + index);
     }
+    await refreshMediaForActiveSection();
     setUploadingAttachmentSubId((current) => (current === subId ? null : current));
   };
 
   const handleUploadSectionAttachmentFile = async (sectionId: string, file: File | null | undefined, orderIndex?: number) => {
     if (!file || !file.name || file.size === 0) return;
+    const validation = validateUploadCandidate(
+      {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      },
+      "attachment"
+    );
+    if (!validation.ok) {
+      showMediaError(validation.error);
+      return;
+    }
     await markDraftIfNeeded();
     try {
       const safeName = file.name.replace(/\s+/g, "-");
@@ -1578,15 +2021,9 @@ function parseLinkWithDescription(m: MediaItem) {
         showMediaError("Caricamento allegato non riuscito. Riprova", error?.message ?? null);
         return;
       }
-      const { data: publicData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(data.path);
-      const publicUrl = publicData?.publicUrl;
-      if (!publicUrl) {
-        showMediaError("Impossibile ottenere il link pubblico dell'allegato.");
-        return;
-      }
       const { data: inserted, error: insertError } = await insertMediaItem({
         section_id: sectionId,
-        url: publicUrl,
+        url: data.path,
         type: "file",
         order_index: orderIndex ?? getNextOrderIndex(sectionId),
         description: file.name
@@ -1612,6 +2049,7 @@ function parseLinkWithDescription(m: MediaItem) {
     for (const [index, file] of files.entries()) {
       await handleUploadSectionAttachmentFile(sectionId, file, baseIndex + index);
     }
+    await refreshMediaForActiveSection();
     setUploadingAttachmentSectionId((current) => (current === sectionId ? null : current));
   };
 
@@ -1847,7 +2285,7 @@ function parseLinkWithDescription(m: MediaItem) {
       await markDraftIfNeeded();
       const { error } = await supabase.from("sections").update({ visible: nextVisible }).eq("id", sectionId);
       if (error) {
-        console.error("Impossibile aggiornare la visibilità della sezione", error);
+        console.error("Impossibile aggiornare la visibilita della sezione", error);
         setSectionsState((prev) => prev.map((s) => (s.id === sectionId ? { ...s, visible: currentVisible } : s)));
       }
     });
@@ -1979,7 +2417,7 @@ function parseLinkWithDescription(m: MediaItem) {
   };
 
   return (
-    <section className={`classico-editor-preview${isModernoLayout ? " moderno-preview" : ""}${isIllustrativo ? " illustrativo-preview" : ""}`}>
+    <section className={`classico-editor-preview${isModernoLayout ? " moderno-preview" : ""}${isIllustrativo ? " illustrativo-preview" : ""}${isRusticoLikeLayout ? " rustico-preview" : ""}${isMediterraneoLayout ? " mediterraneo-preview" : ""}`}>
       {!isReadOnly ? <div className="pill">Anteprima layout {layoutLabel}</div> : null}
       <div className={`classico-sections__panel${isModernoLayout ? " moderno-sections__panel" : ""}${isIllustrativo ? " illustrativo-sections__panel" : ""}`}>
         <div className={`classico-sections__content${isModernoLayout ? " moderno-sections__content" : ""}${isIllustrativo ? " illustrativo-sections__content" : ""}`}>
@@ -2064,12 +2502,49 @@ function parseLinkWithDescription(m: MediaItem) {
                 if (sectionIcon === "la nostra struttura") extraMods += " classico-card--struttura";
                 const isSectionVisible = isVisible(section.visible);
                 const isCenterCard = (index + 1) % 3 === 0;
+                const sectionSlug = slugify(section.title, `sezione-${section.order_index}`);
+                const baseIcon = sectionIcon ? renderIconForKey(sectionIcon) : null;
+                const iconNode = sectionIcon && baseIcon
+                  ? isRomanticoLayout
+                    ? (
+                      <RomanticoIcon
+                        slug={sectionSlug}
+                        fallback={baseIcon}
+                        isModerno={isModernoLike}
+                      />
+                    )
+                    : isFuturisticoLayout
+                    ? (
+                      <FuturisticoIcon
+                        slug={sectionSlug}
+                        fallback={baseIcon}
+                        isModerno={isModernoLike}
+                      />
+                    )
+                    : isNotturnoLayout
+                    ? (
+                      <NotturnoIcon
+                        slug={sectionSlug}
+                        fallback={baseIcon}
+                        isModerno={isModernoLike}
+                      />
+                    )
+                    : baseIcon
+                  : baseIcon;
+                const cardStyle: React.CSSProperties = {
+                  opacity: isSectionVisible ? 1 : 0.6,
+                  cursor: isReadOnly ? "pointer" : "grab"
+                };
+                if (isRusticoLikeLayout) {
+                  cardStyle.background = "#ffffff";
+                  cardStyle.backgroundColor = "#ffffff";
+                }
                 return (
                   <div
                   key={section.id}
                   role="button"
                   tabIndex={0}
-                  className={`classico-card${extraClass}${extraMods}${isCenterCard ? " classico-card--center" : ""}${isModernoLayout ? " moderno-card" : ""}${isIllustrativo ? " illustrativo-card" : ""} classico-card--slug-${slugify(section.title, `sezione-${section.order_index}`)}`}
+                  className={`classico-card${extraClass}${extraMods}${isCenterCard ? " classico-card--center" : ""}${isModernoLayout ? " moderno-card" : ""}${isIllustrativo ? " illustrativo-card" : ""} classico-card--slug-${sectionSlug}`}
                   onClick={() => setActiveSectionId(section.id)}
                   draggable={!isReadOnly}
                   onDragStart={(event) => handleSectionDragStart(event, section.id)}
@@ -2082,42 +2557,10 @@ function parseLinkWithDescription(m: MediaItem) {
                       setActiveSectionId(section.id);
                     }
                   }}
-                  style={{ opacity: isSectionVisible ? 1 : 0.6, cursor: isReadOnly ? "pointer" : "grab" }}
+                  style={cardStyle}
                 >
                   <span className="classico-card__icon" aria-hidden="true">
-                    {sectionIcon ? (
-                      sectionIcon === "check-in"
-                        ? <CheckInImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "come raggiungerci"
-                        ? <ComeRaggiungerciImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "la nostra struttura"
-                        ? <LaNostraStrutturaImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "funzionamento"
-                        ? <FunzionamentoImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "dove mangiare"
-                        ? <DoveMangiareImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "dove bere"
-                        ? <DoveBereImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "regole struttura"
-                        ? <RegoleImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "cosa visitare"
-                        ? <CosaVisitareImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "esperienze"
-                        ? <EsperienzeImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "spiagge"
-                        ? <SpiaggeImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                        : sectionIcon === "shopping"
-                        ? <ShoppingImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : sectionIcon === "servizi"
-                      ? <ServiziImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : sectionIcon === "colazione"
-                      ? <ColazioneImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : sectionIcon === "check-out"
-                      ? <CheckOutImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : sectionIcon === "numeri utili"
-                      ? <NumeriUtiliImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : ICONS[sectionIcon]
-                  ) : (
+                    {iconNode ?? (
                     <span className="classico-card__icon-fallback">{section.order_index}</span>
                   )}
                 </span>
@@ -2210,6 +2653,7 @@ function parseLinkWithDescription(m: MediaItem) {
                     <span className="classico-card__title">{section.title}</span>
                     {!isReadOnly ? (
                       <div
+                        className={sectionIcon === "funzionamento" ? "classico-card__toggle" : undefined}
                         style={{
                           marginTop: 6,
                           display: "grid",
@@ -2294,39 +2738,7 @@ function parseLinkWithDescription(m: MediaItem) {
               ) : null}
               <div className="classico-editor-modal__title-block">
                 <span className="classico-editor-modal__icon" aria-hidden="true">
-                  {iconKey ? (
-                    iconKey === "check-in"
-                      ? <CheckInImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "come raggiungerci"
-                      ? <ComeRaggiungerciImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "la nostra struttura"
-                      ? <LaNostraStrutturaImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "funzionamento"
-                      ? <FunzionamentoImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "dove mangiare"
-                      ? <DoveMangiareImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "dove bere"
-                      ? <DoveBereImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "regole struttura"
-                      ? <RegoleImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "cosa visitare"
-                      ? <CosaVisitareImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "esperienze"
-                      ? <EsperienzeImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "spiagge"
-                      ? <SpiaggeImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "shopping"
-                      ? <ShoppingImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "servizi"
-                      ? <ServiziImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "colazione"
-                      ? <ColazioneImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "check-out"
-                      ? <CheckOutImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : iconKey === "numeri utili"
-                      ? <NumeriUtiliImg isModerno={isModernoLike} isIllustrativo={isIllustrativo} isPastello={isPastello} isOro={isOroLayout} />
-                      : ICONS[iconKey]
-                  ) : (
+                  {modalIconNode ?? (
                     <span className="classico-card__icon-fallback">{activeSection.order_index}</span>
                   )}
                 </span>
@@ -2902,7 +3314,7 @@ function parseLinkWithDescription(m: MediaItem) {
                       >
                         <input
                           type="file"
-                          accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.ppt,.pptx,.csv,.zip"
+                          accept={ATTACHMENT_FILE_ACCEPT}
                           multiple
                           style={{ display: "none" }}
                           onChange={(e) => {
@@ -2942,12 +3354,13 @@ function parseLinkWithDescription(m: MediaItem) {
                       .toLowerCase()
                       .normalize("NFD")
                       .replace(/[\u0300-\u036f]/g, "");
+                    const normalizedKey = normalized.replace(/\s+/g, "");
                     const normalizedNoHyphen = normalized.replace(/-/g, " ");
                     const displayTitle =
-                      normalized === "formalita"
-                        ? "Formalità"
-                        : normalized === "accessibilita"
-                        ? "Accessibilità"
+                      normalizedKey === "formalita" || normalizedKey === "formalit"
+                        ? "Formalita"
+                        : normalizedKey === "accessibilita" || normalizedKey === "accessibilit"
+                        ? "Accessibilita"
                         : subTitle;
                     const sectionNormalized = activeSection.title
                       .toLowerCase()
@@ -2955,14 +3368,80 @@ function parseLinkWithDescription(m: MediaItem) {
                       .replace(/[\u0300-\u036f]/g, "");
                     const isTrainSubsection =
                       normalized.includes("treno") || normalized.includes("treni");
+                    const isRomanticoSubsection = isRomanticoLayout;
 
                     let iconSrc = "/Icons/Classico/valigia.png";
-                    if (isOroLayout && sectionNormalized.includes("check-in") && normalized.includes("prima di partire")) {
+                    if (isRusticoLikeLayout) {
+                      const rusticoIcon = resolveRusticoSubsectionIcon({
+                        sectionNormalized,
+                        normalized,
+                        normalizedKey,
+                        normalizedNoHyphen,
+                        isTrainSubsection,
+                        iconFolder: rusticoIconFolder
+                      });
+                      if (rusticoIcon) iconSrc = rusticoIcon;
+                    }
+                    if (isRomanticoLayout && sectionNormalized.includes("check-in") && normalized.includes("prima di partire")) {
+                      iconSrc = "/Icons/Romantico/valigia.png?v=2";
+                    } else if (isOroLayout && sectionNormalized.includes("check-in") && normalized.includes("prima di partire")) {
                       iconSrc = "/Icons/Oro/valigia.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-in") && normalized.includes("prima di partire")) {
+                      iconSrc = "/Icons/Futuristico/calendario.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("check-in") && normalized.includes("prima di partire")) {
+                      iconSrc = "/Icons/Notturno/valigia.png";
+                    } else if (
+                      isRusticoLikeLayout &&
+                      sectionNormalized.includes("check-in") &&
+                      (normalizedKey === "formalita" || normalizedKey === "formalit")
+                    ) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "documenti1.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("check-in") && normalizedKey === "formalita") {
+                      iconSrc = "/Icons/Romantico/documenti1.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("check-in") && normalized.includes("formalita")) {
                       iconSrc = "/Icons/Oro/passaporto.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-in") && normalizedKey === "formalita") {
+                      iconSrc = "/Icons/Futuristico/documenti.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("check-in") && normalized.includes("formalita")) {
+                      iconSrc = "/Icons/Notturno/passaporto.png";
+                    } else if (
+                      isRusticoLikeLayout &&
+                      sectionNormalized.includes("check-in") &&
+                      (normalizedNoHyphen.includes("self check in") || normalized.includes("self check-in"))
+                    ) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "self-check-in.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("check-in") && normalizedNoHyphen.includes("self check in")) {
+                      iconSrc = "/Icons/Romantico/self-check-in.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("check-in") && normalized.includes("self check-in")) {
                       iconSrc = "/Icons/Oro/self-check-in.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-in") && normalizedNoHyphen.includes("self check in")) {
+                      iconSrc = "/Icons/Futuristico/self-check-in.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("check-in") && normalizedNoHyphen.includes("self check in")) {
+                      iconSrc = "/Icons/Notturno/self-check-in.png";
+                    } else if (
+                      isRusticoLikeLayout &&
+                      sectionNormalized.includes("check-in") &&
+                      (normalized.includes("check-in in presenza") || normalizedNoHyphen.includes("check in in presenza"))
+                    ) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "check-in-di-persona.png");
+                    } else if (
+                      isRomanticoLayout &&
+                      sectionNormalized.includes("check-in") &&
+                      (normalized.includes("check-in in presenza") || normalizedNoHyphen.includes("check in in presenza"))
+                    ) {
+                      iconSrc = "/Icons/Romantico/check-in-di-persona.png?v=2";
+                    } else if (
+                      isFuturisticoLayout &&
+                      sectionNormalized.includes("check-in") &&
+                      (normalized.includes("check-in in presenza") || normalizedNoHyphen.includes("check in in presenza"))
+                    ) {
+                      iconSrc = "/Icons/Futuristico/check-in3.png";
+                    } else if (
+                      isNotturnoLayout &&
+                      sectionNormalized.includes("check-in") &&
+                      (normalized.includes("check-in in presenza") || normalizedNoHyphen.includes("check in in presenza"))
+                    ) {
+                      iconSrc = "/Icons/Notturno/check-in-in-presenza.png";
                     } else if (
                       isOroLayout &&
                       (normalized.includes("check-in in presenza") || normalizedNoHyphen.includes("check in in presenza")) &&
@@ -2977,14 +3456,26 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Illustrativo/scambio-chiavi.png";
                     } else if (isIllustrativo && sectionNormalized.includes("check-in") && normalized.includes("prima di partire")) {
                       iconSrc = "/Icons/Illustrativo/calendario-1.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("check-in") && normalized.includes("orario")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "orario.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("check-in") && normalized.includes("orario")) {
+                      iconSrc = "/Icons/Romantico/orario1.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("check-in") && normalized.includes("orario")) {
                       iconSrc = "/Icons/Oro/orario.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-in") && normalized.includes("orario")) {
+                      iconSrc = "/Icons/Futuristico/orologio.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("check-in") && normalized.includes("orario")) {
+                      iconSrc = "/Icons/Notturno/orario.png";
                     } else if (isPastello && sectionNormalized.includes("check-in") && normalized.includes("orario")) {
                       iconSrc = "/Icons/Pastello/orario-1.png";
                     } else if (isIllustrativo && sectionNormalized.includes("check-in") && normalized.includes("orario")) {
                       iconSrc = "/Icons/Illustrativo/calendario.png";
                     } else if (isModernoLike && sectionNormalized.includes("check-in") && normalized.includes("prima di partire")) {
                       iconSrc = "/Icons/Moderno/calendario.png?v=1";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized === "check-in") {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "check-in-di-persona.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized === "check-in") {
+                      iconSrc = "/Icons/Romantico/check-in1.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized === "check-in") {
                       iconSrc = "/Icons/Pastello/check-in.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized === "check-in") {
@@ -2993,8 +3484,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/chiavi-1.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized === "check-in") {
                       iconSrc = "/Icons/Oro/check-in-1.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized === "check-in") {
+                      iconSrc = "/Icons/Futuristico/check-in.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized === "check-in") {
+                      iconSrc = "/Icons/Notturno/valigie.png";
                     } else if (sectionNormalized.includes("regole struttura") && normalized === "check-in") {
                       iconSrc = "/Icons/Classico/chiavi.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized === "check-out") {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "check-out.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized === "check-out") {
+                      iconSrc = "/Icons/Romantico/check-out1.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized === "check-out") {
                       iconSrc = "/Icons/Pastello/check-out.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized === "check-out") {
@@ -3003,8 +3502,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/check-out.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized === "check-out") {
                       iconSrc = "/Icons/Oro/check-out.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized === "check-out") {
+                      iconSrc = "/Icons/Futuristico/check-out.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized === "check-out") {
+                      iconSrc = "/Icons/Notturno/check-out.png";
                     } else if (sectionNormalized.includes("regole struttura") && normalized === "check-out") {
                       iconSrc = "/Icons/Classico/check-out.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "musica.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
+                      iconSrc = "/Icons/Romantico/musica.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
                       iconSrc = "/Icons/Pastello/silenzio.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
@@ -3013,10 +3520,22 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/silenzio.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
                       iconSrc = "/Icons/Oro/silenzio.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
+                      iconSrc = "/Icons/Futuristico/musica.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
+                      iconSrc = "/Icons/Notturno/silenzio.png";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("silenzio e buon vicinato")) {
                       iconSrc = "/Icons/Classico/silenzio.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "sigaretta.png");
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
                       iconSrc = "/Icons/Oro/fumo.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
+                      iconSrc = "/Icons/Futuristico/sigaretta.png";
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
+                      iconSrc = "/Icons/Romantico/sigaretta.png?v=2";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
+                      iconSrc = "/Icons/Notturno/sigaretta.png";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
                       iconSrc = "/Icons/Pastello/sigaretta.png?v=2";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
@@ -3025,6 +3544,10 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/sigaretta.png?v=1";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("vietato fumare")) {
                       iconSrc = "/Icons/Classico/sigaretta.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized.includes("accesso altri ospiti")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "ospiti.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("accesso altri ospiti")) {
+                      iconSrc = "/Icons/Romantico/ospiti.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized.includes("accesso altri ospiti")) {
                       iconSrc = "/Icons/Pastello/valigia.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized.includes("accesso altri ospiti")) {
@@ -3033,10 +3556,18 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/ospiti.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized.includes("accesso altri ospiti")) {
                       iconSrc = "/Icons/Oro/ospiti.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("accesso altri ospiti")) {
+                      iconSrc = "/Icons/Futuristico/altri-ospiti.png";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("accesso altri ospiti")) {
                       iconSrc = "/Icons/Classico/ospiti.png";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
                       iconSrc = "/Icons/Oro/animali.png?v=1";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "documenti.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
+                      iconSrc = "/Icons/Romantico/documenti.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
+                      iconSrc = "/Icons/Futuristico/passaporto.png";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
                       iconSrc = "/Icons/Pastello/documenti-1.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
@@ -3045,18 +3576,32 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/documenti.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
                       iconSrc = "/Icons/Oro/passaporto.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
+                      iconSrc = "/Icons/Notturno/documenti.png";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("documenti")) {
                       iconSrc = "/Icons/Classico/documenti.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && (normalized.includes("chiavi della casa") || normalized === "chiavi")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "chiavi.png");
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && (normalized.includes("chiavi della casa") || normalized === "chiavi")) {
                       iconSrc = "/Icons/Pastello/chiavi.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && (normalized.includes("chiavi della casa") || normalized === "chiavi")) {
                       iconSrc = "/Icons/Illustrativo/chiavi.png";
                     } else if (isModernoLike && sectionNormalized.includes("regole struttura") && (normalized.includes("chiavi della casa") || normalized === "chiavi")) {
                       iconSrc = "/Icons/Moderno/chiavi-1.png?v=1";
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("chiavi della casa")) {
+                      iconSrc = "/Icons/Romantico/chiavi.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("chiavi della casa")) {
+                      iconSrc = "/Icons/Futuristico/chiavi1.png";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && (normalized.includes("chiavi della casa") || normalized === "chiavi")) {
                       iconSrc = "/Icons/Oro/chiavi.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && (normalized.includes("chiavi della casa") || normalized === "chiavi")) {
+                      iconSrc = "/Icons/Notturno/chiavi.png";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("chiavi della casa")) {
                       iconSrc = "/Icons/Classico/chiavi-1.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "inventario.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
+                      iconSrc = "/Icons/Romantico/lista.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
                       iconSrc = "/Icons/Pastello/inventario.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
@@ -3064,11 +3609,23 @@ function parseLinkWithDescription(m: MediaItem) {
                     } else if (isModernoLike && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
                       iconSrc = "/Icons/Moderno/lista.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
-                      iconSrc = "/Icons/Oro/inventario.lay.classico.png?v=1";
+                      iconSrc = "/Icons/Oro/inventario.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
+                      iconSrc = "/Icons/Futuristico/lista.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
+                      iconSrc = "/Icons/Notturno/lista2.png";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("inventario")) {
                       iconSrc = "/Icons/Classico/inventario.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "pulizia.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
+                      iconSrc = "/Icons/Romantico/pulizia.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
                       iconSrc = "/Icons/Oro/pulizie.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
+                      iconSrc = "/Icons/Futuristico/pulizia.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
+                      iconSrc = "/Icons/Notturno/pulizia.png";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
                       iconSrc = "/Icons/Pastello/pulizie.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
@@ -3077,6 +3634,14 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/pulizie.png?v=1";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("pulizie")) {
                       iconSrc = "/Icons/Classico/pulizia.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "animali.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
+                      iconSrc = "/Icons/Romantico/animali.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
+                      iconSrc = "/Icons/Futuristico/animali.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
+                      iconSrc = "/Icons/Notturno/animali.png";
                     } else if (isPastello && sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
                       iconSrc = "/Icons/Pastello/animali.png";
                     } else if (isIllustrativo && sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
@@ -3085,8 +3650,14 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/animali.png?v=1";
                     } else if (sectionNormalized.includes("regole struttura") && normalized.includes("animali")) {
                       iconSrc = "/Icons/Classico/animali.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("check-out") && normalized.includes("chiavi")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "chiavi1.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("check-out") && normalized.includes("chiavi")) {
+                      iconSrc = "/Icons/Romantico/chiavi.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("check-out") && normalized.includes("chiavi")) {
                       iconSrc = "/Icons/Oro/chiavi-1.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-out") && normalized.includes("chiavi")) {
+                      iconSrc = "/Icons/Futuristico/chiavi3.png";
                     } else if (isPastello && sectionNormalized.includes("check-out") && normalized.includes("chiavi")) {
                       iconSrc = "/Icons/Pastello/chiavi-1.png";
                     } else if (isIllustrativo && sectionNormalized.includes("check-out") && normalized.includes("chiavi")) {
@@ -3095,8 +3666,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/chiavi-1.png?v=1";
                     } else if (sectionNormalized.includes("check-out") && normalized.includes("chiavi")) {
                       iconSrc = "/Icons/Classico/chiavi.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "pulizia1.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
+                      iconSrc = "/Icons/Romantico/pulizia1.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
                       iconSrc = "/Icons/Oro/pulizie.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
+                      iconSrc = "/Icons/Futuristico/pulizia.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
+                      iconSrc = "/Icons/Notturno/pulizia.png";
                     } else if (isPastello && sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
                       iconSrc = "/Icons/Pastello/pulizie-1.png";
                     } else if (isIllustrativo && sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
@@ -3105,8 +3684,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/pulizie.png?v=1";
                     } else if (sectionNormalized.includes("check-out") && normalized.includes("pulizie")) {
                       iconSrc = "/Icons/Classico/pulizia.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "lista.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
+                      iconSrc = "/Icons/Romantico/lista2.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
                       iconSrc = "/Icons/Oro/inventario-1.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
+                      iconSrc = "/Icons/Futuristico/inventario.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
+                      iconSrc = "/Icons/Notturno/lista2.png";
                     } else if (isPastello && sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
                       iconSrc = "/Icons/Pastello/lista.png";
                     } else if (isIllustrativo && sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
@@ -3115,6 +3702,10 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/lista-1.png?v=1";
                     } else if (sectionNormalized.includes("check-out") && normalized.includes("inventario")) {
                       iconSrc = "/Icons/Classico/lista.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("check-out") && normalized.includes("orario")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "check-out1.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("check-out") && normalized.includes("orario")) {
+                      iconSrc = "/Icons/Romantico/orario.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("check-out") && normalized.includes("orario")) {
                       iconSrc = "/Icons/Pastello/orario.png";
                     } else if (isIllustrativo && sectionNormalized.includes("check-out") && normalized.includes("orario")) {
@@ -3123,10 +3714,20 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/clessidra.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("check-out") && normalized.includes("orario")) {
                       iconSrc = "/Icons/Oro/check-out-1.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("check-out") && normalized.includes("orario")) {
+                      iconSrc = "/Icons/Futuristico/check-out2.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("check-out") && normalized.includes("orario")) {
+                      iconSrc = "/Icons/Notturno/orario1.png";
                     } else if (sectionNormalized.includes("check-out") && normalized.includes("orario")) {
                       iconSrc = "/Icons/Classico/check-out-1png.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("numeri utili") && normalized.includes("accoglienza")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "accoglienza.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("accoglienza")) {
+                      iconSrc = "/Icons/Romantico/accoglienza.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("numeri utili") && normalized.includes("accoglienza")) {
                       iconSrc = "/Icons/Oro/accoglienza.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("accoglienza")) {
+                      iconSrc = "/Icons/Futuristico/accoglienza.png";
                     } else if (isPastello && sectionNormalized.includes("numeri utili") && normalized.includes("accoglienza")) {
                       iconSrc = "/Icons/Pastello/accoglienza.png";
                     } else if (isIllustrativo && sectionNormalized.includes("numeri utili") && normalized.includes("accoglienza")) {
@@ -3135,24 +3736,60 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/accoglienza.png?v=1";
                     } else if (sectionNormalized.includes("numeri utili") && normalized.includes("accoglienza")) {
                       iconSrc = "/Icons/Classico/accoglienza.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("numeri utili") && normalized.includes("taxi")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "taxi.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("taxi")) {
+                      iconSrc = "/Icons/Romantico/taxi.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("numeri utili") && normalized.includes("taxi")) {
                       iconSrc = "/Icons/Oro/taxi.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("taxi")) {
+                      iconSrc = "/Icons/Futuristico/taxi.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("taxi")) {
+                      iconSrc = "/Icons/Notturno/taxi.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("numeri utili") && normalized.includes("vigili del fuoco")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "estintore.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("vigili del fuoco")) {
+                      iconSrc = "/Icons/Romantico/estintore.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("numeri utili") && normalized.includes("vigili del fuoco")) {
                       iconSrc = "/Icons/Oro/estintore.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("vigili del fuoco")) {
+                      iconSrc = "/Icons/Futuristico/pompieri.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("vigili del fuoco")) {
+                      iconSrc = "/Icons/Notturno/idrante.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("numeri utili") && normalized.includes("polizia")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "polizia.png");
                     } else if (isOroLayout && sectionNormalized.includes("numeri utili") && normalized.includes("polizia")) {
                       iconSrc = "/Icons/Oro/polizia.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("polizia")) {
+                      iconSrc = "/Icons/Notturno/polizia.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "ospedale.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
+                      iconSrc = "/Icons/Romantico/guardia-medica.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
                       iconSrc = "/Icons/Pastello/guardia-medica.png";
                     } else if (isIllustrativo && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
                       iconSrc = "/Icons/Illustrativo/cassettamedica.png";
                     } else if (isOroLayout && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
                       iconSrc = "/Icons/Oro/guardia-medica.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
+                      iconSrc = "/Icons/Futuristico/ospedale.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
+                      iconSrc = "/Icons/Notturno/guardia-medica.png";
                     } else if (isModernoLike && sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
                       iconSrc = "/Icons/Moderno/guardia-medica.png?v=1";
                     } else if (sectionNormalized.includes("numeri utili") && normalized.includes("guardia medica")) {
                       iconSrc = "/Icons/Classico/guardia-medica.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "farmacia.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
+                      iconSrc = "/Icons/Romantico/farmacia.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
                       iconSrc = "/Icons/Oro/farmacia.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
+                      iconSrc = "/Icons/Futuristico/farmacia.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
+                      iconSrc = "/Icons/Notturno/farmacia.png";
                     } else if (isPastello && sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
                       iconSrc = "/Icons/Pastello/farmacia.png";
                     } else if (isIllustrativo && sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
@@ -3161,8 +3798,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/farmacia.png?v=1";
                     } else if (sectionNormalized.includes("numeri utili") && normalized.includes("farmacia")) {
                       iconSrc = "/Icons/Classico/farmacia.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "guardia-medica.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
+                      iconSrc = "/Icons/Romantico/ambulanza.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
                       iconSrc = "/Icons/Oro/ospedale.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
+                      iconSrc = "/Icons/Futuristico/ambulanza.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
+                      iconSrc = "/Icons/Notturno/ambulanza.png";
                     } else if (isPastello && sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
                       iconSrc = "/Icons/Pastello/ambulanza.png?v=2";
                     } else if (isIllustrativo && sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
@@ -3171,6 +3816,8 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/ospedale.png?v=1";
                     } else if (sectionNormalized.includes("numeri utili") && normalized.includes("ambulanza")) {
                       iconSrc = "/Icons/Classico/ospedale.png";
+                    } else if (isRomanticoLayout && sectionNormalized.includes("numeri utili") && normalized.includes("polizia")) {
+                      iconSrc = "/Icons/Romantico/polizia.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("numeri utili") && normalized.includes("polizia")) {
                       iconSrc = "/Icons/Pastello/polizia.png";
                     } else if (isIllustrativo && sectionNormalized.includes("numeri utili") && normalized.includes("polizia")) {
@@ -3223,6 +3870,30 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/accoglienza.png?v=1";
                     } else if (normalized.includes("check-in in presenza")) {
                       iconSrc = "/Icons/Classico/accoglienza.png";
+                    } else if (
+                      isRusticoLikeLayout &&
+                      normalized.includes("accesso struttura") &&
+                      sectionNormalized.includes("funzionamento")
+                    ) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "accesso.png");
+                    } else if (
+                      isRomanticoLayout &&
+                      normalized.includes("accesso struttura") &&
+                      (sectionNormalized.includes("funzionamento") || sectionNormalized.includes("la nostra struttura"))
+                    ) {
+                      iconSrc = "/Icons/Romantico/chiavi2.png?v=2";
+                    } else if (
+                      isFuturisticoLayout &&
+                      normalized.includes("accesso struttura") &&
+                      sectionNormalized.includes("funzionamento")
+                    ) {
+                      iconSrc = "/Icons/Futuristico/chiavi.png";
+                    } else if (
+                      isNotturnoLayout &&
+                      normalized.includes("accesso struttura") &&
+                      sectionNormalized.includes("funzionamento")
+                    ) {
+                      iconSrc = "/Icons/Notturno/accesso.png";
                     } else if (isPastello && sectionNormalized.includes("funzionamento") && normalized.includes("accesso struttura")) {
                       iconSrc = "/Icons/Pastello/accesso.png";
                     } else if (isIllustrativo && sectionNormalized.includes("funzionamento") && normalized.includes("accesso struttura")) {
@@ -3233,8 +3904,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Oro/porta.png?v=1";
                     } else if (normalized.includes("accesso struttura")) {
                       iconSrc = "/Icons/Classico/accesso.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("funzionamento") && normalized.includes("parcheggio")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "parcheggio.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("parcheggio")) {
+                      iconSrc = "/Icons/Romantico/parcheggio.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("funzionamento") && normalized.includes("parcheggio")) {
                       iconSrc = "/Icons/Oro/parcheggio.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("parcheggio")) {
+                      iconSrc = "/Icons/Futuristico/parcheggio.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("parcheggio")) {
+                      iconSrc = "/Icons/Notturno/parcheggio.png";
                     } else if (isPastello && sectionNormalized.includes("funzionamento") && normalized.includes("parcheggio")) {
                       iconSrc = "/Icons/Pastello/parcheggio.png";
                     } else if (isIllustrativo && sectionNormalized.includes("funzionamento") && normalized.includes("parcheggio")) {
@@ -3243,8 +3922,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/parcheggio.png?v=1";
                     } else if (normalized.includes("parcheggio")) {
                       iconSrc = "/Icons/Classico/parcheggio.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("funzionamento") && normalized.includes("biancheria")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "biancheria.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("biancheria")) {
+                      iconSrc = "/Icons/Romantico/biancheria.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("funzionamento") && normalized.includes("biancheria")) {
                       iconSrc = "/Icons/Oro/biancheria.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("biancheria")) {
+                      iconSrc = "/Icons/Futuristico/biancheria.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("biancheria")) {
+                      iconSrc = "/Icons/Notturno/biancheria.png";
                     } else if (isPastello && sectionNormalized.includes("funzionamento") && normalized.includes("biancheria")) {
                       iconSrc = "/Icons/Pastello/biancheria.png";
                     } else if (isIllustrativo && sectionNormalized.includes("funzionamento") && normalized.includes("biancheria")) {
@@ -3253,8 +3940,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/biancheria.png?v=1";
                     } else if (normalized.includes("biancheria")) {
                       iconSrc = "/Icons/Classico/asciugamani.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("funzionamento") && normalized.includes("rifiuti")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "rifiuti.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("rifiuti")) {
+                      iconSrc = "/Icons/Romantico/rifiuti.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("funzionamento") && normalized.includes("rifiuti")) {
                       iconSrc = "/Icons/Oro/rifiuti.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("rifiuti")) {
+                      iconSrc = "/Icons/Futuristico/rifiuti.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("rifiuti")) {
+                      iconSrc = "/Icons/Notturno/rifiuti.png";
                     } else if (isPastello && sectionNormalized.includes("funzionamento") && normalized.includes("rifiuti")) {
                       iconSrc = "/Icons/Pastello/rifiuti.png";
                     } else if (isIllustrativo && sectionNormalized.includes("funzionamento") && normalized.includes("rifiuti")) {
@@ -3263,6 +3958,14 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/rifiuti.png?v=1";
                     } else if (normalized.includes("rifiuti")) {
                       iconSrc = "/Icons/Classico/rifiuti.png";
+                    } else if (
+                      isRusticoLikeLayout &&
+                      sectionNormalized.includes("funzionamento") &&
+                      (normalized.includes("wi-fi") || normalized.includes("wifi"))
+                    ) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "wi-fi.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("funzionamento") && (normalized.includes("wi-fi") || normalized.includes("wifi"))) {
+                      iconSrc = "/Icons/Romantico/wi-fi.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("funzionamento") && (normalized.includes("wi-fi") || normalized.includes("wifi"))) {
                       iconSrc = "/Icons/Pastello/wifi.png";
                     } else if (isIllustrativo && sectionNormalized.includes("funzionamento") && (normalized.includes("wi-fi") || normalized.includes("wifi"))) {
@@ -3271,8 +3974,26 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/wifi.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("funzionamento") && (normalized.includes("wi-fi") || normalized.includes("wifi"))) {
                       iconSrc = "/Icons/Oro/wi-fi.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("funzionamento") && (normalized.includes("wi-fi") || normalized.includes("wifi"))) {
+                      iconSrc = "/Icons/Futuristico/wi-fi.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("funzionamento") && (normalized.includes("wi-fi") || normalized.includes("wifi"))) {
+                      iconSrc = "/Icons/Notturno/wi-fi.png";
                     } else if (normalized.includes("wi-fi") || normalized.includes("wifi")) {
                       iconSrc = "/Icons/Classico/wifi.png";
+                    } else if (
+                      isRusticoLayout &&
+                      sectionNormalized.includes("funzionamento") &&
+                      (normalized.includes("climatizzatore") || normalized.includes("condizionatore"))
+                    ) {
+                      iconSrc = "/Icons/Rustico/condizionatore.png?v=2";
+                    } else if (
+                      isMediterraneoLayout &&
+                      sectionNormalized.includes("funzionamento") &&
+                      (normalized.includes("climatizzatore") || normalized.includes("condizionatore"))
+                    ) {
+                      iconSrc = "/Icons/Mediterraneo/condizionatore.png?v=2";
+                    } else if (isRomanticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("climatizzatore")) {
+                      iconSrc = "/Icons/Romantico/condizionatore.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("funzionamento") && normalized.includes("climatizzatore")) {
                       iconSrc = "/Icons/Pastello/climatizzatore.png";
                     } else if (isIllustrativo && sectionNormalized.includes("funzionamento") && normalized.includes("climatizzatore")) {
@@ -3281,8 +4002,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/climatizzatore.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("funzionamento") && normalized.includes("climatizzatore")) {
                       iconSrc = "/Icons/Oro/condizionatore.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("climatizzatore")) {
+                      iconSrc = "/Icons/Futuristico/condizionatore.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("climatizzatore")) {
+                      iconSrc = "/Icons/Notturno/climatizzatore.png";
                     } else if (normalized.includes("climatizzatore")) {
                       iconSrc = "/Icons/Classico/condizionatore.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("funzionamento") && normalized.includes("riscaldamento")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "riscaldamento.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("riscaldamento")) {
+                      iconSrc = "/Icons/Romantico/riscaldamento.png?v=2";
                     } else if (isPastello && sectionNormalized.includes("funzionamento") && normalized.includes("riscaldamento")) {
                       iconSrc = "/Icons/Pastello/riscaldamento.png";
                     } else if (isIllustrativo && sectionNormalized.includes("funzionamento") && normalized.includes("riscaldamento")) {
@@ -3291,10 +4020,22 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/riscaldamento.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("funzionamento") && normalized.includes("riscaldamento")) {
                       iconSrc = "/Icons/Oro/riscaldamento.png?v=1";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("riscaldamento")) {
+                      iconSrc = "/Icons/Futuristico/riscaldamento.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("funzionamento") && normalized.includes("riscaldamento")) {
+                      iconSrc = "/Icons/Notturno/riscaldamento.png";
                     } else if (normalized.includes("riscaldamento")) {
                       iconSrc = "/Icons/Classico/riscaldamento.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("auto")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "auto.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("auto")) {
+                      iconSrc = "/Icons/Romantico/auto.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("auto")) {
                       iconSrc = "/Icons/Oro/auto.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("auto")) {
+                      iconSrc = "/Icons/Futuristico/auto.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("auto")) {
+                      iconSrc = "/Icons/Notturno/macchina.png";
                     } else if (isPastello && sectionNormalized.includes("come raggiungerci") && normalized.includes("auto")) {
                       iconSrc = "/Icons/Pastello/macchina.png";
                     } else if (isIllustrativo && sectionNormalized.includes("come raggiungerci") && normalized.includes("auto")) {
@@ -3303,8 +4044,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/macchina.png?v=1";
                     } else if (normalized.includes("auto")) {
                       iconSrc = "/Icons/Classico/auto.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("aereo")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "aereo.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("aereo")) {
+                      iconSrc = "/Icons/Romantico/aereo.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("aereo")) {
                       iconSrc = "/Icons/Oro/aereo.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("aereo")) {
+                      iconSrc = "/Icons/Futuristico/aereo.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("aereo")) {
+                      iconSrc = "/Icons/Notturno/aereo.png";
                     } else if (isPastello && sectionNormalized.includes("come raggiungerci") && normalized.includes("aereo")) {
                       iconSrc = "/Icons/Pastello/aereo.png";
                     } else if (isIllustrativo && sectionNormalized.includes("come raggiungerci") && normalized.includes("aereo")) {
@@ -3313,8 +4062,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/aereo.png?v=1";
                     } else if (normalized.includes("aereo")) {
                       iconSrc = "/Icons/Classico/aereo.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("bus")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "bus.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("bus")) {
+                      iconSrc = "/Icons/Romantico/bus.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("bus")) {
                       iconSrc = "/Icons/Oro/bus.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("bus")) {
+                      iconSrc = "/Icons/Futuristico/bus.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("bus")) {
+                      iconSrc = "/Icons/Notturno/bus.png";
                     } else if (isPastello && sectionNormalized.includes("come raggiungerci") && normalized.includes("bus")) {
                       iconSrc = "/Icons/Pastello/bus.png";
                     } else if (isIllustrativo && sectionNormalized.includes("come raggiungerci") && normalized.includes("bus")) {
@@ -3323,6 +4080,14 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/bus.png?v=1";
                     } else if (normalized.includes("bus")) {
                       iconSrc = "/Icons/Classico/bus.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("metro")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "metro.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("metro")) {
+                      iconSrc = "/Icons/Romantico/metro.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("metro")) {
+                      iconSrc = "/Icons/Futuristico/metro.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("metro")) {
+                      iconSrc = "/Icons/Notturno/metro.png";
                     } else if (isPastello && sectionNormalized.includes("come raggiungerci") && normalized.includes("metro")) {
                       iconSrc = "/Icons/Pastello/metro.png";
                     } else if (isIllustrativo && sectionNormalized.includes("come raggiungerci") && normalized.includes("metro")) {
@@ -3333,8 +4098,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Oro/metro.png";
                     } else if (normalized.includes("metro")) {
                       iconSrc = "/Icons/Classico/metro.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("noleggio")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "noleggio.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("noleggio")) {
+                      iconSrc = "/Icons/Romantico/noleggio.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("noleggio")) {
                       iconSrc = "/Icons/Oro/noleggio.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("noleggio")) {
+                      iconSrc = "/Icons/Futuristico/noleggio.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("noleggio")) {
+                      iconSrc = "/Icons/Notturno/noleggio.png";
                     } else if (isPastello && sectionNormalized.includes("come raggiungerci") && normalized.includes("noleggio")) {
                       iconSrc = "/Icons/Pastello/noleggio.png";
                     } else if (isIllustrativo && sectionNormalized.includes("come raggiungerci") && normalized.includes("noleggio")) {
@@ -3343,8 +4116,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/noleggio.png";
                     } else if (normalized.includes("noleggio")) {
                       iconSrc = "/Icons/Classico/noleggio.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("traghetto")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "traghetti.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("traghetto")) {
+                      iconSrc = "/Icons/Romantico/traghetto.png?v=2";
                     } else if (isOroLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("traghetto")) {
                       iconSrc = "/Icons/Oro/traghetto.png";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("traghetto")) {
+                      iconSrc = "/Icons/Futuristico/traghetto.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("come raggiungerci") && normalized.includes("traghetto")) {
+                      iconSrc = "/Icons/Notturno/traghetto.png";
                     } else if (isPastello && sectionNormalized.includes("come raggiungerci") && normalized.includes("traghetto")) {
                       iconSrc = "/Icons/Pastello/traghetti.png";
                     } else if (isIllustrativo && sectionNormalized.includes("come raggiungerci") && normalized.includes("traghetto")) {
@@ -3353,6 +4134,18 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/traghetto.png?v=1";
                     } else if (normalized.includes("traghetto")) {
                       iconSrc = "/Icons/Classico/traghetto.png";
+                    } else if (
+                      isRusticoLikeLayout &&
+                      sectionNormalized.includes("come raggiungerci") &&
+                      (isTrainSubsection || normalized.includes("treno"))
+                    ) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "treno.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("come raggiungerci") && isTrainSubsection) {
+                      iconSrc = "/Icons/Romantico/treno.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("come raggiungerci") && isTrainSubsection) {
+                      iconSrc = "/Icons/Futuristico/treno.png";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("come raggiungerci") && isTrainSubsection) {
+                      iconSrc = "/Icons/Notturno/treno.png";
                     } else if (isPastello && sectionNormalized.includes("come raggiungerci") && isTrainSubsection) {
                       iconSrc = "/Icons/Pastello/treno.png?v=2";
                     } else if (isIllustrativo && sectionNormalized.includes("come raggiungerci") && isTrainSubsection) {
@@ -3363,6 +4156,12 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Oro/treno.png";
                     } else if (normalized.includes("treno")) {
                       iconSrc = "/Icons/Classico/treno.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("la casa")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "casa.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("la casa")) {
+                      iconSrc = "/Icons/Romantico/casa.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("la casa")) {
+                      iconSrc = "/Icons/Futuristico/casa.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("la casa")) {
                       iconSrc = "/Icons/Pastello/struttura.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("la casa")) {
@@ -3371,8 +4170,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/struttura.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("la casa")) {
                       iconSrc = "/Icons/Oro/struttura.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("la casa")) {
+                      iconSrc = "/Icons/Notturno/casa.png";
                     } else if (normalized.includes("la casa")) {
                       iconSrc = "/Icons/Classico/struttura.png?v=1";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("cucina")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "cucina.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("cucina")) {
+                      iconSrc = "/Icons/Romantico/cucina.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("cucina")) {
+                      iconSrc = "/Icons/Futuristico/cucina.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("cucina")) {
                       iconSrc = "/Icons/Pastello/cucina.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("cucina")) {
@@ -3381,18 +4188,36 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/cucina.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("cucina")) {
                       iconSrc = "/Icons/Oro/cucina.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("cucina")) {
+                      iconSrc = "/Icons/Notturno/cucina.png";
                     } else if (normalized.includes("cucina")) {
                       iconSrc = "/Icons/Classico/cucina.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "terrazza.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
+                      iconSrc = "/Icons/Romantico/terrazza.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
+                      iconSrc = "/Icons/Futuristico/terrazza.png";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
                       iconSrc = "/Icons/Oro/terrazzo.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
+                      iconSrc = "/Icons/Notturno/terrazza.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
                       iconSrc = "/Icons/Pastello/terrazza.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
                       iconSrc = "/Icons/Illustrativo/terrazza.png";
                     } else if (isModernoLike && sectionNormalized.includes("la nostra struttura") && normalized.includes("terrazza")) {
                       iconSrc = "/Icons/Moderno/terrazza.png?v=1";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("giardino")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "giardino.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("giardino")) {
+                      iconSrc = "/Icons/Romantico/giardino.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("giardino")) {
+                      iconSrc = "/Icons/Futuristico/giardino.png";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("giardino")) {
                       iconSrc = "/Icons/Oro/giardino.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("giardino")) {
+                      iconSrc = "/Icons/Notturno/giardino.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("giardino")) {
                       iconSrc = "/Icons/Pastello/giardino.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("giardino")) {
@@ -3403,8 +4228,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Classico/terrazza.png";
                     } else if (normalized.includes("giardino")) {
                       iconSrc = "/Icons/Classico/giardino.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("piscina")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "piscina.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("piscina")) {
+                      iconSrc = "/Icons/Romantico/piscina.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("piscina")) {
+                      iconSrc = "/Icons/Futuristico/piscina.png";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("piscina")) {
                       iconSrc = "/Icons/Oro/piscina.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("piscina")) {
+                      iconSrc = "/Icons/Notturno/piscina.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("piscina")) {
                       iconSrc = "/Icons/Pastello/piscina.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("piscina")) {
@@ -3413,6 +4246,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/piscina.png?v=1";
                     } else if (normalized.includes("piscina")) {
                       iconSrc = "/Icons/Classico/piscina.png";
+                    } else if (
+                      isRusticoLikeLayout &&
+                      sectionNormalized.includes("la nostra struttura") &&
+                      (normalized.includes("camera da letto") || normalized.includes("letto"))
+                    ) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "letto.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("camera da letto")) {
+                      iconSrc = "/Icons/Romantico/letto.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("camera da letto")) {
+                      iconSrc = "/Icons/Futuristico/letto.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("camera da letto")) {
                       iconSrc = "/Icons/Pastello/letto.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("camera da letto")) {
@@ -3421,8 +4264,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/camera.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("camera da letto")) {
                       iconSrc = "/Icons/Oro/letto.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("camera da letto")) {
+                      iconSrc = "/Icons/Notturno/letto.png";
                     } else if (normalized.includes("camera da letto")) {
                       iconSrc = "/Icons/Classico/camera-letto.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("soggiorno")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "soggiorno.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("soggiorno")) {
+                      iconSrc = "/Icons/Romantico/soggiorno.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("soggiorno")) {
+                      iconSrc = "/Icons/Futuristico/soggiorno.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("soggiorno")) {
                       iconSrc = "/Icons/Pastello/soggiorno.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("soggiorno")) {
@@ -3431,8 +4282,16 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/soggiorno.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("soggiorno")) {
                       iconSrc = "/Icons/Oro/soggiorno.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("soggiorno")) {
+                      iconSrc = "/Icons/Notturno/soggiorno.png";
                     } else if (normalized.includes("soggiorno")) {
                       iconSrc = "/Icons/Classico/salone.png";
+                    } else if (isRusticoLikeLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("bagno")) {
+                      iconSrc = getRusticoLikeIconPath(rusticoIconFolder, "bagno.png");
+                    } else if (isRomanticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("bagno")) {
+                      iconSrc = "/Icons/Romantico/bagno.png?v=2";
+                    } else if (isFuturisticoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("bagno")) {
+                      iconSrc = "/Icons/Futuristico/bagno.png";
                     } else if (isPastello && sectionNormalized.includes("la nostra struttura") && normalized.includes("bagno")) {
                       iconSrc = "/Icons/Pastello/bagno.png";
                     } else if (isIllustrativo && sectionNormalized.includes("la nostra struttura") && normalized.includes("bagno")) {
@@ -3441,6 +4300,8 @@ function parseLinkWithDescription(m: MediaItem) {
                       iconSrc = "/Icons/Moderno/bagno.png?v=1";
                     } else if (isOroLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("bagno")) {
                       iconSrc = "/Icons/Oro/bagno.png?v=1";
+                    } else if (isNotturnoLayout && sectionNormalized.includes("la nostra struttura") && normalized.includes("bagno")) {
+                      iconSrc = "/Icons/Notturno/bagno.png";
                   } else if (normalized.includes("bagno")) {
                       iconSrc = "/Icons/Classico/bagno.png";
                     }
@@ -3458,7 +4319,7 @@ function parseLinkWithDescription(m: MediaItem) {
                       >
                         <div className="classico-editor-modal__sub-heading-row" style={{ alignItems: "center", gap: 10 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: 1 }}>
-                            <span className="classico-editor-modal__icon valigia-icon" aria-hidden="true">
+                            <span className={`classico-editor-modal__icon valigia-icon${isRomanticoSubsection ? " valigia-icon--romantico" : ""}`} aria-hidden="true">
                               <img src={iconSrc} alt="" className="classico-card__icon-img" />
                             </span>
                             <div className="classico-editor-modal__sub-heading" style={{ flex: 1, minWidth: 0 }}>
@@ -3740,7 +4601,7 @@ function parseLinkWithDescription(m: MediaItem) {
                             >
                               <input
                                 type="file"
-                                accept="image/*,video/*"
+                                accept={MEDIA_FILE_ACCEPT}
                                 multiple
                                 style={{ display: "none" }}
                                 onChange={(e) => {
@@ -3900,7 +4761,7 @@ function parseLinkWithDescription(m: MediaItem) {
                                 >
                                   <input
                                     type="file"
-                                    accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.ppt,.pptx,.csv,.zip"
+                                    accept={ATTACHMENT_FILE_ACCEPT}
                                     multiple
                                     style={{ display: "none" }}
                                     onChange={(e) => {
@@ -4060,7 +4921,7 @@ function parseLinkWithDescription(m: MediaItem) {
                         >
                           <input
                             type="file"
-                            accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.ppt,.pptx,.csv,.zip"
+                            accept={ATTACHMENT_FILE_ACCEPT}
                             multiple
                             style={{ display: "none" }}
                             onChange={(e) => {
@@ -4124,6 +4985,7 @@ function parseLinkWithDescription(m: MediaItem) {
     </section>
   );
 }
+
 
 
 

@@ -5,6 +5,35 @@ export type DefaultSectionDefinition = {
   order_index: number;
 };
 
+const normalizeTitle = (title: string) =>
+  title
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+
+function ensureColazioneSection(
+  sections: DefaultSectionDefinition[]
+): DefaultSectionDefinition[] {
+  const hasColazione = sections.some((section) => normalizeTitle(section.title) === "colazione");
+  if (hasColazione) return sections;
+
+  const regoleSection = sections.find((section) => normalizeTitle(section.title) === "regole struttura");
+  const insertIndex = regoleSection?.order_index ?? sections.length;
+  const bumped = sections.map((section) =>
+    section.order_index > insertIndex
+      ? { ...section, order_index: section.order_index + 1 }
+      : { ...section }
+  );
+
+  const withColazione: DefaultSectionDefinition[] = [
+    ...bumped,
+    { title: "Colazione", order_index: insertIndex + 1 }
+  ];
+
+  return withColazione.sort((a, b) => a.order_index - b.order_index);
+}
+
 const SHARED_SECTIONS: DefaultSectionDefinition[] = [
   { title: "Check-in", order_index: 1 },
   { title: "Come Raggiungerci", order_index: 2 },
@@ -82,5 +111,6 @@ const DEFAULT_SECTIONS_BY_LAYOUT: Partial<Record<LayoutId, DefaultSectionDefinit
 
 export function getDefaultSections(layoutType: LayoutId | string | null | undefined): DefaultSectionDefinition[] {
   const normalized = (layoutType ?? "").toLowerCase() as LayoutId;
-  return DEFAULT_SECTIONS_BY_LAYOUT[normalized] ?? SHARED_SECTIONS;
+  const base = DEFAULT_SECTIONS_BY_LAYOUT[normalized] ?? SHARED_SECTIONS;
+  return ensureColazioneSection(base);
 }

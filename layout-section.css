@@ -1,0 +1,197 @@
+:root {
+  --bg: #f7fbfb;
+  --card: #ffffff;
+  --brand-light: #59b8b2;
+  --brand-dark: #0e4b58;
+  --muted: #5d7780;
+  --border: #dbe7ea;
+  --border-strong: #7ac9c3;
+  --shadow: 0 18px 45px rgba(14, 75, 88, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--brand-dark);
+}
+
+.layout-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 20px 72px;
+  display: grid;
+  gap: 24px;
+}
+
+.layout-section__header {
+  display: grid;
+  gap: 10px;
+}
+
+.layout-section__title {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 34px);
+  letter-spacing: 0.01em;
+}
+
+.layout-section__subtitle {
+  margin: 0;
+  max-width: 880px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.layout-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, border-width 0.2s ease;
+  cursor: pointer;
+}
+
+.layout-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  border-width: 2px;
+  box-shadow: 0 22px 50px rgba(14, 75, 88, 0.12);
+}
+
+.layout-thumbnail {
+  width: 80px;
+  height: 60px;
+  border-radius: 14px;
+  border: 1px solid #cfe4e3;
+  background: linear-gradient(180deg, #eef6f5, #ffffff);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-thumbnail::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 40px;
+  border-radius: 10px;
+  border: 2px solid #2f7f8a;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.8;
+}
+
+.icon-grid::after {
+  background-image: linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0);
+  background-size: 100% 2px, 2px 100%, 2px 100%;
+  background-position: 50% 50%, 33% 50%, 67% 50%;
+}
+
+.icon-list::after {
+  background-image: linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0), linear-gradient(#2f7f8a 0 0);
+  background-size: 80% 2px;
+  background-position: 50% 35%, 50% 50%, 50% 65%;
+}
+
+.icon-waves::after {
+  background-image: radial-gradient(circle at 10% 30%, #2f7f8a 22%, transparent 0), radial-gradient(circle at 60% 60%, #2f7f8a 22%, transparent 0), radial-gradient(circle at 30% 75%, #2f7f8a 18%, transparent 0);
+  background-size: 12px 12px, 10px 10px, 8px 8px;
+  background-position: 18px 14px, 36px 28px, 28px 38px;
+}
+
+.icon-sun::after {
+  background-image: radial-gradient(circle, #2f7f8a 35%, transparent 36%), linear-gradient(#2f7f8a 0 0);
+  background-size: 12px 12px, 26px 2px;
+  background-position: 50% 50%, 50% 80%;
+}
+
+.icon-spark::after {
+  background-image: linear-gradient(135deg, #2f7f8a 0 0), linear-gradient(-135deg, #2f7f8a 0 0);
+  background-size: 2px 26px, 2px 26px;
+  background-position: 50% 50%, 50% 50%;
+}
+
+.icon-diamond::after {
+  transform: rotate(45deg);
+  border-radius: 6px;
+}
+
+.icon-illustrated::after {
+  background-image: linear-gradient(90deg, #2f7f8a 0 0), radial-gradient(circle, #2f7f8a 38%, transparent 39%);
+  background-size: 24px 2px, 12px 12px;
+  background-position: 50% 60%, 50% 35%;
+}
+
+.icon-circuit::after {
+  background-image: radial-gradient(circle, #2f7f8a 25%, transparent 26%), linear-gradient(#2f7f8a 0 0);
+  background-size: 8px 8px, 50% 2px;
+  background-position: 32px 18px, 50% 70%;
+}
+
+.icon-heart::after {
+  background-image: radial-gradient(circle at 30% 40%, #2f7f8a 40%, transparent 41%), radial-gradient(circle at 70% 40%, #2f7f8a 40%, transparent 41%), linear-gradient(135deg, transparent 50%, #2f7f8a 50%), linear-gradient(225deg, transparent 50%, #2f7f8a 50%);
+  background-size: 16px 16px, 16px 16px, 16px 16px, 16px 16px;
+  background-position: 30% 40%, 70% 40%, 50% 68%, 50% 68%;
+}
+
+.icon-moon::after {
+  background-image: radial-gradient(circle at 60% 40%, #2f7f8a 55%, transparent 56%), radial-gradient(circle at 70% 40%, #eef6f5 58%, transparent 60%);
+  background-size: 22px 22px, 22px 22px;
+  background-position: 50% 50%, 58% 44%;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e6f3f2;
+  color: #2f7f8a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.layout-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.layout-desc {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .layout-section {
+    padding: 32px 16px 56px;
+  }
+
+  .layout-card {
+    padding: 16px;
+  }
+}

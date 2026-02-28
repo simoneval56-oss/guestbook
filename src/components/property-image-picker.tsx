@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { COVER_FILE_ACCEPT } from "../lib/upload-limits";
 
 type Props = {
   initialUrl?: string | null;
@@ -64,7 +65,13 @@ export function PropertyImagePicker({ initialUrl = null, inputName = "main_image
       )}
       <label className="btn btn-secondary" style={{ cursor: "pointer" }}>
         Carica immagine
-        <input type="file" name={inputName} accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
+        <input
+          type="file"
+          name={inputName}
+          accept={COVER_FILE_ACCEPT}
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
       </label>
     </div>
   );

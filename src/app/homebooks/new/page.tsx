@@ -8,6 +8,10 @@ import { getDefaultSections } from "../../../lib/default-sections";
 import { Database } from "../../../lib/database.types";
 import { generatePublicAccessToken } from "../../../lib/homebook-access";
 
+type NewHomebookPageProps = {
+  searchParams?: Promise<{ layout?: string | string[] }>;
+};
+
 async function createHomebook(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient() as any;
@@ -49,12 +53,18 @@ async function createHomebook(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
-export default async function NewHomebookPage() {
+export default async function NewHomebookPage({ searchParams }: NewHomebookPageProps) {
   const supabase = createServerSupabaseClient() as any;
   const {
     data: { session }
   } = await supabase.auth.getSession();
   if (!session) redirect("/login");
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const requestedLayoutRaw = resolvedSearchParams?.layout;
+  const requestedLayout = Array.isArray(requestedLayoutRaw) ? requestedLayoutRaw[0] : requestedLayoutRaw;
+  const normalizedRequestedLayout = typeof requestedLayout === "string" ? requestedLayout.trim().toLowerCase() : "";
+  const isValidRequestedLayout = LAYOUTS.some((layout) => layout.id === normalizedRequestedLayout);
+  const selectedLayout = isValidRequestedLayout ? normalizedRequestedLayout : DEFAULT_LAYOUT_ID;
   const { data: properties } = await supabase.from("properties").select("id, name");
 
   return (
@@ -65,17 +75,20 @@ export default async function NewHomebookPage() {
       </header>
       <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
         {LAYOUTS.map((option) => (
-          <LayoutCard key={option.id} name={option.name} description={option.description} href="#creator" />
+          <LayoutCard
+            key={option.id}
+            name={option.name}
+            description={option.description}
+            href={`/homebooks/new?layout=${encodeURIComponent(option.id)}#creator`}
+          />
         ))}
       </div>
       <section id="creator" className="card">
         <form action={createHomebook} className="grid" style={{ gap: 12 }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 12 }}>
             <input name="title" placeholder="Titolo homebook" required className="input" />
-            <select name="layout_type" className="input" defaultValue={DEFAULT_LAYOUT_ID}>
-              {LAYOUTS.filter((layout) =>
-                ["classico", "moderno", "pastello", "oro", "illustrativo"].includes(layout.id)
-              ).map((option) => (
+            <select name="layout_type" className="input" defaultValue={selectedLayout}>
+              {LAYOUTS.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.name}
                 </option>

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, createServerSupabaseClient } from "../../../../../lib/supabase/server";
+import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../../../lib/storage-media";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const authClient = createServerSupabaseClient();
     const { data: authData, error: authError } = await authClient.auth.getUser();
@@ -11,14 +12,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 
-    const homebookId = params.id;
+    const { id: homebookId } = await params;
     const url = new URL(request.url);
     const sectionId = url.searchParams.get("section_id");
     if (!homebookId || !sectionId) {
       return NextResponse.json({ error: "missing_params" }, { status: 400 });
     }
 
-    const admin = createAdminClient();
+    const admin = createAdminClient() as any;
     const { data: homebook, error: homebookError } = await admin
       .from("homebooks")
       .select("id, property_id")
@@ -57,7 +58,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
     if (subsError) {
       throw subsError;
     }
-    const subsectionIds = (subsections ?? []).map((sub) => sub.id).filter(Boolean);
+    const subsectionIds = (subsections ?? [])
+      .map((sub: { id: string }) => sub.id)
+      .filter((id: string | null | undefined): id is string => Boolean(id));
 
     const selectFields = "id, section_id, subsection_id, url, type, order_index, description, created_at";
     let mediaQuery = admin.from("media").select(selectFields);
@@ -73,12 +76,20 @@ export async function GET(request: Request, { params }: { params: { id: string }
     if (mediaError) {
       throw mediaError;
     }
+    const signedUrlMap = await createSignedUrlMapForValues(
+      admin,
+      (media ?? []).map((item: { url?: string | null }) => item.url ?? null)
+    );
+    const resolvedMedia = (media ?? []).map((item: any) => ({
+      ...item,
+      url: resolveStorageValueWithSignedMap(item.url, signedUrlMap) ?? item.url
+    }));
 
     return NextResponse.json({
       data: {
         section_id: sectionId,
         subsection_ids: subsectionIds,
-        media: media ?? []
+        media: resolvedMedia
       }
     });
   } catch (error: any) {

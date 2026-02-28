@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,400;1,500;1,700;1,900&family=Poppins:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&family=Quicksand:wght@500;600&family=Roboto+Mono:wght@500;600;700&family=Nanum+Gothic:wght@400;700;800&family=Lora:wght@400;600&family=Roboto+Condensed:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Playfair+Display:ital,wght@1,400;1,500;1,700;1,900&family=Poppins:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&family=Quicksand:wght@500;600&family=Roboto+Mono:wght@500;600;700&family=Nanum+Gothic:wght@400;700;800&family=Lora:wght@400;600&family=Roboto+Condensed:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 :root {
   --bg: #dbe7ea;
@@ -33,6 +33,98 @@ body {
   font-weight: 400;
   font-display: swap;
   src: url("/fonts/ABeeZee/ABeeZee-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Rosseville";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Rosseville/Rosseville-Free.woff2") format("woff2"),
+    url("/fonts/Rosseville/Rosseville%20Free.ttf") format("truetype");
+  /* Limit to glyphs present in the font so missing characters fall back cleanly. */
+  unicode-range: U+0020, U+0021, U+0027, U+002C, U+002E, U+0030-0032, U+0034, U+0036, U+0038, U+003F-005D, U+0061-007A;
+}
+
+@font-face {
+  font-family: "Equinox";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Equinox/Equinox-Typeface/Equinox_Typeface_Dfonts.org/Webfonts/Equinox%20Regular.woff") format("woff"),
+    url("/fonts/Equinox/Equinox-Typeface/Equinox_Typeface_Dfonts.org/Equinox%20Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Equinox";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Equinox/Equinox-Typeface/Equinox_Typeface_Dfonts.org/Webfonts/Equinox%20Bold.woff") format("woff"),
+    url("/fonts/Equinox/Equinox-Typeface/Equinox_Typeface_Dfonts.org/Equinox%20Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Herjuna";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Herjuna/HerjunaRegular-R9xW3.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Herjuna";
+  font-style: oblique;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Herjuna/HerjunaOblique-1jVxZ.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "battistina-script-font";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/battistina-script-font/Battistina.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Quentine-font";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Quentine-font/QuentineDEMO-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Bushcraft";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Bushcraft/Bushcraft%20one.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Arkalune";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Arkalune/Arkalune.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Arkalune";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Arkalune/Arkalune-Italic.otf") format("opentype");
+}
+@font-face {
+  font-family: "Quillbacks";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Quillbacks/QuillbacksDemoRegular.ttf") format("truetype");
 }
 
 .hero-typeface {
@@ -249,6 +341,25 @@ button {
   color: #0e4b58;
 }
 
+.romantico-editor-page {
+  position: relative;
+  color: #3b1f2b;
+}
+
+.futuristico-editor-page {
+  position: relative;
+  color: #2f2544;
+}
+
+.notturno-editor-page {
+  position: relative;
+  color: #e6ebff;
+}
+
+.notturno-editor-page .card {
+  color: #0e4b58;
+}
+
 .moderno-editor-page a,
 .moderno-editor-page .btn,
 .moderno-editor-page .pill,
@@ -298,6 +409,40 @@ button {
 .oro-editor-page textarea::placeholder {
   color: #0e4b58;
   opacity: 0.8;
+}
+
+.romantico-editor-page a,
+.romantico-editor-page .btn,
+.romantico-editor-page .pill,
+.romantico-editor-page .text-muted,
+.romantico-editor-page label,
+.romantico-editor-page input,
+.romantico-editor-page select,
+.romantico-editor-page textarea {
+  color: #3b1f2b;
+}
+
+.futuristico-editor-page a,
+.futuristico-editor-page .btn,
+.futuristico-editor-page .pill,
+.futuristico-editor-page .text-muted,
+.futuristico-editor-page label,
+.futuristico-editor-page input,
+.futuristico-editor-page select,
+.futuristico-editor-page textarea {
+  color: #2f2544;
+}
+
+.romantico-editor-page input::placeholder,
+.romantico-editor-page textarea::placeholder {
+  color: #3b1f2b;
+  opacity: 0.7;
+}
+
+.futuristico-editor-page input::placeholder,
+.futuristico-editor-page textarea::placeholder {
+  color: #6b6085;
+  opacity: 0.75;
 }
 
 .classico-editor-page a,
@@ -369,6 +514,103 @@ button {
   background-size: cover;
   z-index: -1;
   pointer-events: none;
+}
+
+.romantico-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: #fff2f6;
+  background-image: url("/Icons/Romantico/sfondo.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.futuristico-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: #f7f3ff;
+  background-image: url("/Icons/Futuristico/sfondo.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.notturno-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: #080c1a;
+  background-image: url("/Icons/Notturno/sfondo.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 130% auto;
+  background-attachment: fixed;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.romantico-editor-page .classico-sections__grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr)) !important;
+}
+
+.romantico-editor-page .classico-card__title {
+  color: #000000 !important;
+  font-family: "Rosseville", "Playfair Display", "Lora", serif;
+  font-size: 23px !important;
+  letter-spacing: 0.01em;
+}
+
+.romantico-editor-page .classico-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.romantico-editor-page .classico-editor-modal__card {
+  background: linear-gradient(145deg, #fff2f6 0%, #f3d6e2 100%);
+}
+
+.romantico-editor-page .classico-editor-modal__card--check-in .classico-editor-modal__title,
+.romantico-editor-page .classico-editor-modal__card--check-in .classico-editor-modal__sub-heading,
+.romantico-editor-page .classico-editor-modal__title,
+.romantico-editor-page .classico-editor-modal__sub-heading {
+  font-family: "Rosseville", "Playfair Display", "Lora", serif;
+  font-weight: 400;
+}
+
+.romantico-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+.romantico-editor-page .classico-sections__grid .classico-card.classico-card--center {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+}
+
+.romantico-editor-page .classico-sections__grid .classico-card--struttura {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 1024px) {
+  .romantico-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .romantico-editor-page .classico-sections__grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 .dashboard-page .btn,
@@ -1184,8 +1426,9 @@ button {
 }
 
 .layout-title--rustico {
-  font-family: "Outfit", "Inter", system-ui, sans-serif;
-  font-weight: 700;
+  font-family: "Bushcraft", "Lora", serif;
+  font-weight: 400;
+  letter-spacing: 0.04em;
 }
 
 .layout-desc {
@@ -1208,8 +1451,8 @@ button {
 }
 
 .layout-desc--rustico {
-  font-family: "Outfit", "Inter", system-ui, sans-serif;
-  font-weight: 400;
+  font-family: "Lora", "Inter", serif;
+  font-weight: 500;
 }
 
 .layout-title--mediterraneo {
@@ -2659,6 +2902,993 @@ button {
   color: var(--pastello-ink);
 }
 
+.public-homebook--futuristico,
+.futuristico-editor-page {
+  --futuristico-ink: #2f2544;
+  --futuristico-muted: #6b6085;
+  --futuristico-accent: #b0a4d6;
+  --futuristico-glow: #e1daf5;
+  --futuristico-title: #3a2a4d;
+}
+
+.public-homebook--notturno,
+.notturno-editor-page {
+  --notturno-ink: #e6ebff;
+  --notturno-muted: #a6b0d8;
+  --notturno-accent: #6476c2;
+  --notturno-glow: #2a335c;
+  --notturno-title: #e6ebff;
+}
+
+.public-homebook--futuristico {
+  color: var(--futuristico-ink);
+  background-color: #f7f3ff;
+  background-image: url("/Icons/Futuristico/sfondo.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.public-homebook--notturno {
+  color: var(--notturno-ink);
+  background-color: #080c1a;
+  background-image: url("/Icons/Notturno/sfondo.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 130% auto;
+  background-attachment: fixed;
+}
+
+.public-homebook--notturno .classico-sections__panel,
+.notturno-editor-page .classico-sections__panel {
+  background-color: rgba(18, 23, 48, 0.72) !important;
+  background-image:
+    radial-gradient(circle at 20% 12%, rgba(116, 136, 210, 0.22), rgba(20, 28, 56, 0.14) 40%),
+    radial-gradient(circle at top, rgba(70, 86, 150, 0.35), rgba(14, 20, 42, 0.68) 62%),
+    linear-gradient(135deg, rgba(26, 34, 68, 0.72), rgba(10, 14, 28, 0.72));
+  border: 1px solid rgba(100, 118, 194, 0.35) !important;
+  box-shadow: 0 24px 50px rgba(6, 8, 20, 0.45);
+}
+
+.public-homebook--notturno .classico-sections__grid,
+.notturno-editor-page .classico-sections__grid {
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+  justify-content: center;
+  row-gap: 20px;
+  column-gap: 24px;
+}
+
+.public-homebook--notturno .classico-sections__grid .classico-card:nth-of-type(3n),
+.public-homebook--notturno .classico-sections__grid .classico-card.classico-card--center,
+.notturno-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+.notturno-editor-page .classico-sections__grid .classico-card.classico-card--center {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+}
+
+.public-homebook--notturno .classico-sections__grid .classico-card--struttura,
+.notturno-editor-page .classico-sections__grid .classico-card--struttura {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+}
+
+.public-homebook--notturno .classico-card,
+.notturno-editor-page .classico-card {
+  background: linear-gradient(
+    135deg,
+    rgba(33, 46, 86, 0.85) 0%,
+    rgba(33, 46, 86, 0.85) 35%,
+    #121730 100%
+  );
+  border: 1px solid rgba(100, 118, 194, 0.35);
+  box-shadow: 0 18px 36px rgba(5, 7, 15, 0.5);
+  color: var(--notturno-ink);
+  height: 128px;
+}
+
+.public-homebook--notturno .classico-card--slug-colazione,
+.public-homebook--notturno .classico-sections__grid .classico-card--slug-colazione,
+.notturno-editor-page .classico-card--slug-colazione,
+.notturno-editor-page .classico-sections__grid .classico-card--slug-colazione {
+  background: linear-gradient(
+    135deg,
+    rgba(33, 46, 86, 0.85) 0%,
+    rgba(33, 46, 86, 0.85) 35%,
+    #121730 100%
+  ) !important;
+  border-color: rgba(100, 118, 194, 0.35) !important;
+}
+
+.public-homebook--notturno .classico-card__title,
+.notturno-editor-page .classico-card__title {
+  color: rgb(224, 205, 187);
+  font-family: "Quillbacks", "Bushcraft", "Quentine-font", "Herjuna", "Playfair Display", "Lora", serif;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  font-size: clamp(22px, 2.6vw, 30px);
+}
+
+.public-homebook--notturno .classico-card--funz,
+.notturno-editor-page .classico-card--funz {
+  position: relative;
+}
+
+.public-homebook--notturno .classico-card--funz .classico-card__toggle,
+.notturno-editor-page .classico-card--funz .classico-card__toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  margin-top: 0 !important;
+}
+
+.public-homebook--notturno .section-modal__title,
+.public-homebook--notturno .section-modal__sub-title,
+.public-homebook--notturno .classico-editor-modal__title,
+.public-homebook--notturno .classico-editor-modal__sub-heading,
+.notturno-editor-page .classico-editor-modal__title,
+.notturno-editor-page .classico-editor-modal__sub-heading {
+  font-family: "Quillbacks", "Bushcraft", "Quentine-font", "Herjuna", "Playfair Display", "Lora", serif;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+.public-homebook--notturno .classico-card__icon,
+.notturno-editor-page .classico-card__icon {
+  background: rgb(246, 234, 223);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.public-homebook--notturno .classico-editor-modal__backdrop,
+.notturno-editor-page .classico-editor-modal__backdrop {
+  background: rgba(7, 10, 20, 0.65);
+}
+
+.public-homebook--notturno .classico-editor-modal__card,
+.notturno-editor-page .classico-editor-modal__card {
+  background: linear-gradient(145deg, rgba(33, 46, 86, 0.85) 0%, #121730 100%);
+  border-top: 4px solid var(--notturno-accent);
+  color: var(--brand-dark);
+  box-shadow: 0 30px 70px rgba(4, 6, 14, 0.7);
+}
+
+.public-homebook--notturno .classico-editor-modal__title,
+.public-homebook--notturno .classico-editor-modal__sub-heading,
+.public-homebook--notturno .classico-editor-modal__sub-text,
+.public-homebook--notturno .classico-editor-modal__group-title,
+.public-homebook--notturno .classico-editor-modal__muted,
+.public-homebook--notturno .classico-editor-modal__hint,
+.public-homebook--notturno .classico-editor-modal__link-desc,
+.public-homebook--notturno .classico-editor-modal__chip,
+.notturno-editor-page .classico-editor-modal__title,
+.notturno-editor-page .classico-editor-modal__sub-heading,
+.notturno-editor-page .classico-editor-modal__sub-text,
+.notturno-editor-page .classico-editor-modal__group-title,
+.notturno-editor-page .classico-editor-modal__muted,
+.notturno-editor-page .classico-editor-modal__hint,
+.notturno-editor-page .classico-editor-modal__link-desc,
+.notturno-editor-page .classico-editor-modal__chip {
+  color: var(--brand-dark);
+}
+
+.public-homebook--notturno .section-modal__backdrop {
+  background: rgba(7, 10, 20, 0.7);
+}
+
+.public-homebook--notturno .section-modal__card {
+  background: linear-gradient(145deg, rgba(33, 46, 86, 0.85) 0%, #121730 100%);
+  border: 1px solid rgba(100, 118, 194, 0.45);
+  color: var(--notturno-ink);
+  box-shadow: 0 30px 70px rgba(4, 6, 14, 0.7);
+}
+
+.public-homebook--notturno .section-modal__title,
+.public-homebook--notturno .section-modal__sub-title,
+.public-homebook--notturno .subsection-block__text,
+.public-homebook--notturno .section-modal__media-title {
+  color: var(--notturno-ink);
+}
+
+.public-homebook--notturno .section-modal__title,
+.public-homebook--notturno .section-modal__media-title,
+.notturno-editor-page .section-modal__title,
+.notturno-editor-page .section-modal__media-title {
+  color: rgb(224, 205, 187) !important;
+}
+
+.public-homebook--notturno .classico-editor-modal__title,
+.notturno-editor-page .classico-editor-modal__title {
+  color: rgb(224, 205, 187) !important;
+}
+
+.public-homebook--notturno .classico-editor-modal__title,
+.notturno-editor-page .classico-editor-modal__title,
+.public-homebook--notturno .section-modal__title,
+.notturno-editor-page .section-modal__title {
+  font-family: "Quillbacks", "Bushcraft", "Quentine-font", "Herjuna", "Playfair Display", "Lora", serif;
+  font-size: clamp(22px, 1.8vw + 12px, 30px);
+}
+
+.public-homebook--notturno .section-modal__sub-title,
+.notturno-editor-page .section-modal__sub-title {
+  color: var(--notturno-ink) !important;
+}
+
+.public-homebook--notturno .classico-editor-modal__sub-heading,
+.notturno-editor-page .classico-editor-modal__sub-heading {
+  color: var(--brand-dark) !important;
+}
+
+.public-homebook--notturno .classico-editor-modal__sub-heading,
+.notturno-editor-page .classico-editor-modal__sub-heading,
+.public-homebook--notturno .section-modal__sub-title,
+.notturno-editor-page .section-modal__sub-title {
+  font-family: "Quillbacks", "Bushcraft", "Quentine-font", "Herjuna", "Playfair Display", "Lora", serif;
+  font-size: clamp(20px, 1.6vw + 12px, 24px);
+}
+
+.public-homebook--notturno .classico-editor-modal__sub-heading-row .classico-editor-modal__icon,
+.notturno-editor-page .classico-editor-modal__sub-heading-row .classico-editor-modal__icon {
+  background: rgb(224, 205, 187);
+}
+
+.public-homebook--notturno .classico-editor-modal__title-block .classico-editor-modal__icon,
+.notturno-editor-page .classico-editor-modal__title-block .classico-editor-modal__icon {
+  background: rgb(224, 205, 187);
+}
+
+.public-homebook--futuristico .classico-sections__panel,
+.futuristico-editor-page .classico-sections__panel {
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.75), rgba(236, 230, 252, 0.65)) !important;
+  border: 1px solid rgba(176, 164, 214, 0.45) !important;
+  box-shadow: 0 24px 50px rgba(47, 37, 68, 0.14);
+  backdrop-filter: blur(6px);
+}
+
+.public-homebook--futuristico .classico-sections__grid,
+.futuristico-editor-page .classico-sections__grid {
+  grid-template-columns: repeat(4, 200px);
+  justify-content: center;
+  row-gap: 22px;
+  column-gap: 28px;
+}
+
+.public-homebook--futuristico .classico-sections__grid .classico-card,
+.futuristico-editor-page .classico-sections__grid .classico-card {
+  grid-column: auto;
+  justify-self: center;
+  width: 200px;
+  max-width: 200px;
+}
+
+.public-homebook--futuristico .classico-sections__grid .classico-card:nth-of-type(3n),
+.public-homebook--futuristico .classico-sections__grid .classico-card.classico-card--center,
+.futuristico-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+.futuristico-editor-page .classico-sections__grid .classico-card.classico-card--center {
+  grid-column: auto !important;
+  justify-self: center !important;
+  width: 200px !important;
+}
+
+.public-homebook--futuristico .classico-sections__grid .classico-card--struttura,
+.futuristico-editor-page .classico-sections__grid .classico-card--struttura {
+  grid-column: auto !important;
+  justify-self: center !important;
+  width: 200px !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  border: 1px solid rgba(176, 164, 214, 0.5) !important;
+  box-shadow: 0 18px 40px rgba(47, 37, 68, 0.14) !important;
+}
+
+.public-homebook--futuristico .classico-card,
+.futuristico-editor-page .classico-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(176, 164, 214, 0.5);
+  box-shadow: 0 18px 40px rgba(47, 37, 68, 0.14);
+  color: var(--futuristico-ink);
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  min-height: 150px;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+
+.public-homebook--futuristico .classico-card__title,
+.futuristico-editor-page .classico-card__title {
+  color: var(--futuristico-title);
+  font-family: "Equinox", "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-align: center;
+}
+
+.public-homebook--futuristico .classico-card__icon,
+.futuristico-editor-page .classico-card__icon {
+  width: 78px;
+  height: 78px;
+  border-radius: 18px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.public-homebook--futuristico .classico-card__icon-img,
+.futuristico-editor-page .classico-card__icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+}
+
+.public-homebook--futuristico .classico-card__chevron,
+.futuristico-editor-page .classico-card__chevron {
+  display: none;
+}
+
+.public-homebook--futuristico .classico-editor-modal__backdrop,
+.futuristico-editor-page .classico-editor-modal__backdrop {
+  background: rgba(33, 24, 52, 0.55);
+}
+
+.public-homebook--futuristico .classico-editor-modal__card,
+.futuristico-editor-page .classico-editor-modal__card {
+  background: linear-gradient(145deg, #f9f6ff 0%, #e6ddf7 100%);
+  border-top: 4px solid var(--futuristico-accent);
+  color: var(--futuristico-ink);
+  box-shadow: 0 30px 70px rgba(47, 37, 68, 0.2);
+}
+
+.public-homebook--futuristico .classico-editor-modal__title,
+.public-homebook--futuristico .classico-editor-modal__sub-heading,
+.futuristico-editor-page .classico-editor-modal__title,
+.futuristico-editor-page .classico-editor-modal__sub-heading {
+  font-family: "Equinox", "Space Grotesk", "Inter", system-ui, sans-serif;
+  color: var(--futuristico-title);
+  font-weight: 700;
+}
+
+.public-homebook--futuristico .classico-editor-modal__sub-heading,
+.futuristico-editor-page .classico-editor-modal__sub-heading {
+  color: var(--futuristico-title);
+}
+
+.public-homebook--futuristico .section-modal__title,
+.public-homebook--futuristico .section-modal__sub-title {
+  font-family: "Equinox", "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--futuristico-title);
+}
+
+.public-homebook--futuristico .subsection-block__text {
+  color: var(--futuristico-title);
+}
+
+.public-homebook--futuristico .classico-editor-modal__sub-text,
+.futuristico-editor-page .classico-editor-modal__sub-text {
+  color: var(--futuristico-title);
+}
+
+/* Futuristico: forza il colore titoli nei popup (editor + pubblico) */
+.futuristico-editor-page .classico-editor-modal__title,
+.futuristico-editor-page .classico-editor-modal__sub-heading,
+.futuristico-editor-page .classico-editor-modal__sub-text,
+.public-homebook--futuristico .section-modal__title,
+.public-homebook--futuristico .section-modal__sub-title,
+.public-homebook--futuristico .subsection-block__text {
+  color: var(--futuristico-title) !important;
+}
+
+/* Futuristico: popup colazione in prugna */
+.public-homebook--futuristico .classico-editor-modal__card--colazione,
+.futuristico-editor-page .classico-editor-modal__card--colazione {
+  color: var(--futuristico-title);
+}
+
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__title,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__sub-text,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__group-title,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__muted,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__hint,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__link-desc,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__chip,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__title,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-text,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__group-title,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__muted,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__hint,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__link-desc,
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__chip {
+  color: var(--futuristico-title) !important;
+}
+
+/* Futuristico: regole struttura titoli in prugna */
+.futuristico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.futuristico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.public-homebook--futuristico .section-modal__card--regole-struttura .section-modal__title,
+.public-homebook--futuristico .section-modal__card--regole-struttura .section-modal__sub-title {
+  color: var(--futuristico-title) !important;
+}
+
+@media (max-width: 1160px) {
+  .public-homebook--futuristico .classico-sections__grid,
+  .futuristico-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(3, 200px);
+  }
+}
+
+@media (max-width: 920px) {
+  .public-homebook--futuristico .classico-sections__grid,
+  .futuristico-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(2, 200px);
+  }
+}
+
+@media (max-width: 620px) {
+  .public-homebook--futuristico .classico-sections__grid,
+  .futuristico-editor-page .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .public-homebook--futuristico .classico-sections__grid .classico-card,
+  .futuristico-editor-page .classico-sections__grid .classico-card,
+  .public-homebook--futuristico .classico-sections__grid .classico-card:nth-of-type(3n),
+  .public-homebook--futuristico .classico-sections__grid .classico-card.classico-card--center,
+  .futuristico-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+  .futuristico-editor-page .classico-sections__grid .classico-card.classico-card--center,
+  .public-homebook--futuristico .classico-sections__grid .classico-card--struttura,
+  .futuristico-editor-page .classico-sections__grid .classico-card--struttura {
+    width: min(100%, 240px) !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .public-homebook--notturno .classico-sections__grid,
+  .notturno-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .public-homebook--notturno .classico-sections__grid,
+  .notturno-editor-page .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.public-homebook--romantico {
+  --romantico-ink: #3b1f2b;
+  --romantico-muted: #6f5562;
+  --romantico-blush: #f6c2d1;
+  --romantico-rose: #e78aa8;
+  --romantico-cream: #fff7f9;
+  --romantico-lavender: #ead7f2;
+  color: var(--romantico-ink);
+  background-color: #fff2f6;
+  background-image: url("/Icons/Romantico/sfondo.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.public-homebook--romantico .base-hero {
+  background: linear-gradient(140deg, rgba(255, 246, 250, 0.98), rgba(249, 233, 244, 0.98));
+  color: var(--romantico-ink);
+  border-color: rgba(231, 138, 168, 0.4);
+  box-shadow: 0 20px 46px rgba(69, 37, 52, 0.16);
+}
+
+.public-homebook--romantico .base-hero::after {
+  background: radial-gradient(circle, rgba(246, 194, 209, 0.42), rgba(234, 215, 242, 0));
+  opacity: 0.9;
+}
+
+.public-homebook--romantico .base-hero__eyebrow {
+  background: rgba(246, 194, 209, 0.35);
+  border-color: rgba(231, 138, 168, 0.5);
+  color: var(--romantico-ink);
+}
+
+.public-homebook--romantico .base-hero__title {
+  color: var(--romantico-ink);
+  font-family: "Playfair Display", "Inter", serif;
+  letter-spacing: 0.01em;
+}
+
+.public-homebook--romantico .base-hero__subtitle {
+  color: var(--romantico-muted);
+}
+
+.public-homebook--romantico .base-hero__meta span {
+  background: rgba(234, 215, 242, 0.5);
+  border-color: rgba(231, 138, 168, 0.35);
+  color: var(--romantico-ink);
+}
+
+.public-homebook--romantico .section-panel {
+  background: rgba(255, 247, 249, 0.95);
+  border: 1px solid rgba(231, 138, 168, 0.35);
+  box-shadow: 0 18px 42px rgba(69, 37, 52, 0.12);
+}
+
+.public-homebook--romantico .section-panel__title {
+  color: var(--romantico-ink);
+}
+
+.public-homebook--romantico .section-panel__subtitle {
+  color: var(--romantico-muted);
+}
+
+.public-homebook--romantico .section-button {
+  border-color: rgba(234, 215, 242, 0.85);
+  background: linear-gradient(180deg, #ffffff 0%, #fff4f8 55%, #fdf1f7 100%);
+}
+
+.public-homebook--romantico .section-button__badge {
+  background: rgba(231, 138, 168, 0.28);
+  border: 1px solid rgba(231, 138, 168, 0.5);
+  color: var(--romantico-ink);
+}
+
+.public-homebook--romantico .section-button__meta,
+.public-homebook--romantico .section-button__title {
+  color: var(--romantico-ink);
+}
+
+.public-homebook--romantico .section-button__hint {
+  color: var(--romantico-muted);
+}
+
+.public-homebook--romantico .section-button.is-active {
+  border-color: var(--romantico-rose);
+  background: linear-gradient(180deg, rgba(246, 194, 209, 0.35) 0%, rgba(234, 215, 242, 0.35) 100%);
+  box-shadow: 0 20px 46px rgba(69, 37, 52, 0.16);
+}
+
+.public-homebook--romantico .section-modal__backdrop {
+  background: rgba(59, 31, 43, 0.35);
+}
+
+.public-homebook--romantico .section-modal__card {
+  background: linear-gradient(145deg, #fff2f6 0%, #f3d6e2 100%);
+  border-top: 4px solid var(--romantico-rose);
+  box-shadow: 0 24px 52px rgba(69, 37, 52, 0.18);
+}
+
+.public-homebook--romantico .section-modal__title {
+  color: var(--romantico-ink);
+  font-family: "Rosseville", "Playfair Display", "Lora", serif;
+  font-weight: 400;
+}
+
+.public-homebook--romantico .section-modal__sub-title,
+.public-homebook--romantico .subsection-block__text {
+  color: var(--romantico-muted);
+}
+
+.public-homebook--romantico .section-modal__sub-title {
+  font-family: "Rosseville", "Playfair Display", "Lora", serif;
+  font-weight: 400;
+}
+
+.romantico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.romantico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
+  color: #000000 !important;
+}
+
+.public-homebook--romantico .section-modal__card--regole-struttura .section-modal__title,
+.public-homebook--romantico .section-modal__card--regole-struttura .section-modal__sub-title {
+  color: #000000 !important;
+}
+
+.public-homebook--romantico .media-chip {
+  background: rgba(234, 215, 242, 0.45);
+  border-color: rgba(231, 138, 168, 0.35);
+  color: var(--romantico-ink);
+}
+
+.public-homebook--romantico .media-chip__type {
+  color: var(--romantico-ink);
+}
+
+.public-homebook--romantico .classico-sections__grid {
+  grid-template-columns: repeat(3, minmax(180px, 1fr)) !important;
+}
+
+.public-homebook--romantico .classico-card__title {
+  color: #000000 !important;
+  font-family: "Rosseville", "Playfair Display", "Lora", serif;
+  font-size: 23px !important;
+  letter-spacing: 0.01em;
+}
+
+.public-homebook--romantico .classico-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.public-homebook--romantico .classico-sections__grid .classico-card:nth-of-type(3n),
+.public-homebook--romantico .classico-sections__grid .classico-card.classico-card--center {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+}
+
+.public-homebook--romantico .classico-sections__grid .classico-card--struttura {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.public-homebook--rustico {
+  --rustico-ink: #3b2a1d;
+  --rustico-muted: #6b5847;
+  --rustico-sand: #f7e3d3;
+  --rustico-paper: #fff6ef;
+  --rustico-peach: #f1d2bd;
+  --rustico-sage: #d9eadf;
+  --rustico-border: #e2d4c2;
+  --rustico-amber: #b6763b;
+  --rustico-wood: #6f4526;
+  --rustico-olive: #7a6a40;
+  --essenziale-accent: var(--rustico-amber);
+  --border: var(--rustico-border);
+  --muted: var(--rustico-muted);
+  --text: var(--rustico-ink);
+  color: var(--rustico-ink);
+  font-family: "Lora", "Inter", serif;
+  background: #e1efe6;
+  border: 1px solid rgba(120, 84, 52, 0.18);
+  border-radius: 24px;
+  padding: clamp(12px, 2vw, 18px);
+}
+
+.rustico-editor-page .classico-editor-preview {
+  --rustico-ink: #3b2a1d;
+  --rustico-muted: #6b5847;
+  --rustico-sand: #f7e3d3;
+  --rustico-paper: #fff6ef;
+  --rustico-peach: #f1d2bd;
+  --rustico-sage: #d9eadf;
+  --rustico-border: #e2d4c2;
+  --rustico-amber: #b6763b;
+  --rustico-wood: #6f4526;
+  --rustico-olive: #7a6a40;
+  --border: var(--rustico-border);
+  --muted: var(--rustico-muted);
+  --text: var(--rustico-ink);
+  color: var(--rustico-ink);
+  font-family: "Lora", "Inter", serif;
+}
+
+.public-homebook--rustico.base-layout--essenziale .base-hero {
+  background: linear-gradient(135deg, #342116 0%, #5a3a24 50%, #7a4d2f 100%);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 24px 52px rgba(36, 22, 12, 0.4);
+  color: #fff6e6;
+}
+
+.public-homebook--rustico.base-layout--essenziale .base-hero::after {
+  background: radial-gradient(circle, rgba(255, 214, 170, 0.45), rgba(90, 58, 36, 0));
+  opacity: 0.85;
+}
+
+.public-homebook--rustico .base-hero__eyebrow {
+  background: rgba(255, 214, 170, 0.18);
+  border-color: rgba(255, 214, 170, 0.4);
+  color: #ffe9cf;
+  font-family: "Outfit", "Inter", system-ui, sans-serif;
+}
+
+.public-homebook--rustico .base-hero__title {
+  color: #fff6e6;
+  font-family: "Bushcraft", "Lora", serif;
+  letter-spacing: 0.02em;
+}
+
+.public-homebook--rustico .base-hero__subtitle {
+  color: rgba(255, 239, 220, 0.9);
+}
+
+.public-homebook--rustico .base-hero__meta span {
+  background: rgba(255, 214, 170, 0.2);
+  border-color: rgba(255, 214, 170, 0.38);
+  color: #ffe9cf;
+}
+
+.public-homebook--rustico .public-homebook-cover__title {
+  font-family: "Bushcraft", "Lora", serif;
+  color: var(--rustico-wood);
+  letter-spacing: 0.02em;
+}
+
+.public-homebook--rustico .public-homebook-cover__address {
+  color: var(--rustico-muted);
+  font-family: "Outfit", "Inter", system-ui, sans-serif;
+}
+
+.public-homebook--rustico .public-homebook-cover__description {
+  color: var(--rustico-muted);
+  font-family: "Lora", "Inter", serif;
+}
+
+.public-homebook--rustico .section-panel {
+  background: linear-gradient(180deg, #fff4ea 0%, #f2e0d1 60%, #e3f0e7 100%);
+  border-color: rgba(120, 84, 52, 0.2);
+  box-shadow: 0 18px 40px rgba(85, 56, 30, 0.14);
+}
+
+.public-homebook--rustico .section-panel__title {
+  color: var(--rustico-ink);
+  font-family: "Lora", "Inter", serif;
+}
+
+.public-homebook--rustico .section-panel__subtitle {
+  color: var(--rustico-muted);
+}
+
+.public-homebook--rustico .section-button {
+  border-color: rgba(120, 84, 52, 0.22);
+  background: linear-gradient(180deg, #fff2e7 0%, #f1dccb 55%, #e1efe6 100%);
+  box-shadow: 0 12px 26px rgba(85, 56, 30, 0.12);
+}
+
+.public-homebook--rustico .section-button:hover {
+  border-color: var(--rustico-amber);
+  box-shadow: 0 18px 38px rgba(85, 56, 30, 0.2);
+}
+
+.public-homebook--rustico.base-layout--essenziale .section-button.is-active {
+  border-color: var(--rustico-amber);
+  background: linear-gradient(180deg, #f4ddca 0%, #fff6ef 100%);
+  box-shadow: 0 20px 44px rgba(85, 56, 30, 0.2);
+}
+
+.public-homebook--rustico .section-button__badge {
+  background: rgba(182, 118, 59, 0.2);
+  border-color: rgba(182, 118, 59, 0.45);
+  color: var(--rustico-wood);
+}
+
+.public-homebook--rustico .section-button__meta {
+  color: #7a5130;
+  font-family: "Outfit", "Inter", system-ui, sans-serif;
+}
+
+.public-homebook--rustico .section-button__title {
+  color: var(--rustico-ink);
+  font-family: "Lora", "Inter", serif;
+}
+
+.public-homebook--rustico .section-button__hint {
+  color: var(--rustico-muted);
+}
+
+.public-homebook--rustico .homebook-search__input,
+.rustico-editor-page .homebook-search__input {
+  background: #fffaf4;
+  border-color: rgba(120, 84, 52, 0.28);
+  color: var(--rustico-ink);
+}
+
+.public-homebook--rustico .homebook-search__input::placeholder,
+.rustico-editor-page .homebook-search__input::placeholder {
+  color: rgba(107, 88, 71, 0.7);
+}
+
+.public-homebook--rustico .btn-secondary,
+.rustico-editor-page .btn-secondary {
+  border-color: rgba(120, 84, 52, 0.4);
+  color: var(--rustico-wood);
+}
+
+.public-homebook--rustico .btn-secondary:hover,
+.rustico-editor-page .btn-secondary:hover {
+  background: rgba(255, 239, 220, 0.7);
+  box-shadow: 0 10px 24px rgba(85, 56, 30, 0.18);
+}
+
+.public-homebook--rustico .media-chip {
+  background: rgba(242, 228, 211, 0.8);
+  border-color: rgba(120, 84, 52, 0.24);
+  color: var(--rustico-ink);
+}
+
+.public-homebook--rustico .media-chip__type {
+  color: var(--rustico-wood);
+}
+
+.public-homebook--rustico .media-chip__desc {
+  color: var(--rustico-muted);
+}
+
+.public-homebook--rustico .section-modal__backdrop {
+  background: rgba(46, 30, 18, 0.55);
+}
+
+.public-homebook--rustico .section-modal__card {
+  background: linear-gradient(145deg, #fff8ef 0%, #f3e1cd 100%);
+  border-color: rgba(120, 84, 52, 0.3);
+  box-shadow: 0 24px 56px rgba(46, 30, 18, 0.28);
+}
+
+.public-homebook--rustico .section-modal__title,
+.public-homebook--rustico .section-modal__sub-title,
+.rustico-preview .section-modal__title,
+.rustico-preview .section-modal__sub-title,
+.rustico-editor-page .section-modal__title,
+.rustico-editor-page .section-modal__sub-title {
+  font-family: "Arkalune", "Bushcraft", "Lora", serif;
+  color: var(--rustico-ink);
+}
+
+.public-homebook--rustico .section-modal__eyebrow,
+.public-homebook--rustico .section-modal__media-title {
+  color: var(--rustico-olive);
+  font-family: "Outfit", "Inter", system-ui, sans-serif;
+}
+
+.public-homebook--rustico .classico-sections__panel,
+.rustico-editor-page .classico-editor-preview .classico-sections__panel {
+  background: linear-gradient(180deg, #f7eee5 0%, #e9e9e3 50%, #e1efe6 100%);
+  border: 1px solid rgba(120, 84, 52, 0.22);
+  box-shadow: 0 28px 60px rgba(85, 56, 30, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.public-homebook--rustico .classico-sections__grid,
+.rustico-editor-page .classico-sections__grid {
+  grid-template-columns: repeat(4, minmax(190px, 1fr));
+  gap: 20px;
+  justify-content: stretch;
+}
+
+.public-homebook--rustico .classico-card,
+.rustico-editor-page .classico-card {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 18px 16px;
+  min-height: 156px;
+  background: transparent !important;
+  border: 1px solid rgba(120, 84, 52, 0.22);
+  box-shadow: none;
+  font-family: "Lora", "Inter", serif;
+  font-style: normal;
+}
+
+.public-homebook--rustico .classico-card:hover,
+.rustico-editor-page .classico-card:hover {
+  border-color: rgba(182, 118, 59, 0.55);
+  box-shadow: none;
+}
+
+.public-homebook--rustico .classico-card__icon,
+.rustico-editor-page .classico-card__icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 18px;
+  background: transparent;
+  border: none;
+}
+
+.public-homebook--rustico .classico-card__icon-img,
+.rustico-editor-page .classico-card__icon-img {
+  width: 100%;
+  height: 100%;
+}
+
+.public-homebook--rustico .classico-card__title,
+.rustico-preview .classico-card__title,
+.rustico-editor-page .classico-card__title {
+  flex: 0;
+  font-family: "Arkalune", "Bushcraft", "Lora", serif;
+  font-weight: 400;
+  font-size: clamp(18px, 2.2vw, 22px);
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  color: var(--rustico-ink);
+  font-style: normal;
+}
+
+.public-homebook--rustico .classico-card__chevron,
+.rustico-editor-page .classico-card__chevron {
+  display: none;
+}
+
+.public-homebook--rustico .classico-sections__grid .classico-card:nth-of-type(3n),
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--center,
+.public-homebook--rustico .classico-sections__grid .classico-card--struttura,
+.rustico-editor-page .classico-sections__grid .classico-card:nth-of-type(3n),
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--center,
+.rustico-editor-page .classico-sections__grid .classico-card--struttura {
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+  background: linear-gradient(180deg, #fffaf3 0%, #f1e3d1 100%) !important;
+  box-shadow: 0 16px 32px rgba(85, 56, 30, 0.18) !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__backdrop,
+.rustico-editor-page .classico-editor-modal__backdrop {
+  background: rgba(46, 30, 18, 0.55);
+}
+
+.public-homebook--rustico .classico-editor-modal__card,
+.rustico-editor-page .classico-editor-modal__card {
+  background: linear-gradient(145deg, #fff8ef 0%, #f1dfcb 100%);
+  border: 1px solid rgba(120, 84, 52, 0.3);
+  box-shadow: 0 30px 68px rgba(46, 30, 18, 0.3);
+  color: var(--rustico-ink);
+  font-family: "Lora", "Inter", serif;
+}
+
+.public-homebook--rustico .classico-editor-modal__title,
+.public-homebook--rustico .classico-editor-modal__sub-heading,
+.rustico-preview .classico-editor-modal__title,
+.rustico-preview .classico-editor-modal__sub-heading,
+.rustico-editor-page .classico-editor-modal__title,
+.rustico-editor-page .classico-editor-modal__sub-heading {
+  color: var(--rustico-ink) !important;
+  font-family: "Arkalune", "Bushcraft", "Lora", serif;
+  font-weight: 400;
+}
+
+@media (max-width: 1200px) {
+  .public-homebook--rustico .classico-sections__grid,
+  .rustico-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 920px) {
+  .public-homebook--rustico .classico-sections__grid,
+  .rustico-editor-page .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .public-homebook--rustico .classico-sections__grid,
+  .rustico-editor-page .classico-sections__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .public-homebook--romantico .classico-sections__grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .public-homebook--romantico .classico-sections__grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 @media (max-width: 920px) {
   .aurora-grid {
     grid-template-columns: 1fr;
@@ -3307,6 +4537,13 @@ button {
   box-shadow: none !important;
 }
 
+.public-homebook--romantico .classico-sections__panel,
+.public-homebook--romantico .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.romantico-editor-page .classico-sections__panel,
+.romantico-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: #fae6ed !important;
+}
+
 .pastello-layout .classico-sections__panel,
 .pastello-editor-page .classico-sections__panel,
 .pastello-editor-page .classico-editor-preview .classico-sections__panel {
@@ -3443,6 +4680,14 @@ button {
 .public-homebook--classico .classico-card--slug-colazione,
 .public-homebook .classico-card--slug-colazione {
   background: linear-gradient(135deg, rgb(246, 234, 223) 20%, rgb(224, 205, 187) 100%);
+}
+
+.public-homebook--futuristico .classico-card--slug-colazione,
+.public-homebook--futuristico .classico-sections__grid .classico-card--slug-colazione,
+.futuristico-editor-page .classico-card--slug-colazione,
+.futuristico-editor-page .classico-sections__grid .classico-card--slug-colazione {
+  background: transparent !important;
+  border-color: rgba(176, 164, 214, 0.45) !important;
 }
 
 .classico-layout .classico-card--slug-cosa-visitare,
@@ -3994,7 +5239,7 @@ button {
   border: none;
 }
 
-/* Pastello: sposta "Check-in" più a destra (colonna 3) */
+/* Pastello: sposta "Check-in" pi? a destra (colonna 3) */
 .pastello-layout .classico-card--slug-check-in,
 .pastello-editor-page .classico-card--slug-check-in,
 .pastello-preview .classico-card--slug-check-in,
@@ -4383,6 +5628,11 @@ img[src*="/Moderno/servizi"] {
   background: transparent !important;
   box-shadow: none !important;
   place-items: center;
+}
+
+.public-homebook--notturno .classico-card__icon,
+.notturno-editor-page .classico-card__icon {
+  background: rgb(224, 205, 187) !important;
 }
 
 
@@ -5057,7 +6307,7 @@ img[src*="/Moderno/servizi"] {
   height: 78% !important;
   transform: scale(1.1) !important;
   transform-origin: center !important;
-  /* Tratto più spesso solo per il check-in nel layout moderno */
+  /* Tratto pi? spesso solo per il check-in nel layout moderno */
   filter: grayscale(100%) contrast(1.05)
     drop-shadow(0 0 0 #1f3f45)
     drop-shadow(0 0 0 #1f3f45)
@@ -5065,7 +6315,7 @@ img[src*="/Moderno/servizi"] {
     drop-shadow(0 0 0 #1f3f45) !important;
 }
 
-/* Layout moderno: linee più sottili per l'icona Servizi */
+/* Layout moderno: linee pi? sottili per l'icona Servizi */
 .moderno-layout .moderno-card.classico-card--slug-servizi .classico-card__icon-img,
 .moderno-preview .moderno-card.classico-card--slug-servizi .classico-card__icon-img {
   transform: scale(1) !important;
@@ -5168,6 +6418,26 @@ img[src*="/Moderno/servizi"] {
   display: none;
 }
 
+.romantico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--romantico .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.futuristico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--futuristico .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.rustico-preview .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.rustico-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--rustico .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
+
+.notturno-editor-page .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row,
+.public-homebook--notturno .classico-editor-modal__card--colazione .classico-editor-modal__sub-heading-row {
+  display: none;
+}
 .classico-editor-modal__header {
   display: flex;
   align-items: center;
@@ -5211,7 +6481,7 @@ img[src*="/Moderno/servizi"] {
   transform-origin: center !important;
 }
 
-/* Titolo popup: mantieni icona più grande (come prima) */
+/* Titolo popup: mantieni icona pi? grande (come prima) */
 .classico-editor-modal__title-block .classico-editor-modal__icon {
   width: 48px;
   height: 48px;
@@ -5456,6 +6726,29 @@ img[src*="/Moderno/servizi"] {
   color: #f59a4b !important;
 }
 
+/* Layout notturno: usa i colori del tema invece dell'arancione di regole struttura */
+.public-homebook--notturno .classico-editor-modal__title--regole-struttura,
+.notturno-editor-page .classico-editor-modal__title--regole-struttura,
+.public-homebook--notturno .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.notturno-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title {
+  color: rgb(224, 205, 187) !important;
+}
+
+.public-homebook--notturno .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.notturno-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
+  color: var(--brand-dark) !important;
+}
+
+.public-homebook--notturno .section-modal__card--regole-struttura .section-modal__title,
+.notturno-editor-page .section-modal__card--regole-struttura .section-modal__title {
+  color: rgb(224, 205, 187) !important;
+}
+
+.public-homebook--notturno .section-modal__card--regole-struttura .section-modal__sub-title,
+.notturno-editor-page .section-modal__card--regole-struttura .section-modal__sub-title {
+  color: var(--notturno-ink) !important;
+}
+
 .oro-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
 .oro-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
 .classico-editor-modal__card--oro.classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
@@ -5537,7 +6830,7 @@ img[src*="/Moderno/servizi"] {
   height: 100% !important;
   transform: none !important;
   transform-origin: center !important;
-  /* tratto più spesso per il check-in nel layout classico (anche anteprima) */
+  /* tratto pi? spesso per il check-in nel layout classico (anche anteprima) */
   filter: contrast(1.3)
     drop-shadow(0 0 0 #1f3f45)
     drop-shadow(0 0 0 #1f3f45)
@@ -5684,6 +6977,32 @@ img[src*="/Moderno/servizi"] {
   object-fit: contain;
   filter: drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55) drop-shadow(0 0 0 #214c55);
   transform: scale(1.08);
+}
+
+.valigia-icon--romantico {
+  width: 68px;
+  height: 68px;
+  background: transparent;
+  border: none;
+}
+
+.valigia-icon--romantico img {
+  transform: scale(1.12);
+}
+
+.public-homebook--futuristico .valigia-icon,
+.futuristico-editor-page .valigia-icon {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.public-homebook--rustico .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .classico-editor-modal__sub-heading {
@@ -6787,4 +8106,676 @@ img[src*="/Moderno/servizi"] {
 .pastello-editor-page .classico-card--slug-check-in .classico-card__title,
 .pastello-preview .classico-card--slug-check-in .classico-card__title {
   margin-top: 0;
+}
+
+
+/* Rustico palette overrides */
+.rustico-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: linear-gradient(180deg, #f7eee5 0%, #e9e9e3 50%, #e1efe6 100%) !important;
+  border: 1px solid rgba(120, 84, 52, 0.22) !important;
+  box-shadow: 0 28px 60px rgba(85, 56, 30, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+.rustico-editor-page .classico-sections__grid .classico-card,
+.rustico-editor-page .classico-card,
+.public-homebook--rustico .classico-card {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug"],
+.rustico-editor-page .classico-card--funz,
+.rustico-editor-page .classico-card--struttura {
+  background: transparent !important;
+}
+
+/* Rustico preview/background overrides */
+.rustico-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #e1efe6;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.rustico-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: linear-gradient(180deg, #f7eee5 0%, #e9e9e3 50%, #e1efe6 100%) !important;
+  border: 1px solid rgba(120, 84, 52, 0.22) !important;
+  box-shadow: 0 28px 60px rgba(85, 56, 30, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+.rustico-preview .classico-card,
+.rustico-preview .classico-card[class*="classico-card--slug"],
+.rustico-preview .classico-card--funz,
+.rustico-preview .classico-card--struttura {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+
+/* Rustico panel blend to page background */
+.public-homebook--rustico .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.rustico-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.rustico-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: linear-gradient(180deg, rgba(247, 238, 229, 0.98) 0%, rgba(241, 216, 190, 0.92) 36%, rgba(230, 237, 227, 0.95) 72%, rgba(225, 239, 230, 1) 100%) !important;
+  border: none !important;
+  box-shadow: 0 22px 48px rgba(85, 56, 30, 0.12), 0 0 62px rgba(225, 239, 230, 0.62) !important;
+}
+/* Rustico panel edge fade */
+.public-homebook--rustico .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.rustico-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.rustico-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  position: relative;
+  border: none !important;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.public-homebook--rustico .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel)::after,
+.rustico-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel)::after,
+.rustico-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(225, 239, 230, 0) 55%, rgba(218, 233, 222, 0.45) 80%, rgba(210, 227, 214, 0.75) 100%);
+}
+/* Rustico check-in popup green background */
+.public-homebook--rustico .section-modal__card--check-in,
+.rustico-preview .section-modal__card--check-in,
+.rustico-editor-page .section-modal__card--check-in,
+.public-homebook--rustico .classico-editor-modal__card--check-in,
+.rustico-preview .classico-editor-modal__card--check-in,
+.rustico-editor-page .classico-editor-modal__card--check-in {
+  background: linear-gradient(145deg, rgba(244, 251, 246, 0.96) 0%, #d9eadf 100%) !important;
+}
+/* Rustico check-in popup subsection icons larger */
+.public-homebook--rustico .classico-editor-modal__card--check-in .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__card--check-in .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__card--check-in .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__card--check-in .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-preview .classico-editor-modal__card--check-in .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-editor-page .classico-editor-modal__card--check-in .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img {
+  transform: scale(1.18) !important;
+}
+/* Rustico come raggiungerci popup subsection icons larger */
+.public-homebook--rustico .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-preview .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-editor-page .classico-editor-modal__card--come-raggiungerci .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img {
+  transform: scale(1.18) !important;
+}
+/* Rustico la nostra struttura popup background */
+.public-homebook--rustico .section-modal__card--la-nostra-struttura,
+.rustico-preview .section-modal__card--la-nostra-struttura,
+.rustico-editor-page .section-modal__card--la-nostra-struttura,
+.public-homebook--rustico .classico-editor-modal__card--la-nostra-struttura,
+.rustico-preview .classico-editor-modal__card--la-nostra-struttura,
+.rustico-editor-page .classico-editor-modal__card--la-nostra-struttura {
+  background: linear-gradient(145deg, rgba(244, 251, 246, 0.96) 0%, #d9eadf 100%) !important;
+}
+/* Rustico la nostra struttura popup text color */
+.public-homebook--rustico .section-modal__card--la-nostra-struttura .section-modal__title,
+.public-homebook--rustico .section-modal__card--la-nostra-struttura .section-modal__sub-title,
+.rustico-preview .section-modal__card--la-nostra-struttura .section-modal__title,
+.rustico-preview .section-modal__card--la-nostra-struttura .section-modal__sub-title,
+.rustico-editor-page .section-modal__card--la-nostra-struttura .section-modal__title,
+.rustico-editor-page .section-modal__card--la-nostra-struttura .section-modal__sub-title,
+.public-homebook--rustico .classico-editor-modal__title--la-nostra-struttura,
+.rustico-preview .classico-editor-modal__title--la-nostra-struttura,
+.rustico-editor-page .classico-editor-modal__title--la-nostra-struttura,
+.public-homebook--rustico .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__title,
+.public-homebook--rustico .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading,
+.rustico-preview .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__title,
+.rustico-preview .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading,
+.rustico-editor-page .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__title,
+.rustico-editor-page .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading {
+  color: #3b2a1d !important;
+}
+/* Rustico dove mangiare popup background */
+.public-homebook--rustico .section-modal__card--dove-mangiare,
+.rustico-preview .section-modal__card--dove-mangiare,
+.rustico-editor-page .section-modal__card--dove-mangiare,
+.public-homebook--rustico .classico-editor-modal__card--dove-mangiare,
+.rustico-preview .classico-editor-modal__card--dove-mangiare,
+.rustico-editor-page .classico-editor-modal__card--dove-mangiare {
+  background: linear-gradient(145deg, rgba(244, 251, 246, 0.96) 0%, #d9eadf 100%) !important;
+}
+/* Rustico cosa visitare popup background */
+.public-homebook--rustico .section-modal__card--cosa-visitare,
+.rustico-preview .section-modal__card--cosa-visitare,
+.rustico-editor-page .section-modal__card--cosa-visitare,
+.public-homebook--rustico .classico-editor-modal__card--cosa-visitare,
+.rustico-preview .classico-editor-modal__card--cosa-visitare,
+.rustico-editor-page .classico-editor-modal__card--cosa-visitare {
+  background: linear-gradient(145deg, rgba(244, 251, 246, 0.96) 0%, #d9eadf 100%) !important;
+}
+/* Rustico shopping popup background */
+.public-homebook--rustico .section-modal__card--shopping,
+.rustico-preview .section-modal__card--shopping,
+.rustico-editor-page .section-modal__card--shopping,
+.public-homebook--rustico .classico-editor-modal__card--shopping,
+.rustico-preview .classico-editor-modal__card--shopping,
+.rustico-editor-page .classico-editor-modal__card--shopping {
+  background: linear-gradient(145deg, rgba(244, 251, 246, 0.96) 0%, #d9eadf 100%) !important;
+}
+/* Rustico servizi popup background */
+.public-homebook--rustico .section-modal__card--servizi,
+.rustico-preview .section-modal__card--servizi,
+.rustico-editor-page .section-modal__card--servizi,
+.public-homebook--rustico .classico-editor-modal__card--servizi,
+.rustico-preview .classico-editor-modal__card--servizi,
+.rustico-editor-page .classico-editor-modal__card--servizi {
+  background: linear-gradient(145deg, rgba(244, 251, 246, 0.96) 0%, #d9eadf 100%) !important;
+}
+/* Rustico check-out popup background */
+.public-homebook--rustico .section-modal__card--check-out,
+.public-homebook--rustico .section-modal__card--checkout,
+.rustico-preview .section-modal__card--check-out,
+.rustico-preview .section-modal__card--checkout,
+.rustico-editor-page .section-modal__card--check-out,
+.rustico-editor-page .section-modal__card--checkout,
+.public-homebook--rustico .classico-editor-modal__card--check-out,
+.public-homebook--rustico .classico-editor-modal__card--checkout,
+.rustico-preview .classico-editor-modal__card--check-out,
+.rustico-preview .classico-editor-modal__card--checkout,
+.rustico-editor-page .classico-editor-modal__card--check-out,
+.rustico-editor-page .classico-editor-modal__card--checkout {
+  background: linear-gradient(145deg, rgba(244, 251, 246, 0.96) 0%, #d9eadf 100%) !important;
+}
+/* Rustico come raggiungerci popup background */
+.public-homebook--rustico .section-modal__card--come-raggiungerci,
+.rustico-preview .section-modal__card--come-raggiungerci,
+.rustico-editor-page .section-modal__card--come-raggiungerci,
+.public-homebook--rustico .classico-editor-modal__card--come-raggiungerci,
+.rustico-preview .classico-editor-modal__card--come-raggiungerci,
+.rustico-editor-page .classico-editor-modal__card--come-raggiungerci {
+  background: linear-gradient(145deg, rgba(255, 244, 236, 0.96) 0%, rgb(241, 216, 190) 100%) !important;
+}
+/* Rustico cards no border */
+.public-homebook--rustico .classico-card,
+.public-homebook--rustico .classico-sections__grid .classico-card,
+.rustico-preview .classico-card,
+.rustico-preview .classico-sections__grid .classico-card,
+.rustico-editor-page .classico-card,
+.rustico-editor-page .classico-sections__grid .classico-card {
+  border: none !important;
+  border-color: transparent !important;
+}
+/* Rustico reach card shadow */
+.public-homebook--rustico .classico-card--reach,
+.rustico-preview .classico-card--reach,
+.rustico-editor-page .classico-card--reach {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico reach card shadow (compat) */
+.public-homebook--rustico .classico-card--reach,
+.public-homebook--rustico .classico-card--slug-come-raggiungerci,
+.rustico-preview .classico-card--reach,
+.rustico-preview .classico-card--slug-come-raggiungerci,
+.rustico-editor-page .classico-card--reach,
+.rustico-editor-page .classico-card--slug-come-raggiungerci {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico reach card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--reach,
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-come-raggiungerci,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--reach,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-come-raggiungerci,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--reach,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-come-raggiungerci {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico regole struttura card shadow (compat) */
+.public-homebook--rustico .classico-card--slug-regole-struttura,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-regole-struttura"],
+.rustico-preview .classico-card--slug-regole-struttura,
+.rustico-preview .classico-card[class*="classico-card--slug-regole-struttura"],
+.rustico-editor-page .classico-card--slug-regole-struttura,
+.rustico-editor-page .classico-card[class*="classico-card--slug-regole-struttura"] {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico regole struttura card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-regole-struttura,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-regole-struttura"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-regole-struttura,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-regole-struttura"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-regole-struttura,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-regole-struttura"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico dove mangiare card shadow (compat) */
+.public-homebook--rustico .classico-card--slug-dove-mangiare,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-dove-mangiare"],
+.rustico-preview .classico-card--slug-dove-mangiare,
+.rustico-preview .classico-card[class*="classico-card--slug-dove-mangiare"],
+.rustico-editor-page .classico-card--slug-dove-mangiare,
+.rustico-editor-page .classico-card[class*="classico-card--slug-dove-mangiare"] {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico dove mangiare card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-dove-mangiare"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-dove-mangiare"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-dove-mangiare"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico esperienze card shadow (compat) */
+.public-homebook--rustico .classico-card--slug-esperienze,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-esperienze"],
+.rustico-preview .classico-card--slug-esperienze,
+.rustico-preview .classico-card[class*="classico-card--slug-esperienze"],
+.rustico-editor-page .classico-card--slug-esperienze,
+.rustico-editor-page .classico-card[class*="classico-card--slug-esperienze"] {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico esperienze card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-esperienze,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-esperienze"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-esperienze,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-esperienze"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-esperienze,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-esperienze"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico spiagge card shadow (compat) */
+.public-homebook--rustico .classico-card--slug-spiagge,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-spiagge"],
+.rustico-preview .classico-card--slug-spiagge,
+.rustico-preview .classico-card[class*="classico-card--slug-spiagge"],
+.rustico-editor-page .classico-card--slug-spiagge,
+.rustico-editor-page .classico-card[class*="classico-card--slug-spiagge"] {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico spiagge card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-spiagge,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-spiagge"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-spiagge,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-spiagge"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-spiagge,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-spiagge"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico servizi card shadow (compat) */
+.public-homebook--rustico .classico-card--slug-servizi,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-servizi"],
+.rustico-preview .classico-card--slug-servizi,
+.rustico-preview .classico-card[class*="classico-card--slug-servizi"],
+.rustico-editor-page .classico-card--slug-servizi,
+.rustico-editor-page .classico-card[class*="classico-card--slug-servizi"] {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico servizi card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-servizi,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-servizi"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-servizi,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-servizi"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-servizi,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-servizi"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico check-out card shadow (compat) */
+.public-homebook--rustico .classico-card--slug-check-out,
+.public-homebook--rustico .classico-card--slug-checkout,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-check-out"],
+.public-homebook--rustico .classico-card[class*="classico-card--slug-checkout"],
+.rustico-preview .classico-card--slug-check-out,
+.rustico-preview .classico-card--slug-checkout,
+.rustico-preview .classico-card[class*="classico-card--slug-check-out"],
+.rustico-preview .classico-card[class*="classico-card--slug-checkout"],
+.rustico-editor-page .classico-card--slug-check-out,
+.rustico-editor-page .classico-card--slug-checkout,
+.rustico-editor-page .classico-card[class*="classico-card--slug-check-out"],
+.rustico-editor-page .classico-card[class*="classico-card--slug-checkout"] {
+  box-shadow: 0 18px 34px rgba(85, 56, 30, 0.18), 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+}
+/* Rustico check-out card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-check-out,
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-checkout,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-check-out"],
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-checkout"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-check-out,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-checkout,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-check-out"],
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-checkout"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-check-out,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-checkout,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-check-out"],
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-checkout"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico cosa visitare card no shadow (compat) */
+.public-homebook--rustico .classico-card--slug-cosa-visitare,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-cosa-visitare"],
+.rustico-preview .classico-card--slug-cosa-visitare,
+.rustico-preview .classico-card[class*="classico-card--slug-cosa-visitare"],
+.rustico-editor-page .classico-card--slug-cosa-visitare,
+.rustico-editor-page .classico-card[class*="classico-card--slug-cosa-visitare"] {
+  box-shadow: none !important;
+}
+/* Rustico cosa visitare card no shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-cosa-visitare,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-cosa-visitare"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-cosa-visitare,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-cosa-visitare"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-cosa-visitare,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-cosa-visitare"] {
+  box-shadow: none !important;
+  filter: none !important;
+}
+/* Rustico colazione card no shadow (compat) */
+.public-homebook--rustico .classico-card--slug-colazione,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-colazione"],
+.rustico-preview .classico-card--slug-colazione,
+.rustico-preview .classico-card[class*="classico-card--slug-colazione"],
+.rustico-editor-page .classico-card--slug-colazione,
+.rustico-editor-page .classico-card[class*="classico-card--slug-colazione"] {
+  box-shadow: none !important;
+}
+/* Rustico colazione card no shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-colazione,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-colazione"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-colazione,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-colazione"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-colazione,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-colazione"] {
+  box-shadow: none !important;
+  filter: none !important;
+}
+/* Rustico struttura card no shadow */
+.public-homebook--rustico .classico-card--struttura,
+.public-homebook--rustico .classico-card--slug-la-nostra-struttura,
+.rustico-preview .classico-card--struttura,
+.rustico-preview .classico-card--slug-la-nostra-struttura,
+.rustico-editor-page .classico-card--struttura,
+.rustico-editor-page .classico-card--slug-la-nostra-struttura {
+  box-shadow: none !important;
+}
+/* Rustico struttura card no shadow override */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--struttura,
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--struttura,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--struttura,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--struttura::before,
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--struttura::after,
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura::before,
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura::after,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--struttura::before,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--struttura::after,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura::before,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura::after,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--struttura::before,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--struttura::after,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura::before,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-la-nostra-struttura::after {
+  box-shadow: none !important;
+  background: none !important;
+  filter: none !important;
+}
+/* Rustico funzionamento card shadow (compat) */
+.public-homebook--rustico .classico-card--funz,
+.public-homebook--rustico .classico-card--slug-funzionamento,
+.public-homebook--rustico .classico-card[class*="classico-card--slug-funzionamento"],
+.rustico-preview .classico-card--funz,
+.rustico-preview .classico-card--slug-funzionamento,
+.rustico-preview .classico-card[class*="classico-card--slug-funzionamento"],
+.rustico-editor-page .classico-card--funz,
+.rustico-editor-page .classico-card--slug-funzionamento,
+.rustico-editor-page .classico-card[class*="classico-card--slug-funzionamento"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+/* Rustico funzionamento card shadow override strong */
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--funz,
+.public-homebook--rustico .classico-sections__grid .classico-card.classico-card--slug-funzionamento,
+.public-homebook--rustico .classico-sections__grid .classico-card[class*="classico-card--slug-funzionamento"],
+.rustico-preview .classico-sections__grid .classico-card.classico-card--funz,
+.rustico-preview .classico-sections__grid .classico-card.classico-card--slug-funzionamento,
+.rustico-preview .classico-sections__grid .classico-card[class*="classico-card--slug-funzionamento"],
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--funz,
+.rustico-editor-page .classico-sections__grid .classico-card.classico-card--slug-funzionamento,
+.rustico-editor-page .classico-sections__grid .classico-card[class*="classico-card--slug-funzionamento"] {
+  box-shadow: 0 22px 44px rgba(85, 56, 30, 0.26), 0 4px 0 rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Rustico la nostra struttura popup subsection icons larger */
+.public-homebook--rustico .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-preview .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-editor-page .classico-editor-modal__card--la-nostra-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img {
+  transform: scale(1.18) !important;
+}
+/* Rustico funzionamento popup subsection icons larger */
+.public-homebook--rustico .classico-editor-modal__card--funzionamento .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__card--funzionamento .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__card--funzionamento .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__card--funzionamento .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-preview .classico-editor-modal__card--funzionamento .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-editor-page .classico-editor-modal__card--funzionamento .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img {
+  transform: scale(1.18) !important;
+}
+/* Rustico regole struttura popup subsection icons larger */
+.public-homebook--rustico .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img {
+  transform: scale(1.18) !important;
+}
+/* Rustico numeri utili popup subsection icons larger */
+.public-homebook--rustico .classico-editor-modal__card--numeri-utili .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__card--numeri-utili .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__card--numeri-utili .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__card--numeri-utili .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-preview .classico-editor-modal__card--numeri-utili .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-editor-page .classico-editor-modal__card--numeri-utili .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img {
+  transform: scale(1.18) !important;
+}
+/* Rustico check-out popup subsection icons larger */
+.public-homebook--rustico .classico-editor-modal__card--check-out .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-preview .classico-editor-modal__card--check-out .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon,
+.rustico-editor-page .classico-editor-modal__card--check-out .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.public-homebook--rustico .classico-editor-modal__card--check-out .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-preview .classico-editor-modal__card--check-out .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img,
+.rustico-editor-page .classico-editor-modal__card--check-out .classico-editor-modal__sub-heading-row .classico-editor-modal__icon.valigia-icon img {
+  transform: scale(1.18) !important;
+}
+
+
+
+
+
+
+
+
+/* Mediterraneo palette overrides (rustico-like structure) */
+.public-homebook--mediterraneo,
+.mediterraneo-editor-page .classico-editor-preview {
+  --rustico-ink: #2f4f63;
+  --rustico-muted: #607d91;
+  --rustico-sand: #f5eee4;
+  --rustico-paper: #fbf8f3;
+  --rustico-peach: #e8dac8;
+  --rustico-sage: #d5e7f1;
+  --rustico-border: #d7d9d4;
+  --rustico-amber: #bca181;
+  --rustico-wood: #3d627a;
+  --rustico-olive: #6c8fa6;
+  --border: var(--rustico-border);
+  --muted: var(--rustico-muted);
+  --text: var(--rustico-ink);
+  color: var(--rustico-ink);
+}
+
+.public-homebook--mediterraneo {
+  background: #d6e6ef;
+  border-color: rgba(94, 128, 149, 0.24);
+}
+
+.mediterraneo-editor-page::before {
+  background: linear-gradient(180deg, #deebf3 0%, #d3e5f0 100%);
+}
+
+.public-homebook--mediterraneo .public-homebook-cover__title,
+.public-homebook--mediterraneo .classico-card__title,
+.mediterraneo-preview .classico-card__title,
+.mediterraneo-editor-page .classico-card__title,
+.public-homebook--mediterraneo .section-modal__title,
+.public-homebook--mediterraneo .section-modal__sub-title,
+.mediterraneo-preview .section-modal__title,
+.mediterraneo-preview .section-modal__sub-title,
+.mediterraneo-editor-page .section-modal__title,
+.mediterraneo-editor-page .section-modal__sub-title,
+.public-homebook--mediterraneo .classico-editor-modal__title,
+.public-homebook--mediterraneo .classico-editor-modal__sub-heading,
+.mediterraneo-preview .classico-editor-modal__title,
+.mediterraneo-preview .classico-editor-modal__sub-heading,
+.mediterraneo-editor-page .classico-editor-modal__title,
+.mediterraneo-editor-page .classico-editor-modal__sub-heading {
+  color: #2f4f63 !important;
+}
+
+.public-homebook--mediterraneo .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.mediterraneo-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
+.mediterraneo-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel) {
+  background: linear-gradient(180deg, rgba(247, 241, 234, 0.98) 0%, rgba(233, 220, 201, 0.92) 36%, rgba(218, 233, 243, 0.94) 72%, rgba(208, 227, 239, 1) 100%) !important;
+  border: none !important;
+  box-shadow: 0 22px 48px rgba(61, 93, 114, 0.14), 0 0 62px rgba(208, 227, 239, 0.62) !important;
+}
+
+.public-homebook--mediterraneo .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel)::after,
+.mediterraneo-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel)::after,
+.mediterraneo-editor-page .classico-editor-preview .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel)::after {
+  background: linear-gradient(180deg, rgba(214, 230, 239, 0) 56%, rgba(202, 221, 233, 0.42) 80%, rgba(192, 214, 228, 0.76) 100%);
+}
+
+.public-homebook--mediterraneo .section-modal__card,
+.public-homebook--mediterraneo .classico-editor-modal__card,
+.mediterraneo-preview .section-modal__card,
+.mediterraneo-preview .classico-editor-modal__card,
+.mediterraneo-editor-page .section-modal__card,
+.mediterraneo-editor-page .classico-editor-modal__card {
+  background: linear-gradient(145deg, rgba(247, 240, 231, 0.97) 0%, rgba(212, 229, 240, 0.96) 100%) !important;
+  border-color: rgba(98, 132, 152, 0.3) !important;
+  box-shadow: 0 26px 56px rgba(51, 79, 98, 0.22) !important;
+}
+
+.public-homebook--mediterraneo .section-modal__card--come-raggiungerci,
+.public-homebook--mediterraneo .classico-editor-modal__card--come-raggiungerci,
+.mediterraneo-preview .section-modal__card--come-raggiungerci,
+.mediterraneo-preview .classico-editor-modal__card--come-raggiungerci,
+.mediterraneo-editor-page .section-modal__card--come-raggiungerci,
+.mediterraneo-editor-page .classico-editor-modal__card--come-raggiungerci {
+  background: linear-gradient(145deg, rgba(247, 240, 231, 0.97) 0%, rgba(212, 229, 240, 0.96) 100%) !important;
+}
+
+.public-homebook--mediterraneo .section-modal__card--check-in,
+.public-homebook--mediterraneo .section-modal__card--regole-struttura,
+.public-homebook--mediterraneo .section-modal__card--dove-mangiare,
+.public-homebook--mediterraneo .section-modal__card--cosa-visitare,
+.public-homebook--mediterraneo .section-modal__card--shopping,
+.public-homebook--mediterraneo .section-modal__card--servizi,
+.public-homebook--mediterraneo .section-modal__card--check-out,
+.public-homebook--mediterraneo .section-modal__card--checkout,
+.public-homebook--mediterraneo .classico-editor-modal__card--check-in,
+.public-homebook--mediterraneo .classico-editor-modal__card--regole-struttura,
+.public-homebook--mediterraneo .classico-editor-modal__card--dove-mangiare,
+.public-homebook--mediterraneo .classico-editor-modal__card--cosa-visitare,
+.public-homebook--mediterraneo .classico-editor-modal__card--shopping,
+.public-homebook--mediterraneo .classico-editor-modal__card--servizi,
+.public-homebook--mediterraneo .classico-editor-modal__card--check-out,
+.public-homebook--mediterraneo .classico-editor-modal__card--checkout,
+.mediterraneo-preview .section-modal__card--check-in,
+.mediterraneo-preview .section-modal__card--regole-struttura,
+.mediterraneo-preview .section-modal__card--dove-mangiare,
+.mediterraneo-preview .section-modal__card--cosa-visitare,
+.mediterraneo-preview .section-modal__card--shopping,
+.mediterraneo-preview .section-modal__card--servizi,
+.mediterraneo-preview .section-modal__card--check-out,
+.mediterraneo-preview .section-modal__card--checkout,
+.mediterraneo-preview .classico-editor-modal__card--check-in,
+.mediterraneo-preview .classico-editor-modal__card--regole-struttura,
+.mediterraneo-preview .classico-editor-modal__card--dove-mangiare,
+.mediterraneo-preview .classico-editor-modal__card--cosa-visitare,
+.mediterraneo-preview .classico-editor-modal__card--shopping,
+.mediterraneo-preview .classico-editor-modal__card--servizi,
+.mediterraneo-preview .classico-editor-modal__card--check-out,
+.mediterraneo-preview .classico-editor-modal__card--checkout,
+.mediterraneo-editor-page .section-modal__card--check-in,
+.mediterraneo-editor-page .section-modal__card--regole-struttura,
+.mediterraneo-editor-page .section-modal__card--dove-mangiare,
+.mediterraneo-editor-page .section-modal__card--cosa-visitare,
+.mediterraneo-editor-page .section-modal__card--shopping,
+.mediterraneo-editor-page .section-modal__card--servizi,
+.mediterraneo-editor-page .section-modal__card--check-out,
+.mediterraneo-editor-page .section-modal__card--checkout,
+.mediterraneo-editor-page .classico-editor-modal__card--check-in,
+.mediterraneo-editor-page .classico-editor-modal__card--regole-struttura,
+.mediterraneo-editor-page .classico-editor-modal__card--dove-mangiare,
+.mediterraneo-editor-page .classico-editor-modal__card--cosa-visitare,
+.mediterraneo-editor-page .classico-editor-modal__card--shopping,
+.mediterraneo-editor-page .classico-editor-modal__card--servizi,
+.mediterraneo-editor-page .classico-editor-modal__card--check-out,
+.mediterraneo-editor-page .classico-editor-modal__card--checkout {
+  background: linear-gradient(145deg, rgba(247, 240, 231, 0.97) 0%, rgba(212, 229, 240, 0.96) 100%) !important;
+}
+
+.public-homebook--mediterraneo .section-modal__card--regole-struttura .section-modal__title,
+.public-homebook--mediterraneo .section-modal__card--regole-struttura .section-modal__sub-title,
+.public-homebook--mediterraneo .classico-editor-modal__title--regole-struttura,
+.public-homebook--mediterraneo .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.public-homebook--mediterraneo .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.mediterraneo-preview .section-modal__card--regole-struttura .section-modal__title,
+.mediterraneo-preview .section-modal__card--regole-struttura .section-modal__sub-title,
+.mediterraneo-preview .classico-editor-modal__title--regole-struttura,
+.mediterraneo-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.mediterraneo-preview .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading,
+.mediterraneo-editor-page .section-modal__card--regole-struttura .section-modal__title,
+.mediterraneo-editor-page .section-modal__card--regole-struttura .section-modal__sub-title,
+.mediterraneo-editor-page .classico-editor-modal__title--regole-struttura,
+.mediterraneo-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.mediterraneo-editor-page .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
+  color: #2f4f63 !important;
 }

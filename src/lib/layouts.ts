@@ -43,14 +43,16 @@ export const LAYOUTS: LayoutDefinition[] = [
     name: "RUSTICO",
     description: "Un design caldo ed accogliente.",
     icon: "icon-waves",
-    template: "essenziale"
+    template: "essenziale",
+    thumbnail: "/layout-thumbs/anteprima-rustico.png?v=1"
   },
   {
     id: "mediterraneo",
     name: "MEDITERRANEO",
     description: "Toni freschi e rilassanti.",
     icon: "icon-sun",
-    template: "aurora"
+    template: "aurora",
+    thumbnail: "/layout-thumbs/anteprima-mediterraneo.png?v=1"
   },
   {
     id: "pastello",
@@ -81,21 +83,24 @@ export const LAYOUTS: LayoutDefinition[] = [
     name: "FUTURISTICO",
     description: "Un design innovativo per un effetto ultramoderno.",
     icon: "icon-circuit",
-    template: "essenziale"
+    template: "essenziale",
+    thumbnail: "/layout-thumbs/anteprima-futuristico.png?v=1"
   },
   {
     id: "romantico",
     name: "ROMANTICO",
     description: "Palette delicate per un'atmosfera da sogno.",
     icon: "icon-heart",
-    template: "boutique"
+    template: "boutique",
+    thumbnail: "/layout-thumbs/anteprima-romantico.png?v=1"
   },
   {
     id: "notturno",
     name: "NOTTURNO",
     description: "Toni scuri, contrasti eleganti.",
     icon: "icon-moon",
-    template: "aurora"
+    template: "aurora",
+    thumbnail: "/layout-thumbs/anteprima-notturno.png?v=1"
   }
 ];
 

@@ -1,4 +1,4 @@
-const VERSION = "v11";
+const VERSION = "v28";
 const SHELL_CACHE = `homebook-shell-${VERSION}`;
 const ASSET_CACHE = `homebook-assets-${VERSION}`;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;

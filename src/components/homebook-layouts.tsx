@@ -3,6 +3,11 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { getRomanticoIconCandidates } from "../lib/romantico-icons";
+import { getFuturisticoIconCandidates } from "../lib/futuristico-icons";
+import { getNotturnoIconCandidates } from "../lib/notturno-icons";
+import { getRusticoIconCandidates } from "../lib/rustico-icons";
+import { getMediterraneoIconCandidates } from "../lib/mediterraneo-icons";
 
 type MediaItem = {
   id: string;
@@ -369,7 +374,7 @@ const PASTELLO_ICON_MAP: Record<string, string[]> = {
   "la-nostra-struttura": ["/Icons/Pastello/struttura.png"],
   funzionamento: ["/Icons/Pastello/funzionamento.png"],
   "regole-struttura": ["/Icons/Pastello/regole.png"],
-  "dove-bere": ["/Icons/Pastello/bar.png"],
+  "dove-bere": ["/Icons/Pastello/pub.png"],
   "dove-mangiare": ["/Icons/Pastello/ristorante.png"],
   "cosa-visitare": ["/Icons/Pastello/cosa-visitare.png"],
   esperienze: ["/Icons/Pastello/esperienze-1.png"],
@@ -412,6 +417,11 @@ function SectionIcon({
   const isModerno = variant === "moderno" || isIllustrativo;
   const isPastello = variant === "pastello";
   const isOro = layoutSlug === "oro";
+  const isRomantico = layoutSlug === "romantico";
+  const isFuturistico = layoutSlug === "futuristico";
+  const isNotturno = layoutSlug === "notturno";
+  const isRustico = layoutSlug === "rustico";
+  const isMediterraneo = layoutSlug === "mediterraneo";
 
   const iconCandidates = useMemo(() => {
     if (isOro) {
@@ -425,6 +435,26 @@ function SectionIcon({
         candidates.add(path);
       }
     };
+
+    if (isRomantico) {
+      getRomanticoIconCandidates(slug).forEach(pushCandidate);
+    }
+
+    if (isFuturistico) {
+      getFuturisticoIconCandidates(slug).forEach(pushCandidate);
+    }
+
+    if (isNotturno) {
+      getNotturnoIconCandidates(slug).forEach(pushCandidate);
+    }
+
+    if (isRustico) {
+      getRusticoIconCandidates(slug).forEach(pushCandidate);
+    }
+
+    if (isMediterraneo) {
+      getMediterraneoIconCandidates(slug).forEach(pushCandidate);
+    }
 
     if (isIllustrativo) {
       pushCandidate("/Icons/Illustrativo/fotocamera.png");
@@ -440,6 +470,10 @@ function SectionIcon({
       ? ["Moderno", "Classico"]
       : isPastello
       ? ["Pastello", "Classico"]
+      : isRustico
+      ? ["Rustico", "Classico"]
+      : isMediterraneo
+      ? ["Mediterraneo", "Classico"]
       : ["Classico"];
 
     folderOrder.forEach((folder) => {
@@ -449,7 +483,7 @@ function SectionIcon({
 
     const aliasNames = ICON_SLUG_ALIASES[slug] ?? [];
     aliasNames.forEach((alias) => {
-      ["Pastello", "Illustrativo", "Moderno", "Classico"].forEach((folder) => {
+      ["Mediterraneo", "Rustico", "Pastello", "Illustrativo", "Moderno", "Classico"].forEach((folder) => {
         pushCandidate(`/Icons/${folder}/${alias}.png`);
         pushCandidate(`/Icons/${folder}/${alias}.svg`);
       });
@@ -463,7 +497,7 @@ function SectionIcon({
     pushCandidate(`/Icons/${slug}.png`);
 
     return Array.from(candidates);
-  }, [slug, isIllustrativo, isModerno, isPastello, isOro]);
+  }, [slug, isIllustrativo, isModerno, isPastello, isOro, isRomantico, isFuturistico, isNotturno, isRustico, isMediterraneo]);
 
   const iconSrc = iconCandidates[iconIndex] ?? iconCandidates[0] ?? "";
 

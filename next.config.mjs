@@ -10,6 +10,16 @@ if (supabaseUrl) {
       hostname,
       pathname: "/storage/v1/object/public/**"
     });
+    remotePatterns.push({
+      protocol: "https",
+      hostname,
+      pathname: "/storage/v1/object/sign/**"
+    });
+    remotePatterns.push({
+      protocol: "https",
+      hostname,
+      pathname: "/storage/v1/object/authenticated/**"
+    });
   } catch {
     // ignore malformed URL
   }

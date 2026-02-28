@@ -6,9 +6,21 @@ import { createBrowserSupabaseClient } from "../lib/supabase/client";
 
 type Mode = "login" | "register";
 
-export function AuthForm({ mode }: { mode: Mode }) {
+type AuthFormProps = {
+  mode: Mode;
+  redirectTo?: string;
+};
+
+function sanitizeRedirectPath(value: string | undefined) {
+  if (!value) return "/dashboard";
+  if (!value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+  return value;
+}
+
+export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const router = useRouter();
   const supabase = createBrowserSupabaseClient();
+  const safeRedirectPath = sanitizeRedirectPath(redirectTo);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,7 +43,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         const { error: signUpError, data } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${location.origin}/dashboard` }
+          options: { emailRedirectTo: `${location.origin}${safeRedirectPath}` }
         });
         if (signUpError) throw signUpError;
         if (data.user) {
@@ -54,7 +66,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         });
         if (signInError) throw signInError;
       }
-      router.push("/dashboard");
+      router.push(safeRedirectPath);
       router.refresh();
     } catch (err: any) {
       setError(err.message ?? "Errore inatteso");

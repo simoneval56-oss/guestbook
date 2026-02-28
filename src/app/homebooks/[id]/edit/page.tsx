@@ -6,9 +6,12 @@ import Image from "next/image";
 import { createServerSupabaseClient } from "../../../../lib/supabase/server";
 import { createAdminClient } from "../../../../lib/supabase/server";
 import { getDefaultSections } from "../../../../lib/default-sections";
+import { DEFAULT_LAYOUT_ID } from "../../../../lib/layouts";
 import { OwnerPreviewToggle } from "../../../../components/owner-preview-toggle";
 import { PublishControls } from "../../../../components/publish-controls";
 import { Database } from "../../../../lib/database.types";
+import { COVER_FILE_ACCEPT, validateUploadCandidate } from "../../../../lib/upload-limits";
+import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../../lib/storage-media";
 import type { MediaItem, Section, Subsection } from "../../../../components/classico-editor-preview";
 
 const CLASSICO_DEFAULT_SUBSECTIONS = [
@@ -19,7 +22,18 @@ const CLASSICO_DEFAULT_SUBSECTIONS = [
   "Check-in in presenza"
 ];
 
-const CLASSICO_LIKE_LAYOUTS = new Set(["classico", "moderno", "illustrativo", "pastello", "oro"]);
+const CLASSICO_LIKE_LAYOUTS = new Set([
+  "classico",
+  "rustico",
+  "mediterraneo",
+  "moderno",
+  "illustrativo",
+  "pastello",
+  "oro",
+  "romantico",
+  "futuristico",
+  "notturno"
+]);
 
 const CLASSICO_EXTRA_SECTIONS: Record<string, string[]> = {
   "check-in": CLASSICO_DEFAULT_SUBSECTIONS,
@@ -80,7 +94,7 @@ const normalizeTitle = (title: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
 type SectionPreview = Section;
 type SubsectionPreview = Subsection & { section_id: string };
@@ -159,15 +173,17 @@ async function ensureDefaultSubsectionsForClassicLayouts(
       }[]
     | null
 ) {
-  // I layout classico/moderno/illustrativo/pastello riutilizzano la stessa griglia, quindi condividono le sottosezioni di base.
-  if (!CLASSICO_LIKE_LAYOUTS.has(layout_type) || !sections) return;
+  if (!sections) return;
+  const isClassicLike = CLASSICO_LIKE_LAYOUTS.has(layout_type);
   const useColazioneBodyOnly =
-    layout_type === "pastello" ||
-    layout_type === "illustrativo" ||
-    layout_type === "moderno" ||
-    layout_type === "oro";
+    isClassicLike &&
+    (layout_type === "pastello" ||
+      layout_type === "illustrativo" ||
+      layout_type === "moderno" ||
+      layout_type === "oro");
+  const sectionDefaults = isClassicLike ? CLASSICO_EXTRA_SECTIONS : { colazione: ["Colazione"] };
   const inserts: Database["public"]["Tables"]["subsections"]["Insert"][] = [];
-  for (const [sectionTitle, subs] of Object.entries(CLASSICO_EXTRA_SECTIONS)) {
+  for (const [sectionTitle, subs] of Object.entries(sectionDefaults)) {
     const match = sections.find((s) => normalizeTitle(s.title) === normalizeTitle(sectionTitle));
     if (!match) continue;
     const { count } = await supabase
@@ -388,10 +404,69 @@ async function ensureOroColazioneSection(
   return updated.sort((a, b) => a.order_index - b.order_index);
 }
 
+async function ensureExtraColazioneSection(
+  admin: any,
+  layout_type: string,
+  homebookId: string,
+  sections: SectionPreview[]
+): Promise<SectionPreview[]> {
+  if (layout_type !== "futuristico" && layout_type !== "romantico") return sections;
+  const hasColazione = sections.some((section) => normalizeTitle(section.title) === "colazione");
+  if (hasColazione) return sections;
+
+  const regoleSection = sections.find((section) => normalizeTitle(section.title) === "regole struttura");
+  const insertIndex = (regoleSection?.order_index ?? 5) + 1;
+  const toShift = sections
+    .filter((section) => section.order_index >= insertIndex)
+    .sort((a, b) => b.order_index - a.order_index);
+
+  for (const section of toShift) {
+    const nextIndex = section.order_index + 1;
+    const { error } = await admin.from("sections").update({ order_index: nextIndex }).eq("id", section.id);
+    if (!error) {
+      section.order_index = nextIndex;
+    }
+  }
+
+  const { data, error } = await admin
+    .from("sections")
+    .insert({
+      homebook_id: homebookId,
+      title: "Colazione",
+      order_index: insertIndex
+    })
+    .select("id, title, order_index, visible")
+    .single();
+
+  if (error || !data) return sections;
+
+  const updated: SectionPreview[] = [
+    ...sections,
+    {
+      id: data.id,
+      title: data.title,
+      order_index: data.order_index,
+      visible: data.visible ?? null
+    }
+  ];
+
+  return updated.sort((a, b) => a.order_index - b.order_index);
+}
+
 const STORAGE_BUCKET = "homebook-media";
 
 async function uploadImageToStorage(file: File | null, pathPrefix: string) {
   if (!file || typeof file.arrayBuffer !== "function" || file.size === 0) return null;
+  const validation = validateUploadCandidate(
+    {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    },
+    "cover"
+  );
+  if (!validation.ok) return null;
+
   const admin = createAdminClient();
   const arrayBuffer = await file.arrayBuffer();
   const filePath = `${pathPrefix}/${Date.now()}-${file.name}`.replace(/\s+/g, "-");
@@ -403,11 +478,11 @@ async function uploadImageToStorage(file: File | null, pathPrefix: string) {
       contentType: file.type || "image/jpeg"
     });
   if (error || !data?.path) return null;
-  const { data: publicData } = admin.storage.from(STORAGE_BUCKET).getPublicUrl(data.path);
-  return publicData?.publicUrl ?? null;
+  return data.path;
 }
 
 export default async function EditHomebookPage({ params }: Props) {
+  const { id: homebookId } = await params;
   const supabase = createServerSupabaseClient() as any;
   const admin = createAdminClient() as any;
   const {
@@ -421,12 +496,15 @@ export default async function EditHomebookPage({ params }: Props) {
   const { data: homebook } = await supabase
     .from("homebooks")
     .select("*, properties(name, main_image_url, short_description, user_id)")
-    .eq("id", params.id)
+    .eq("id", homebookId)
     .single();
 
   if (!homebook || homebook.properties?.user_id !== session.user.id) {
     notFound();
   }
+
+  const layoutType =
+    (homebook.layout_type ?? DEFAULT_LAYOUT_ID).toString().trim().toLowerCase() || DEFAULT_LAYOUT_ID;
 
   const { data: sections, error: sectionsError } = await admin
     .from("sections")
@@ -453,34 +531,15 @@ export default async function EditHomebookPage({ params }: Props) {
     visible: section.visible ?? null
   }));
 
-  resolvedSections = await ensurePastelloColazioneSection(
-    admin,
-    homebook.layout_type,
-    homebook.id,
-    resolvedSections
-  );
-  resolvedSections = await ensureIllustrativoColazioneSection(
-    admin,
-    homebook.layout_type,
-    homebook.id,
-    resolvedSections
-  );
-  resolvedSections = await ensureModernoColazioneSection(
-    admin,
-    homebook.layout_type,
-    homebook.id,
-    resolvedSections
-  );
-  resolvedSections = await ensureOroColazioneSection(
-    admin,
-    homebook.layout_type,
-    homebook.id,
-    resolvedSections
-  );
+  resolvedSections = await ensurePastelloColazioneSection(admin, layoutType, homebook.id, resolvedSections);
+  resolvedSections = await ensureIllustrativoColazioneSection(admin, layoutType, homebook.id, resolvedSections);
+  resolvedSections = await ensureModernoColazioneSection(admin, layoutType, homebook.id, resolvedSections);
+  resolvedSections = await ensureOroColazioneSection(admin, layoutType, homebook.id, resolvedSections);
+  resolvedSections = await ensureExtraColazioneSection(admin, layoutType, homebook.id, resolvedSections);
 
   const sectionIds = resolvedSections.map((section) => section.id).filter(Boolean);
 
-  await ensureDefaultSubsectionsForClassicLayouts(supabase, homebook.layout_type, resolvedSections);
+  await ensureDefaultSubsectionsForClassicLayouts(supabase, layoutType, resolvedSections);
 
   const { data: subsections, error: subsError } = sectionIds.length
     ? await admin
@@ -556,9 +615,21 @@ export default async function EditHomebookPage({ params }: Props) {
       created_at: item.created_at ?? null
     }));
   }
+  const signedValueMap = await createSignedUrlMapForValues(
+    admin,
+    [homebook.properties?.main_image_url ?? null, ...media.map((item) => item.url)]
+  );
+  const resolvedCoverImage = resolveStorageValueWithSignedMap(
+    homebook.properties?.main_image_url ?? null,
+    signedValueMap
+  );
+  const resolvedMedia = media.map((item) => ({
+    ...item,
+    url: resolveStorageValueWithSignedMap(item.url, signedValueMap) ?? item.url
+  }));
 
   const subsBySection = groupBy(resolvedSubsections, (row) => row.section_id) as Record<string, Subsection[]>;
-  const mediaByParent = groupBy(media, (row) => row.section_id ?? row.subsection_id ?? "") as Record<
+  const mediaByParent = groupBy(resolvedMedia, (row) => row.section_id ?? row.subsection_id ?? "") as Record<
     string,
     MediaPreview[]
   >;
@@ -580,16 +651,26 @@ export default async function EditHomebookPage({ params }: Props) {
   }));
 
   const pageClass =
-    homebook.layout_type === "classico"
+    layoutType === "classico"
       ? "classico-editor-page"
-      : homebook.layout_type === "moderno"
+      : layoutType === "rustico"
+      ? "rustico-editor-page"
+      : layoutType === "mediterraneo"
+      ? "rustico-editor-page mediterraneo-editor-page"
+      : layoutType === "moderno"
       ? "moderno-editor-page"
-      : homebook.layout_type === "illustrativo"
+      : layoutType === "illustrativo"
       ? "illustrativo-editor-page"
-      : homebook.layout_type === "pastello"
+      : layoutType === "pastello"
       ? "pastello-editor-page"
-      : homebook.layout_type === "oro"
+      : layoutType === "futuristico"
+      ? "futuristico-editor-page"
+      : layoutType === "notturno"
+      ? "notturno-editor-page"
+      : layoutType === "oro"
       ? "oro-editor-page"
+      : layoutType === "romantico"
+      ? "romantico-editor-page"
       : "";
 
   return (
@@ -603,7 +684,7 @@ export default async function EditHomebookPage({ params }: Props) {
             <span className="structure-summary__name">
               {homebook.properties?.name ?? "Nome struttura"}
             </span>
-            <span className="structure-summary__layout">Layout: {homebook.layout_type}</span>
+            <span className="structure-summary__layout">Layout: {layoutType}</span>
           </div>
         </div>
         <PublishControls homebookId={homebook.id} initialIsPublished={homebook.is_published} />
@@ -619,9 +700,9 @@ export default async function EditHomebookPage({ params }: Props) {
               overflow: "hidden"
             }}
           >
-            {homebook.properties?.main_image_url ? (
+            {resolvedCoverImage ? (
               <Image
-                src={homebook.properties.main_image_url}
+                src={resolvedCoverImage}
                 alt={`Foto copertina di ${homebook.properties?.name ?? "struttura"}`}
                 fill
                 sizes="(max-width: 900px) 100vw, 1200px"
@@ -677,9 +758,9 @@ export default async function EditHomebookPage({ params }: Props) {
               </label>
               <label className="grid" style={{ gap: 6 }}>
                 <span style={{ fontWeight: 600 }}>Oppure carica dal tuo PC</span>
-                <input className="input" type="file" name="main_image_file" accept="image/*" />
+                <input className="input" type="file" name="main_image_file" accept={COVER_FILE_ACCEPT} />
                 <span className="text-muted" style={{ fontSize: 12 }}>
-                  Se selezioni un file (max 4MB), verrà usato al posto dell&apos;URL.
+                  Se selezioni un file (JPG/PNG/WEBP, max 12MB), verrà usato al posto dell&apos;URL.
                 </span>
               </label>
               <label className="grid" style={{ gap: 6 }}>
@@ -743,13 +824,13 @@ export default async function EditHomebookPage({ params }: Props) {
         ) : null}
       </section>
 
-      {["classico", "moderno", "illustrativo", "pastello", "oro"].includes(homebook.layout_type) &&
+      {["classico", "rustico", "mediterraneo", "moderno", "illustrativo", "pastello", "oro", "romantico", "futuristico", "notturno"].includes(layoutType) &&
       (sections?.length ?? 0) > 0 ? (
         <OwnerPreviewToggle
           sections={castSections}
           subsectionsBySection={subsBySection}
           mediaByParent={mediaByParent}
-          layoutName={homebook.layout_type}
+          layoutName={layoutType}
           homebookId={homebook.id}
           isPublished={homebook.is_published}
         />

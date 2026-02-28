@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type PublicLinkActionsProps = {
   url: string;
@@ -22,6 +22,8 @@ export function PublicLinkActions({
 }: PublicLinkActionsProps) {
   const [copied, setCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
+  const [qrSrc, setQrSrc] = useState("");
+  const [qrState, setQrState] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const canShare = Boolean(url) && isEnabled && isPublished;
 
   const handleCopy = async () => {
@@ -35,13 +37,47 @@ export function PublicLinkActions({
     }
   };
 
-  const qrSrc = url
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}`
-    : "";
+  useEffect(() => {
+    let cancelled = false;
+    const buildQr = async () => {
+      if (!showQr || !canShare || !url) {
+        setQrSrc("");
+        setQrState("idle");
+        return;
+      }
+      setQrState("loading");
+      try {
+        const { toDataURL } = await import("qrcode");
+        const dataUrl = await toDataURL(url, {
+          width: 220,
+          margin: 1,
+          errorCorrectionLevel: "M",
+          color: {
+            dark: "#0e4b58",
+            light: "#ffffff"
+          }
+        });
+        if (!cancelled) {
+          setQrSrc(dataUrl);
+          setQrState("ready");
+        }
+      } catch {
+        if (!cancelled) {
+          setQrSrc("");
+          setQrState("error");
+        }
+      }
+    };
+    buildQr();
+    return () => {
+      cancelled = true;
+    };
+  }, [showQr, canShare, url]);
+
   const tooltipCopy = "Copia negli appunti il link pubblico con token da inviare agli ospiti.";
   const tooltipQr = showQr
     ? "Nasconde il QR code del link pubblico."
-    : "Mostra un QR code del link pubblico per condivisione rapida.";
+    : "Mostra un QR code generato localmente del link pubblico.";
   const tooltipRotate = "Genera un nuovo token: il vecchio link non funziona più.";
   const tooltipToggle = isEnabled
     ? "Blocca l'accesso ospiti anche con il link pubblico."
@@ -58,6 +94,8 @@ export function PublicLinkActions({
     : !isPublished
     ? "Pubblica per rendere accessibile il link."
     : "";
+  const securityReminder =
+    "Promemoria sicurezza: se necessario rigenera il link o disattiva l'accesso. Evita di inserire dati molto riservati (es. codici di ingresso): inviali privatamente all'ospite.";
 
   return (
     <div style={{ marginTop: 10, display: "grid", gap: 8 }}>
@@ -105,6 +143,18 @@ export function PublicLinkActions({
         </form>
       </div>
       {statusMessage ? <div className="text-muted">{statusMessage}</div> : null}
+      <div
+        style={{
+          border: "1px solid rgba(14, 75, 88, 0.18)",
+          borderRadius: 10,
+          background: "#f8fcfd",
+          padding: "8px 10px"
+        }}
+      >
+        <span className="text-muted" style={{ fontSize: 12, lineHeight: 1.45 }}>
+          {securityReminder}
+        </span>
+      </div>
       {showQr && canShare ? (
         <div
           style={{
@@ -118,7 +168,17 @@ export function PublicLinkActions({
             padding: 8
           }}
         >
-          <Image src={qrSrc} alt="QR link pubblico" width={204} height={204} unoptimized />
+          {qrState === "ready" && qrSrc ? (
+            <Image src={qrSrc} alt="QR link pubblico" width={204} height={204} unoptimized />
+          ) : qrState === "error" ? (
+            <span className="text-muted" style={{ textAlign: "center", fontSize: 12 }}>
+              Impossibile generare il QR.
+            </span>
+          ) : (
+            <span className="text-muted" style={{ fontSize: 12 }}>
+              Generazione QR...
+            </span>
+          )}
         </div>
       ) : null}
     </div>

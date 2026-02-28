@@ -7,9 +7,15 @@ type ServerSupabaseOptions = {
 };
 
 export function createServerSupabaseClient(options: ServerSupabaseOptions = {}) {
-  const cookieStore = cookies();
-  const getAll = () => cookieStore.getAll().map((cookie) => ({ name: cookie.name, value: cookie.value }));
-  const setAll = (cookiesToSet: { name: string; value: string; options: CookieOptions }[]) => {
+  const getAll = async () => {
+    const cookieStore = await cookies();
+    return cookieStore.getAll().map((cookie: { name: string; value: string }) => ({
+      name: cookie.name,
+      value: cookie.value
+    }));
+  };
+  const setAll = async (cookiesToSet: { name: string; value: string; options: CookieOptions }[]) => {
+    const cookieStore = await cookies();
     cookiesToSet.forEach(({ name, value, options }) => {
       try {
         cookieStore.set({

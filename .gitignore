@@ -9,3 +9,6 @@ tmp/
 *.pid
 *.tsbuildinfo
 supabase/.temp/
+playwright-report/
+test-results/
+tests/e2e/.fixtures/

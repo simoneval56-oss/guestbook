@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 type LayoutItem = {
@@ -11,9 +12,14 @@ type LayoutItem = {
   thumbnail?: string;
 };
 
-export function LayoutCarousel({ items }: { items: LayoutItem[] }) {
+type LayoutCarouselProps = {
+  items: LayoutItem[];
+  isAuthenticated?: boolean;
+};
+
+export function LayoutCarousel({ items, isAuthenticated = false }: LayoutCarouselProps) {
   const trackRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const goToIndex = (index: number) => {
@@ -73,14 +79,24 @@ export function LayoutCarousel({ items }: { items: LayoutItem[] }) {
         <div className="layout-carousel__fade layout-carousel__fade--right" aria-hidden="true" />
         <div className="layout-carousel__track" ref={trackRef}>
           {items.map((layout, idx) => (
-            <div
-              key={layout.name}
+            <Link
+              key={layout.id}
+              href={
+                isAuthenticated
+                  ? `/homebooks/new?layout=${encodeURIComponent(layout.id)}`
+                  : `/login?next=${encodeURIComponent(`/homebooks/new?layout=${layout.id}`)}`
+              }
               className={`layout-card layout-card--carousel layout-card--${layout.id} ${
                 activeIndex === idx ? "is-active" : ""
               } ${
                 Math.abs(activeIndex - idx) === 1 ? "is-near" : ""
               }`}
               data-layout={layout.id}
+              aria-label={
+                isAuthenticated
+                  ? `Scegli layout ${layout.name} e crea un homebook`
+                  : `Accedi per usare il layout ${layout.name}`
+              }
               ref={(el) => {
                 itemRefs.current[idx] = el;
               }}
@@ -154,7 +170,7 @@ export function LayoutCarousel({ items }: { items: LayoutItem[] }) {
               >
                 {layout.description}
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

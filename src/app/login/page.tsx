@@ -1,7 +1,22 @@
 import Link from "next/link";
 import { AuthForm } from "../../components/auth-form";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams?: Promise<{ next?: string | string[] }>;
+};
+
+function sanitizeRedirectPath(value: string | undefined) {
+  if (!value) return "/dashboard";
+  if (!value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+  return value;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const rawNext = resolvedSearchParams?.next;
+  const nextValue = Array.isArray(rawNext) ? rawNext[0] : rawNext;
+  const redirectTo = sanitizeRedirectPath(nextValue);
+
   return (
     <div className="grid auth-page auth-page--login" style={{ gap: 16 }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -10,7 +25,7 @@ export default function LoginPage() {
           Registrati
         </Link>
       </header>
-      <AuthForm mode="login" />
+      <AuthForm mode="login" redirectTo={redirectTo} />
     </div>
   );
 }

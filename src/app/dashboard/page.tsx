@@ -7,13 +7,24 @@ import { DEFAULT_LAYOUT_ID, LAYOUTS } from "../../lib/layouts";
 import { getDefaultSections } from "../../lib/default-sections";
 import { Database } from "../../lib/database.types";
 import { generatePublicAccessToken } from "../../lib/homebook-access";
+import { validateUploadCandidate } from "../../lib/upload-limits";
+import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../lib/storage-media";
 import { DeleteHomebookButton } from "../../components/delete-homebook-button";
 import { PublicLinkActions } from "../../components/public-link-actions";
 import { DeletePropertyButton } from "../../components/delete-property-button";
 import { PropertyImagePicker } from "../../components/property-image-picker";
+import { DashboardLayoutShowcase } from "../../components/dashboard-layout-showcase";
 
 const CLASSICO_DEFAULT_SUBSECTIONS = ["Prima di partire", "Orario", "Formalità", "Self check-in", "Check-in in presenza"];
-const CLASSICO_LIKE_LAYOUTS = new Set(["classico", "moderno", "illustrativo", "pastello"]);
+const CLASSICO_LIKE_LAYOUTS = new Set([
+  "classico",
+  "mediterraneo",
+  "moderno",
+  "illustrativo",
+  "pastello",
+  "futuristico",
+  "notturno"
+]);
 const SUPABASE_TIMEOUT_MS = 10000;
 
 const CLASSICO_EXTRA_SECTIONS: Record<string, string[]> = {
@@ -184,6 +195,16 @@ const STORAGE_BUCKET = "homebook-media";
 
 async function uploadImageToStorage(file: File | null, pathPrefix: string) {
   if (!file || typeof file.arrayBuffer !== "function" || file.size == 0) return null;
+  const validation = validateUploadCandidate(
+    {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    },
+    "cover"
+  );
+  if (!validation.ok) return null;
+
   const admin = createAdminClient();
   const arrayBuffer = await file.arrayBuffer();
   const filePath = `${pathPrefix}/${Date.now()}-${file.name}`.replace(/\s+/g, "-");
@@ -195,8 +216,7 @@ async function uploadImageToStorage(file: File | null, pathPrefix: string) {
       contentType: file.type || "image/jpeg"
     });
   if (error || !data?.path) return null;
-  const { data: publicData } = admin.storage.from(STORAGE_BUCKET).getPublicUrl(data.path);
-  return publicData?.publicUrl ?? null;
+  return data.path;
 }
 
 async function deletePropertyAction(formData: FormData) {
@@ -423,6 +443,25 @@ export default async function DashboardPage() {
         .order("created_at", { ascending: false }),
       "Homebook"
     );
+    let propertySignedMap = new Map<string, string>();
+    if ((properties ?? []).length) {
+      try {
+        const storageAdmin = createAdminClient() as any;
+        propertySignedMap = await createSignedUrlMapForValues(
+          storageAdmin,
+          (properties ?? []).map((property: Database["public"]["Tables"]["properties"]["Row"]) => property.main_image_url)
+        );
+      } catch {
+        propertySignedMap = new Map<string, string>();
+      }
+    }
+    const propertyImageById = new Map<string, string | null>();
+    (properties ?? []).forEach((property: Database["public"]["Tables"]["properties"]["Row"]) => {
+      propertyImageById.set(
+        property.id,
+        resolveStorageValueWithSignedMap(property.main_image_url, propertySignedMap) ?? null
+      );
+    });
 
     return (
       <div className="grid dashboard-page" style={{ gap: 24 }}>
@@ -489,7 +528,10 @@ export default async function DashboardPage() {
                         <input name="address" defaultValue={property.address ?? ""} className="input" placeholder="Indirizzo" />
                         <div style={{ display: "grid", gap: 8 }}>
                           <div style={{ fontWeight: 600, color: "#0e4b58" }}>Immagine principale</div>
-                          <PropertyImagePicker initialUrl={property.main_image_url} inputName="main_image_file" />
+                          <PropertyImagePicker
+                            initialUrl={propertyImageById.get(property.id) ?? property.main_image_url}
+                            inputName="main_image_file"
+                          />
                           <input type="hidden" name="main_image_url" defaultValue={property.main_image_url ?? ""} />
                         </div>
                         <textarea
@@ -523,9 +565,7 @@ export default async function DashboardPage() {
               <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))" }}>
                 <input name="title" placeholder="Titolo homebook" required className="input" />
                 <select name="layout_type" className="input" defaultValue={DEFAULT_LAYOUT_ID}>
-                  {LAYOUTS.filter((layout) =>
-                    ["classico", "moderno", "pastello", "oro", "illustrativo"].includes(layout.id)
-                  ).map((layout) => (
+                  {LAYOUTS.map((layout) => (
                     <option key={layout.id} value={layout.id}>
                       {layout.name}
                     </option>
@@ -610,6 +650,15 @@ export default async function DashboardPage() {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="card" style={{ display: "grid", gap: 12, marginTop: 96 }}>
+            <div>
+              <div style={{ fontWeight: 700, color: "#0e4b58" }}>Esplora tutti i layout</div>
+              <div className="text-muted" style={{ marginTop: 6 }}>
+                Clicca un layout per vedere un&apos;anteprima rapida e capire quale stile si adatta meglio alla tua struttura.
+              </div>
+            </div>
+            <DashboardLayoutShowcase layouts={LAYOUTS} />
           </div>
         </section>
       </div>

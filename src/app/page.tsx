@@ -1,13 +1,16 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
 import { LayoutCarousel } from "../components/layout-carousel";
-import { LAYOUTS, LayoutId } from "../lib/layouts";
+import { LAYOUTS } from "../lib/layouts";
+import { createServerSupabaseClient } from "../lib/supabase/server";
 
-// Temporarily hide layouts not yet ready from the home carousel.
-const HIDDEN_HOME_LAYOUT_IDS = new Set<LayoutId>(["mediterraneo", "rustico", "notturno", "futuristico", "romantico"]);
-const HOME_VISIBLE_LAYOUTS = LAYOUTS.filter((layout) => !HIDDEN_HOME_LAYOUT_IDS.has(layout.id));
+export default async function HomePage() {
+  const supabase = createServerSupabaseClient() as any;
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+  const isAuthenticated = Boolean(session);
 
-export default function HomePage() {
   return (
     <div className="grid" style={{ gap: 32 }}>
       <header className="topbar">
@@ -209,7 +212,7 @@ export default function HomePage() {
             ospiti vedono la versione pubblica protetta.
           </p>
         </div>
-        <LayoutCarousel items={HOME_VISIBLE_LAYOUTS} />
+        <LayoutCarousel items={LAYOUTS} isAuthenticated={isAuthenticated} />
       </section>
     </div>
   );

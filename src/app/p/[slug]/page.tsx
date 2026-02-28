@@ -12,13 +12,14 @@ import {
 import { PublicOfflineManager } from "../../../components/public-offline-manager";
 import { Database } from "../../../lib/database.types";
 import { getLayoutById } from "../../../lib/layouts";
+import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../lib/storage-media";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 type Props = {
-  params: { slug: string };
-  searchParams?: { t?: string | string[]; debug?: string | string[] };
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ t?: string | string[]; debug?: string | string[] }>;
 };
 
 type SectionRow = Database["public"]["Tables"]["sections"]["Row"];
@@ -234,6 +235,55 @@ async function ensureOroColazioneSectionPublic(
   return updated.sort((a, b) => a.order_index - b.order_index);
 }
 
+async function ensureExtraColazioneSectionPublic(
+  admin: any,
+  layoutType: string,
+  homebookId: string,
+  sections: SectionPreview[]
+): Promise<SectionPreview[]> {
+  if (layoutType !== "futuristico" && layoutType !== "romantico") return sections;
+  const hasColazione = sections.some((section) => normalizeKey(section.title) === "colazione");
+  if (hasColazione) return sections;
+
+  const regoleSection = sections.find((section) => normalizeKey(section.title) === "regole struttura");
+  const insertIndex = (regoleSection?.order_index ?? 5) + 1;
+  const toShift = sections
+    .filter((section) => section.order_index >= insertIndex)
+    .sort((a, b) => b.order_index - a.order_index);
+
+  for (const section of toShift) {
+    const nextIndex = section.order_index + 1;
+    const { error } = await admin.from("sections").update({ order_index: nextIndex }).eq("id", section.id);
+    if (!error) {
+      section.order_index = nextIndex;
+    }
+  }
+
+  const { data, error } = await admin
+    .from("sections")
+    .insert({
+      homebook_id: homebookId,
+      title: "Colazione",
+      order_index: insertIndex
+    })
+    .select("id, title, order_index, visible")
+    .single();
+
+  if (error || !data) return sections;
+
+  const updated: SectionPreview[] = [
+    ...sections,
+    {
+      id: data.id,
+      title: data.title,
+      order_index: data.order_index,
+      visible: data.visible ?? null
+    }
+  ];
+
+  return updated.sort((a, b) => a.order_index - b.order_index);
+}
+
 const SUBSECTION_ORDER_RAW: Record<string, string[]> = {
   "check-in": ["Prima di partire", "Orario", "Formalità", "Self check-in", "Check-in in presenza"],
   "come raggiungerci": ["Auto", "Aereo", "Bus", "Traghetto", "Metro", "Treno", "Noleggio"],
@@ -295,15 +345,17 @@ function sortSubsections(sectionTitle: string, list: SubsectionPreview[]) {
 
 export default async function PublicHomebookPage({ params, searchParams }: Props) {
   noStore();
-  const rawSlug = params.slug ?? "";
+  const resolvedParams = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const rawSlug = resolvedParams.slug ?? "";
   let slug = rawSlug;
-  let resolvedToken = typeof searchParams?.t === "string" ? searchParams.t.trim() : "";
-  if (!resolvedToken && searchParams && typeof (searchParams as any).get === "function") {
-    resolvedToken = ((searchParams as any).get("t") as string | null)?.trim() ?? "";
+  let resolvedToken = typeof resolvedSearchParams?.t === "string" ? resolvedSearchParams.t.trim() : "";
+  if (!resolvedToken && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
+    resolvedToken = ((resolvedSearchParams as any).get("t") as string | null)?.trim() ?? "";
   }
-  let debugFlag = typeof searchParams?.debug === "string" ? searchParams.debug.trim() : "";
-  if (!debugFlag && searchParams && typeof (searchParams as any).get === "function") {
-    debugFlag = ((searchParams as any).get("debug") as string | null)?.trim() ?? "";
+  let debugFlag = typeof resolvedSearchParams?.debug === "string" ? resolvedSearchParams.debug.trim() : "";
+  if (!debugFlag && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
+    debugFlag = ((resolvedSearchParams as any).get("debug") as string | null)?.trim() ?? "";
   }
   if (!resolvedToken && rawSlug.includes("?")) {
     const [base, queryString] = rawSlug.split("?");
@@ -319,9 +371,9 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
             rawSlug,
             slug,
             tokenLength: resolvedToken.length,
-            hasSearchParamsGet: Boolean(searchParams && typeof (searchParams as any).get === "function"),
+            hasSearchParamsGet: Boolean(resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function"),
             debugFlag,
-            searchParams
+            searchParams: resolvedSearchParams
           },
           null,
           2
@@ -370,6 +422,9 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
     notFound();
   }
 
+  const layoutMeta = getLayoutById(homebook.layout_type);
+  const layoutType = layoutMeta.id;
+
   let allowOfflineCache = true;
   const ownerId = homebook.properties?.user_id ?? null;
   if (!ownerId) {
@@ -407,28 +462,36 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
       : []) as any);
 
   const adminForUpdates =
-    (homebook.layout_type === "illustrativo" ||
-      homebook.layout_type === "moderno" ||
-      homebook.layout_type === "oro") &&
+    (layoutType === "illustrativo" ||
+      layoutType === "moderno" ||
+      layoutType === "oro" ||
+      layoutType === "futuristico" ||
+      layoutType === "romantico") &&
     process.env.SUPABASE_SERVICE_ROLE_KEY
       ? createAdminClient()
       : null;
   if (adminForUpdates) {
     resolvedSections = await ensureIllustrativoColazioneSectionPublic(
       adminForUpdates,
-      homebook.layout_type,
+      layoutType,
       homebook.id,
       resolvedSections as SectionPreview[]
     );
     resolvedSections = await ensureModernoColazioneSectionPublic(
       adminForUpdates,
-      homebook.layout_type,
+      layoutType,
       homebook.id,
       resolvedSections as SectionPreview[]
     );
     resolvedSections = await ensureOroColazioneSectionPublic(
       adminForUpdates,
-      homebook.layout_type,
+      layoutType,
+      homebook.id,
+      resolvedSections as SectionPreview[]
+    );
+    resolvedSections = await ensureExtraColazioneSectionPublic(
+      adminForUpdates,
+      layoutType,
       homebook.id,
       resolvedSections as SectionPreview[]
     );
@@ -487,12 +550,32 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
       .order("created_at", { ascending: true });
     media = fallback.data ?? [];
   }
+  let signedValueMap = new Map<string, string>();
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const signingClient = createAdminClient() as any;
+      signedValueMap = await createSignedUrlMapForValues(
+        signingClient,
+        [homebook.properties?.main_image_url ?? null, ...(media ?? []).map((item: { url?: string | null }) => item.url ?? null)]
+      );
+    } catch {
+      signedValueMap = new Map<string, string>();
+    }
+  }
+  const resolvedCoverImage = resolveStorageValueWithSignedMap(
+    homebook.properties?.main_image_url ?? null,
+    signedValueMap
+  );
+  const resolvedMedia = (media ?? []).map((item: any) => ({
+    ...item,
+    url: resolveStorageValueWithSignedMap(item.url, signedValueMap) ?? item.url
+  }));
 
   const offlineAssets = Array.from(
     new Set(
       [
-        homebook.properties?.main_image_url ?? null,
-        ...(media ?? [])
+        resolvedCoverImage,
+        ...resolvedMedia
           .filter((item: { type?: string }) => item.type === "image" || item.type === "file")
           .map((item: { url?: string | null }) => item.url ?? null)
       ].filter(Boolean)
@@ -501,7 +584,7 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
 
   const castSections = (resolvedSections ?? []) as SectionPreview[];
   const castSubsections = (resolvedSubsections ?? []) as SubsectionPreview[];
-  const castMedia = (media ?? []) as MediaPreview[];
+  const castMedia = resolvedMedia as MediaPreview[];
 
   const isVisible = (value?: boolean | null) => value !== false;
   const visibleSections = castSections.filter((section) => isVisible(section.visible));
@@ -560,21 +643,32 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
         }))
       : filteredSections;
 
-  const layoutMeta = getLayoutById(homebook.layout_type);
-  const isGridPreview = ["classico", "moderno", "illustrativo", "pastello", "oro"].includes(layoutMeta.id);
+  const isGridPreview = ["classico", "rustico", "mediterraneo", "moderno", "illustrativo", "pastello", "oro", "futuristico", "notturno"].includes(layoutMeta.id);
   const previewPageClass =
     layoutMeta.id === "classico"
       ? "classico-editor-page"
+      : layoutMeta.id === "rustico"
+      ? "rustico-editor-page"
+      : layoutMeta.id === "mediterraneo"
+      ? "rustico-editor-page mediterraneo-editor-page"
       : layoutMeta.id === "moderno"
       ? "moderno-editor-page"
       : layoutMeta.id === "illustrativo"
       ? "illustrativo-editor-page"
       : layoutMeta.id === "pastello"
       ? "pastello-editor-page"
+      : layoutMeta.id === "futuristico"
+      ? "futuristico-editor-page"
+      : layoutMeta.id === "notturno"
+      ? "notturno-editor-page"
       : layoutMeta.id === "oro"
       ? "oro-editor-page"
       : "";
-  const coverImage = homebook.properties?.main_image_url ?? null;
+  const publicLayoutClass =
+    layoutMeta.id === "mediterraneo"
+      ? "public-homebook--rustico public-homebook--mediterraneo"
+      : `public-homebook--${layoutMeta.id}`;
+  const coverImage = resolvedCoverImage;
   const heroTitle = homebook.properties?.name ?? homebook.title;
   const heroSubtitle = homebook.properties?.short_description ?? "";
   const heroAddress = homebook.properties?.address ?? "";
@@ -586,7 +680,7 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
       property: {
         name: homebook.properties?.name ?? null,
         address: homebook.properties?.address ?? null,
-        mainImageUrl: homebook.properties?.main_image_url ?? null,
+        mainImageUrl: resolvedCoverImage,
         shortDescription: homebook.properties?.short_description ?? null
       }
     },
@@ -596,7 +690,7 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
   const renderLayout = () => {
     if (isGridPreview) {
       return (
-        <div className={`public-homebook public-homebook--${layoutMeta.id} ${previewPageClass}`}>
+        <div className={`public-homebook ${publicLayoutClass} ${previewPageClass}`}>
           <section className="card" style={{ padding: 0, overflow: "hidden" }}>
             <div
               style={{
