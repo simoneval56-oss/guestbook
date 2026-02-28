@@ -9,5 +9,9 @@ export function createBrowserSupabaseClient() {
     throw new Error("Missing Supabase public env vars");
   }
 
-  return createBrowserClient<Database>(url, anonKey) as any;
+  return createBrowserClient<Database>(url, anonKey, {
+    cookieOptions: {
+      path: "/"
+    }
+  }) as any;
 }

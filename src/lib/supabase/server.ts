@@ -49,6 +49,9 @@ export function createServerSupabaseClient(options: ServerSupabaseOptions = {}) 
     url,
     anonKey,
     {
+      cookieOptions: {
+        path: "/"
+      },
       cookies: {
         getAll,
         setAll
