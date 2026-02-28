@@ -116,10 +116,9 @@ async function updatePropertyDetailsAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient() as any;
   const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
+    data: { session }
+  } = await supabase.auth.getSession();
+  if (!session) redirect("/login");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const name = formData.get("name")?.toString() ?? "";
@@ -137,7 +136,7 @@ async function updatePropertyDetailsAction(formData: FormData) {
     .eq("id", property_id)
     .single();
 
-  if (!property || property.user_id !== user.id) return;
+  if (!property || property.user_id !== session.user.id) return;
 
   const uploadedUrl =
     main_image_file instanceof File && main_image_file.size > 0
@@ -490,11 +489,10 @@ export default async function EditHomebookPage({ params }: Props) {
   const supabase = createServerSupabaseClient() as any;
   const admin = createAdminClient() as any;
   const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
+    data: { session }
+  } = await supabase.auth.getSession();
 
-  if (userError || !user) {
+  if (!session) {
     redirect("/login");
   }
 
@@ -504,7 +502,7 @@ export default async function EditHomebookPage({ params }: Props) {
     .eq("id", homebookId)
     .single();
 
-  if (!homebook || homebook.properties?.user_id !== user.id) {
+  if (!homebook || homebook.properties?.user_id !== session.user.id) {
     notFound();
   }
 
