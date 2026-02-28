@@ -474,9 +474,11 @@ export default async function DashboardPage() {
             <h2 style={{ margin: "8px 0 0", color: "#0e4b58" }}>{session.user.email}</h2>
           </div>
           <div style={{ display: "flex", gap: 12 }}>
-            <Link className="btn btn-secondary" href="/api/auth/logout">
-              Logout
-            </Link>
+            <form action="/api/auth/logout" method="post">
+              <button className="btn btn-secondary" type="submit">
+                Logout
+              </button>
+            </form>
           </div>
         </header>
 
