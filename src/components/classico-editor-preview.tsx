@@ -1114,6 +1114,8 @@ export function ClassicoEditorPreview({
   const [sectionDragId, setSectionDragId] = useState<string | null>(null);
   const [subDragId, setSubDragId] = useState<string | null>(null);
   const [subDropTargetId, setSubDropTargetId] = useState<string | null>(null);
+  const [subDropPlacement, setSubDropPlacement] = useState<"before" | "after">("before");
+  const subDragIdRef = useRef<string | null>(null);
   const modalBodyRef = useRef<HTMLDivElement | null>(null);
   const subAutoScrollRafRef = useRef<number | null>(null);
   const subAutoScrollDirectionRef = useRef<-1 | 0 | 1>(0);
@@ -2460,66 +2462,85 @@ function parseLinkWithDescription(m: MediaItem) {
     });
   };
 
-  const moveSubsectionToBoundary = (sectionId: string, subId: string, boundary: "start" | "end") => {
-    const list = [...activeSubs];
-    if (list.length < 2) return;
-    if (boundary === "start") {
-      const firstId = list[0]?.id;
-      if (firstId && firstId !== subId) {
-        reorderSubsections(sectionId, subId, firstId, "before");
-      }
-      return;
-    }
-    const lastId = list[list.length - 1]?.id;
-    if (lastId && lastId !== subId) {
-      reorderSubsections(sectionId, subId, lastId, "after");
-    }
-  };
-
   const handleSubDragStart = (event: DragEvent<HTMLElement>, subId: string) => {
     if (isReadOnly) return;
     event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", subId);
+    subDragIdRef.current = subId;
     setSubDragId(subId);
     setSubDropTargetId(subId);
+    setSubDropPlacement("before");
     updateSubAutoScrollFromPointer(event.clientY);
   };
 
   const handleSubDragOver = (event: DragEvent<HTMLElement>, hoverSubId?: string) => {
-    if (isReadOnly || !subDragId) return;
+    if (isReadOnly) return;
+    const draggedId = subDragIdRef.current ?? subDragId;
+    if (!draggedId) return;
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
-    if (hoverSubId && hoverSubId !== subDragId) {
+    if (hoverSubId && hoverSubId !== draggedId) {
       setSubDropTargetId(hoverSubId);
+      const currentTarget = event.currentTarget as HTMLElement;
+      const rect = currentTarget.getBoundingClientRect();
+      setSubDropPlacement(event.clientY > rect.top + rect.height / 2 ? "after" : "before");
     }
     updateSubAutoScrollFromPointer(event.clientY);
   };
 
+  const getDraggedSubId = (event?: DragEvent<HTMLElement>) => {
+    const fromDataTransfer = event ? event.dataTransfer.getData("text/plain") : "";
+    return subDragIdRef.current ?? subDragId ?? (fromDataTransfer || null);
+  };
+
   const handleSubListDrop = (event: DragEvent<HTMLElement>) => {
-    if (isReadOnly || !subDragId || !activeSection) return;
+    if (isReadOnly || !activeSection) return;
+    const draggedId = getDraggedSubId(event);
+    if (!draggedId) return;
     event.preventDefault();
-    const lastId = activeSubs[activeSubs.length - 1]?.id;
-    if (lastId) {
-      reorderSubsections(activeSection.id, subDragId, lastId, "after");
+    event.stopPropagation();
+    const targetId = subDropTargetId;
+    if (targetId && targetId !== draggedId) {
+      reorderSubsections(activeSection.id, draggedId, targetId, subDropPlacement);
+    } else {
+      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      const firstId = activeSubs[0]?.id;
+      const lastId = activeSubs[activeSubs.length - 1]?.id;
+      if (event.clientY >= rect.top + rect.height / 2 && lastId && lastId !== draggedId) {
+        reorderSubsections(activeSection.id, draggedId, lastId, "after");
+      } else if (firstId && firstId !== draggedId) {
+        reorderSubsections(activeSection.id, draggedId, firstId, "before");
+      }
     }
+    subDragIdRef.current = null;
     setSubDragId(null);
     setSubDropTargetId(null);
+    setSubDropPlacement("before");
     stopSubAutoScroll();
   };
 
   const handleSubDrop = (event: DragEvent<HTMLElement>, subId: string) => {
-    if (isReadOnly || !subDragId) return;
+    if (isReadOnly) return;
+    const draggedId = getDraggedSubId(event);
+    if (!draggedId || draggedId === subId) return;
     event.preventDefault();
     event.stopPropagation();
     if (!activeSection) return;
-    reorderSubsections(activeSection.id, subDragId, subId);
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const position: "before" | "after" = event.clientY > rect.top + rect.height / 2 ? "after" : "before";
+    reorderSubsections(activeSection.id, draggedId, subId, position);
+    subDragIdRef.current = null;
     setSubDragId(null);
     setSubDropTargetId(null);
+    setSubDropPlacement("before");
     stopSubAutoScroll();
   };
 
   const handleSubDragEnd = () => {
+    subDragIdRef.current = null;
     setSubDragId(null);
     setSubDropTargetId(null);
+    setSubDropPlacement("before");
     stopSubAutoScroll();
   };
 
@@ -2530,6 +2551,7 @@ function parseLinkWithDescription(m: MediaItem) {
       }
       subAutoScrollRafRef.current = null;
       subAutoScrollDirectionRef.current = 0;
+      subDragIdRef.current = null;
     };
   }, []);
 
@@ -4462,32 +4484,11 @@ function parseLinkWithDescription(m: MediaItem) {
                                 style={{ padding: "2px 6px", lineHeight: 1, cursor: "grab" }}
                                 draggable={!isReadOnly}
                                 onDragStart={(event) => handleSubDragStart(event, sub.id)}
+                                onDragEnd={handleSubDragEnd}
                                 aria-label={`Trascina ${displayTitle} per riordinare`}
                                 title="Trascina per riordinare"
                               >
                                 ||
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-secondary"
-                                style={{ padding: "2px 8px", lineHeight: 1 }}
-                                onClick={() => moveSubsectionToBoundary(activeSection.id, sub.id, "start")}
-                                disabled={isPending || idx === 0}
-                                aria-label={`Sposta ${displayTitle} in cima`}
-                                title="Sposta in cima"
-                              >
-                                Cima
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-secondary"
-                                style={{ padding: "2px 8px", lineHeight: 1 }}
-                                onClick={() => moveSubsectionToBoundary(activeSection.id, sub.id, "end")}
-                                disabled={isPending || idx === activeSubs.length - 1}
-                                aria-label={`Sposta ${displayTitle} in fondo`}
-                                title="Sposta in fondo"
-                              >
-                                Fondo
                               </button>
                               {!isSubVisible ? (
                                 <span className="classico-editor-modal__muted" style={{ fontStyle: "italic" }}>
