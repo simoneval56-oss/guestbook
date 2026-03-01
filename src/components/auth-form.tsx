@@ -83,7 +83,9 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
     borderRadius: 12,
     border: "1px solid #cdd9e1",
     background: "#f6fafc",
-    color: "var(--text)"
+    color: "var(--brand-dark)",
+    WebkitTextFillColor: "var(--brand-dark)",
+    caretColor: "var(--brand-dark)"
   };
 
   return (
@@ -91,7 +93,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       <div className="pill">{title}</div>
       <div className="grid" style={{ marginTop: 16, gap: 12 }}>
         <label className="grid" style={{ gap: 6 }}>
-          <span>Email</span>
+          <span style={{ color: "var(--brand-dark)" }}>Email</span>
           <input
             required
             type="email"
@@ -103,7 +105,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         </label>
         <label className="grid" style={{ gap: 6 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span>Password</span>
+            <span style={{ color: "var(--brand-dark)" }}>Password</span>
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
