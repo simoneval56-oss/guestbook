@@ -287,6 +287,12 @@ async function createHomebookAction(formData: FormData) {
 
   if (!property_id || !title) return;
 
+  const { data: ownedProperty } = await (supabase.from("properties") as any)
+    .select("id, user_id")
+    .eq("id", property_id)
+    .single();
+  if (!ownedProperty || ownedProperty.user_id !== user.id) return;
+
   const public_slug = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
   const public_access_token = generatePublicAccessToken();
 
@@ -442,18 +448,27 @@ export default async function DashboardPage() {
     }
 
     const { data: properties } = await withTimeout(
-      (supabase.from("properties") as any).select("*").order("created_at", {
-        ascending: false
-      }),
+      (supabase.from("properties") as any)
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", {
+          ascending: false
+        }),
       "ProprietÃ "
     );
+    const ownedPropertyIds = (properties ?? []).map((property: Database["public"]["Tables"]["properties"]["Row"]) => property.id);
 
-    const { data: homebooks } = await withTimeout(
-      (supabase.from("homebooks") as any)
-        .select("*, properties(name)")
-        .order("created_at", { ascending: false }),
-      "Homebook"
-    );
+    let homebooks: any[] = [];
+    if (ownedPropertyIds.length) {
+      const { data } = await withTimeout(
+        (supabase.from("homebooks") as any)
+          .select("*, properties(name)")
+          .in("property_id", ownedPropertyIds)
+          .order("created_at", { ascending: false }),
+        "Homebook"
+      );
+      homebooks = data ?? [];
+    }
     let propertySignedMap = new Map<string, string>();
     if ((properties ?? []).length) {
       try {

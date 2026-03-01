@@ -56,6 +56,7 @@ test.describe("Accessi critici", () => {
     await expect(page.getByText(fixture.ownerA.homebookTitle)).toBeVisible();
 
     await expect(page.locator(".structure-summary__name").filter({ hasText: fixture.ownerB.propertyName })).toHaveCount(0);
+    await expect(page.getByText(fixture.ownerB.homebookTitle)).toHaveCount(0);
 
     const ownEditResponse = await page.goto(`/homebooks/${fixture.ownerA.homebookId}/edit`);
     expect(ownEditResponse?.status()).toBe(200);

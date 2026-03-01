@@ -28,6 +28,13 @@ async function createHomebook(formData: FormData) {
   const title = formData.get("title")?.toString() ?? "";
   const layout_type = formData.get("layout_type")?.toString() || DEFAULT_LAYOUT_ID;
   if (!property_id || !title) return;
+
+  const { data: ownedProperty } = await (supabase.from("properties") as any)
+    .select("id, user_id")
+    .eq("id", property_id)
+    .single();
+  if (!ownedProperty || ownedProperty.user_id !== user.id) return;
+
   const public_slug = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
   const public_access_token = generatePublicAccessToken();
   const homebookPayload: Database["public"]["Tables"]["homebooks"]["Insert"] = {
@@ -70,7 +77,7 @@ export default async function NewHomebookPage({ searchParams }: NewHomebookPageP
   const normalizedRequestedLayout = typeof requestedLayout === "string" ? requestedLayout.trim().toLowerCase() : "";
   const isValidRequestedLayout = LAYOUTS.some((layout) => layout.id === normalizedRequestedLayout);
   const selectedLayout = isValidRequestedLayout ? normalizedRequestedLayout : DEFAULT_LAYOUT_ID;
-  const { data: properties } = await supabase.from("properties").select("id, name");
+  const { data: properties } = await supabase.from("properties").select("id, name").eq("user_id", user.id);
 
   return (
     <div className="grid" style={{ gap: 16 }}>
