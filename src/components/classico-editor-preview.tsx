@@ -1113,6 +1113,10 @@ export function ClassicoEditorPreview({
   } | null>(null);
   const [sectionDragId, setSectionDragId] = useState<string | null>(null);
   const [subDragId, setSubDragId] = useState<string | null>(null);
+  const [subDropTargetId, setSubDropTargetId] = useState<string | null>(null);
+  const modalBodyRef = useRef<HTMLDivElement | null>(null);
+  const subAutoScrollRafRef = useRef<number | null>(null);
+  const subAutoScrollDirectionRef = useRef<-1 | 0 | 1>(0);
   const [isPending, startTransition] = useTransition();
   const [showSavedFeedback, setShowSavedFeedback] = useState(false);
   const savedFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -2364,15 +2368,79 @@ function parseLinkWithDescription(m: MediaItem) {
     setSectionDragId(null);
   };
 
-  const reorderSubsections = (sectionId: string, fromId: string, toId: string) => {
+  const stopSubAutoScroll = () => {
+    subAutoScrollDirectionRef.current = 0;
+    if (subAutoScrollRafRef.current !== null && typeof window !== "undefined") {
+      window.cancelAnimationFrame(subAutoScrollRafRef.current);
+    }
+    subAutoScrollRafRef.current = null;
+  };
+
+  const runSubAutoScroll = () => {
+    const container = modalBodyRef.current;
+    const direction = subAutoScrollDirectionRef.current;
+    if (!container || direction === 0) {
+      subAutoScrollRafRef.current = null;
+      return;
+    }
+    const remaining =
+      direction > 0
+        ? container.scrollHeight - container.clientHeight - container.scrollTop
+        : container.scrollTop;
+    if (remaining <= 0) {
+      stopSubAutoScroll();
+      return;
+    }
+    container.scrollTop += direction * 14;
+    if (typeof window !== "undefined") {
+      subAutoScrollRafRef.current = window.requestAnimationFrame(runSubAutoScroll);
+    }
+  };
+
+  const setSubAutoScrollDirection = (direction: -1 | 0 | 1) => {
+    if (subAutoScrollDirectionRef.current === direction) return;
+    subAutoScrollDirectionRef.current = direction;
+    if (direction === 0) {
+      stopSubAutoScroll();
+      return;
+    }
+    if (subAutoScrollRafRef.current === null && typeof window !== "undefined") {
+      subAutoScrollRafRef.current = window.requestAnimationFrame(runSubAutoScroll);
+    }
+  };
+
+  const updateSubAutoScrollFromPointer = (clientY: number) => {
+    const container = modalBodyRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const edgeThreshold = Math.max(48, Math.min(96, rect.height * 0.18));
+    if (clientY < rect.top + edgeThreshold) {
+      setSubAutoScrollDirection(-1);
+      return;
+    }
+    if (clientY > rect.bottom - edgeThreshold) {
+      setSubAutoScrollDirection(1);
+      return;
+    }
+    setSubAutoScrollDirection(0);
+  };
+
+  const reorderSubsections = (
+    sectionId: string,
+    fromId: string,
+    toId: string,
+    position: "before" | "after" = "before"
+  ) => {
     if (fromId === toId) return;
     const list = [...activeSubs];
     const fromIndex = list.findIndex((sub) => sub.id === fromId);
-    const toIndex = list.findIndex((sub) => sub.id === toId);
-    if (fromIndex === -1 || toIndex === -1) return;
+    if (fromIndex === -1) return;
     const updated = [...list];
     const [moved] = updated.splice(fromIndex, 1);
-    updated.splice(toIndex, 0, moved);
+    const targetIndex = updated.findIndex((sub) => sub.id === toId);
+    if (targetIndex === -1) return;
+    const insertIndex = position === "after" ? targetIndex + 1 : targetIndex;
+    updated.splice(insertIndex, 0, moved);
     const orderMap = new Map(updated.map((sub, index) => [sub.id, index + 1]));
     setSubsState((prev) => {
       const next = { ...prev };
@@ -2392,29 +2460,78 @@ function parseLinkWithDescription(m: MediaItem) {
     });
   };
 
+  const moveSubsectionToBoundary = (sectionId: string, subId: string, boundary: "start" | "end") => {
+    const list = [...activeSubs];
+    if (list.length < 2) return;
+    if (boundary === "start") {
+      const firstId = list[0]?.id;
+      if (firstId && firstId !== subId) {
+        reorderSubsections(sectionId, subId, firstId, "before");
+      }
+      return;
+    }
+    const lastId = list[list.length - 1]?.id;
+    if (lastId && lastId !== subId) {
+      reorderSubsections(sectionId, subId, lastId, "after");
+    }
+  };
+
   const handleSubDragStart = (event: DragEvent<HTMLElement>, subId: string) => {
     if (isReadOnly) return;
     event.dataTransfer.effectAllowed = "move";
     setSubDragId(subId);
+    setSubDropTargetId(subId);
+    updateSubAutoScrollFromPointer(event.clientY);
   };
 
-  const handleSubDragOver = (event: DragEvent<HTMLElement>) => {
-    if (isReadOnly) return;
+  const handleSubDragOver = (event: DragEvent<HTMLElement>, hoverSubId?: string) => {
+    if (isReadOnly || !subDragId) return;
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
+    if (hoverSubId && hoverSubId !== subDragId) {
+      setSubDropTargetId(hoverSubId);
+    }
+    updateSubAutoScrollFromPointer(event.clientY);
+  };
+
+  const handleSubListDrop = (event: DragEvent<HTMLElement>) => {
+    if (isReadOnly || !subDragId || !activeSection) return;
+    event.preventDefault();
+    const lastId = activeSubs[activeSubs.length - 1]?.id;
+    if (lastId) {
+      reorderSubsections(activeSection.id, subDragId, lastId, "after");
+    }
+    setSubDragId(null);
+    setSubDropTargetId(null);
+    stopSubAutoScroll();
   };
 
   const handleSubDrop = (event: DragEvent<HTMLElement>, subId: string) => {
-    if (isReadOnly) return;
+    if (isReadOnly || !subDragId) return;
     event.preventDefault();
-    if (!activeSection || !subDragId) return;
+    event.stopPropagation();
+    if (!activeSection) return;
     reorderSubsections(activeSection.id, subDragId, subId);
     setSubDragId(null);
+    setSubDropTargetId(null);
+    stopSubAutoScroll();
   };
 
   const handleSubDragEnd = () => {
     setSubDragId(null);
+    setSubDropTargetId(null);
+    stopSubAutoScroll();
   };
+
+  useEffect(() => {
+    return () => {
+      if (subAutoScrollRafRef.current !== null && typeof window !== "undefined") {
+        window.cancelAnimationFrame(subAutoScrollRafRef.current);
+      }
+      subAutoScrollRafRef.current = null;
+      subAutoScrollDirectionRef.current = 0;
+    };
+  }, []);
 
   return (
     <section className={`classico-editor-preview${isModernoLayout ? " moderno-preview" : ""}${isIllustrativo ? " illustrativo-preview" : ""}${isRusticoLikeLayout ? " rustico-preview" : ""}${isMediterraneoLayout ? " mediterraneo-preview" : ""}`}>
@@ -2757,7 +2874,12 @@ function parseLinkWithDescription(m: MediaItem) {
             </header>
 
             <fieldset disabled={isReadOnly} style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
-            <div className="classico-editor-modal__body">
+            <div
+              className="classico-editor-modal__body"
+              ref={modalBodyRef}
+              onDragOver={handleSubDragOver}
+              onDrop={handleSubListDrop}
+            >
               {iconKey === "dove mangiare" ? (
                 <div className="classico-editor-modal__list" style={{ marginBottom: 12 }}>
                   <div className="classico-editor-modal__group">
@@ -4312,8 +4434,14 @@ function parseLinkWithDescription(m: MediaItem) {
                     return (
                       <article
                         key={sub.id}
-                        className="classico-editor-modal__sub"
-                        onDragOver={handleSubDragOver}
+                        className={`classico-editor-modal__sub${
+                          subDragId === sub.id ? " classico-editor-modal__sub--dragging" : ""
+                        }${
+                          subDropTargetId === sub.id && subDragId !== sub.id
+                            ? " classico-editor-modal__sub--drop-target"
+                            : ""
+                        }`}
+                        onDragOver={(event) => handleSubDragOver(event, sub.id)}
                         onDrop={(event) => handleSubDrop(event, sub.id)}
                         onDragEnd={handleSubDragEnd}
                       >
@@ -4338,6 +4466,28 @@ function parseLinkWithDescription(m: MediaItem) {
                                 title="Trascina per riordinare"
                               >
                                 ||
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-secondary"
+                                style={{ padding: "2px 8px", lineHeight: 1 }}
+                                onClick={() => moveSubsectionToBoundary(activeSection.id, sub.id, "start")}
+                                disabled={isPending || idx === 0}
+                                aria-label={`Sposta ${displayTitle} in cima`}
+                                title="Sposta in cima"
+                              >
+                                Cima
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-secondary"
+                                style={{ padding: "2px 8px", lineHeight: 1 }}
+                                onClick={() => moveSubsectionToBoundary(activeSection.id, sub.id, "end")}
+                                disabled={isPending || idx === activeSubs.length - 1}
+                                aria-label={`Sposta ${displayTitle} in fondo`}
+                                title="Sposta in fondo"
+                              >
+                                Fondo
                               </button>
                               {!isSubVisible ? (
                                 <span className="classico-editor-modal__muted" style={{ fontStyle: "italic" }}>
