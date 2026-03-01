@@ -212,6 +212,28 @@ button {
   box-shadow: 0 8px 18px rgba(14, 75, 88, 0.12);
 }
 
+.btn:disabled,
+.btn[disabled] {
+  opacity: 1;
+  cursor: not-allowed;
+  background: #9dd1cd;
+  border-color: #77b8b2;
+  color: #1f4f5a;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-secondary:disabled,
+.btn-secondary[disabled] {
+  opacity: 1;
+  cursor: not-allowed;
+  background: #eef3f6;
+  border-color: #c8d6de;
+  color: #3f5f6c;
+  box-shadow: none;
+  transform: none;
+}
+
 .tooltip-wrap {
   position: relative;
   display: inline-flex;
@@ -1738,7 +1760,7 @@ button {
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #eef6f5;
-  color: var(--text);
+  color: var(--brand-dark);
   font-size: 13px;
   max-width: 100%;
   overflow: hidden;
@@ -3563,6 +3585,22 @@ button {
   border: 1px solid rgba(120, 84, 52, 0.18);
   border-radius: 24px;
   padding: clamp(12px, 2vw, 18px);
+}
+
+.rustico-editor-page {
+  --rustico-ink: #3b2a1d;
+  --rustico-muted: #6b5847;
+  --text: var(--rustico-ink);
+  --muted: var(--rustico-muted);
+  color: var(--rustico-ink);
+}
+
+.mediterraneo-editor-page {
+  --rustico-ink: #2f4f63;
+  --rustico-muted: #607d91;
+  --text: var(--rustico-ink);
+  --muted: var(--rustico-muted);
+  color: var(--rustico-ink);
 }
 
 .rustico-editor-page .classico-editor-preview {
@@ -7432,10 +7470,10 @@ img[src*="/Moderno/servizi"] {
 .pastello-layout,
 .pastello-editor-page,
 .public-homebook--pastello {
-  --pastello-ink: var(--text);
-  --pastello-muted: var(--muted);
+  --pastello-ink: #2e2738;
+  --pastello-muted: #6f6479;
   background: #f9fafb;
-  color: var(--text);
+  color: var(--pastello-ink);
   min-height: 120vh;
   background-size: 100% 140%;
   background-position: center top;
@@ -7445,7 +7483,7 @@ img[src*="/Moderno/servizi"] {
 .pastello-layout .base-hero {
   background: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  color: var(--text);
+  color: var(--pastello-ink);
 }
 
 .public-homebook--pastello .section-panel,
@@ -8039,7 +8077,7 @@ img[src*="/Moderno/servizi"] {
   font-family: "Inter", system-ui, -apple-system, sans-serif;
   font-weight: 600;
   font-size: 16px;
-  color: var(--text);
+  color: var(--pastello-ink);
 }
 
 .public-homebook--pastello .classico-card__chevron,
@@ -8059,13 +8097,13 @@ img[src*="/Moderno/servizi"] {
 .pastello-layout .section-modal__card {
   border: 1px solid var(--border);
   border-top: 4px solid var(--border);
-  color: var(--text);
+  color: var(--pastello-ink);
   background: #fff;
 }
 
 .public-homebook--pastello .section-modal__title,
 .pastello-layout .section-modal__title {
-  color: var(--text);
+  color: var(--pastello-ink);
 }
 
 .public-homebook--pastello .section-modal__sub-title,
