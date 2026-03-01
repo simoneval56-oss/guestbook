@@ -4621,7 +4621,7 @@ button {
   background: linear-gradient(135deg, rgb(246, 234, 223) 20%, rgb(224, 205, 187) 100%);
 }
 
-.public-homebook .classico-card--slug-colazione,
+.public-homebook--classico .classico-card--slug-colazione,
 .public-homebook--classico .classico-card--slug-colazione {
   background: linear-gradient(135deg, rgb(246, 234, 223) 20%, rgb(224, 205, 187) 100%);
 }
@@ -4678,7 +4678,7 @@ button {
 .classico-editor-page .classico-card--slug-colazione,
 .classico-preview .classico-card--slug-colazione,
 .public-homebook--classico .classico-card--slug-colazione,
-.public-homebook .classico-card--slug-colazione {
+.public-homebook--classico .classico-card--slug-colazione {
   background: linear-gradient(135deg, rgb(246, 234, 223) 20%, rgb(224, 205, 187) 100%);
 }
 
@@ -4694,7 +4694,7 @@ button {
 .classico-editor-page .classico-card--slug-cosa-visitare,
 .classico-preview .classico-card--slug-cosa-visitare,
 .public-homebook--classico .classico-card--slug-cosa-visitare,
-.public-homebook .classico-card--slug-cosa-visitare {
+.public-homebook--classico .classico-card--slug-cosa-visitare {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
 }
 .classico-sections__grid .classico-card:nth-child(4n),
@@ -5950,7 +5950,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-servizi,
 .classico-preview .classico-card--slug-servizi,
 .public-homebook--classico .classico-card--slug-servizi,
-.public-homebook .classico-card--slug-servizi {
+.public-homebook--classico .classico-card--slug-servizi {
   background: #f6eadf;
 }
 
@@ -5976,7 +5976,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-dove-bere,
 .classico-preview .classico-card--slug-dove-bere,
 .public-homebook--classico .classico-card--slug-dove-bere,
-.public-homebook .classico-card--slug-dove-bere {
+.public-homebook--classico .classico-card--slug-dove-bere {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
   border-color: rgba(19, 84, 90, 0.12);
 }
@@ -5991,7 +5991,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-shopping,
 .classico-preview .classico-card--slug-shopping,
 .public-homebook--classico .classico-card--slug-shopping,
-.public-homebook .classico-card--slug-shopping {
+.public-homebook--classico .classico-card--slug-shopping {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
 }
 
@@ -6006,7 +6006,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-numeri-utili,
 .classico-preview .classico-card--slug-numeri-utili,
 .public-homebook--classico .classico-card--slug-numeri-utili,
-.public-homebook .classico-card--slug-numeri-utili {
+.public-homebook--classico .classico-card--slug-numeri-utili {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
 }
 
@@ -6015,7 +6015,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-come-raggiungerci,
 .classico-preview .classico-card--slug-come-raggiungerci,
 .public-homebook--classico .classico-card--slug-come-raggiungerci,
-.public-homebook .classico-card--slug-come-raggiungerci {
+.public-homebook--classico .classico-card--slug-come-raggiungerci {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
   border-color: rgba(19, 84, 90, 0.12);
 }
@@ -6035,7 +6035,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-regole-struttura,
 .classico-preview .classico-card--slug-regole-struttura,
 .public-homebook--classico .classico-card--slug-regole-struttura,
-.public-homebook .classico-card--slug-regole-struttura {
+.public-homebook--classico .classico-card--slug-regole-struttura {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
   min-height: 128px;
   max-height: 128px;
@@ -6054,7 +6054,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-spiagge,
 .classico-preview .classico-card--slug-spiagge,
 .public-homebook--classico .classico-card--slug-spiagge,
-.public-homebook .classico-card--slug-spiagge {
+.public-homebook--classico .classico-card--slug-spiagge {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
 }
 /* Layout classico: sfondo dedicato per "Check-out" (solo classico + anteprima/editor) */
@@ -6062,7 +6062,7 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-check-out,
 .classico-preview .classico-card--slug-check-out,
 .public-homebook--classico .classico-card--slug-check-out,
-.public-homebook .classico-card--slug-check-out {
+.public-homebook--classico .classico-card--slug-check-out {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
   border-color: rgba(19, 84, 90, 0.12);
 }
@@ -6136,12 +6136,12 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-dove-mangiare,
 .classico-preview .classico-card--slug-dove-mangiare,
 .public-homebook--classico .classico-card--slug-dove-mangiare,
-.public-homebook .classico-card--slug-dove-mangiare,
+.public-homebook--classico .classico-card--slug-dove-mangiare,
 .classico-layout .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
 .classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
 .classico-preview .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
 .public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare,
-.public-homebook .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare {
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-dove-mangiare {
   background: #f6eadf;
 }
 
@@ -6155,12 +6155,12 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-esperienze,
 .classico-preview .classico-card--slug-esperienze,
 .public-homebook--classico .classico-card--slug-esperienze,
-.public-homebook .classico-card--slug-esperienze,
+.public-homebook--classico .classico-card--slug-esperienze,
 .classico-layout .classico-sections__grid .classico-card.classico-card--slug-esperienze,
 .classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-esperienze,
 .classico-preview .classico-sections__grid .classico-card.classico-card--slug-esperienze,
 .public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-esperienze,
-.public-homebook .classico-sections__grid .classico-card.classico-card--slug-esperienze {
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-esperienze {
   background: #f6eadf;
 }
 
@@ -6168,12 +6168,12 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-servizi,
 .classico-preview .classico-card--slug-servizi,
 .public-homebook--classico .classico-card--slug-servizi,
-.public-homebook .classico-card--slug-servizi,
+.public-homebook--classico .classico-card--slug-servizi,
 .classico-layout .classico-sections__grid .classico-card.classico-card--slug-servizi,
 .classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-servizi,
 .classico-preview .classico-sections__grid .classico-card.classico-card--slug-servizi,
 .public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-servizi,
-.public-homebook .classico-sections__grid .classico-card.classico-card--slug-servizi {
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-servizi {
   background: #f6eadf;
 }
 
@@ -6181,12 +6181,12 @@ img[src*="/Moderno/servizi"] {
 .classico-editor-page .classico-card--slug-numeri-utili,
 .classico-preview .classico-card--slug-numeri-utili,
 .public-homebook--classico .classico-card--slug-numeri-utili,
-.public-homebook .classico-card--slug-numeri-utili,
+.public-homebook--classico .classico-card--slug-numeri-utili,
 .classico-layout .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
 .classico-editor-page .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
 .classico-preview .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
 .public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-numeri-utili,
-.public-homebook .classico-sections__grid .classico-card.classico-card--slug-numeri-utili {
+.public-homebook--classico .classico-sections__grid .classico-card.classico-card--slug-numeri-utili {
   background: linear-gradient(135deg, #f6eadf 20%, #e0cdbb 100%);
   border-color: rgba(19, 84, 90, 0.12);
 }
