@@ -123,14 +123,15 @@ async function createPropertyAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient();
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   // Ensure the user exists in public.users (needed for FK on properties)
   const userPayload: Database["public"]["Tables"]["users"]["Insert"] = {
-    id: session.user.id,
-    email: session.user.email ?? ""
+    id: user.id,
+    email: user.email ?? ""
   };
   await (supabase.from("users") as any).upsert(userPayload, { onConflict: "id" });
 
@@ -142,7 +143,7 @@ async function createPropertyAction(formData: FormData) {
   if (!name) return;
 
   const propertyPayload: Database["public"]["Tables"]["properties"]["Insert"] = {
-    user_id: session.user.id,
+    user_id: user.id,
     name,
     address,
     main_image_url,
@@ -158,9 +159,10 @@ async function updatePropertyAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient();
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const name = formData.get("name")?.toString() ?? "";
@@ -175,7 +177,7 @@ async function updatePropertyAction(formData: FormData) {
     .select("id, user_id")
     .eq("id", property_id)
     .single();
-  if (!property || property.user_id !== session.user.id) return;
+  if (!property || property.user_id !== user.id) return;
 
   const uploadedUrl =
     main_image_file instanceof File && main_image_file.size > 0
@@ -226,9 +228,10 @@ async function deletePropertyAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient();
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   if (!property_id) return;
@@ -237,7 +240,7 @@ async function deletePropertyAction(formData: FormData) {
     .select("id, user_id")
     .eq("id", property_id)
     .single();
-  if (!property || property.user_id !== session.user.id) return;
+  if (!property || property.user_id !== user.id) return;
 
   const { data: homebooks } = await (supabase.from("homebooks") as any)
     .select("id")
@@ -273,9 +276,10 @@ async function createHomebookAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient();
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const title = formData.get("title")?.toString() ?? "";
@@ -321,9 +325,10 @@ async function deleteHomebookAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient();
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   if (!homebook_id) return;
@@ -333,7 +338,7 @@ async function deleteHomebookAction(formData: FormData) {
     .eq("id", homebook_id)
     .single();
 
-  if (!homebook || (homebook as any).properties?.user_id !== session.user.id) {
+  if (!homebook || (homebook as any).properties?.user_id !== user.id) {
     return;
   }
 
@@ -363,9 +368,10 @@ async function rotatePublicAccessTokenAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient();
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   if (!homebook_id) return;
@@ -375,7 +381,7 @@ async function rotatePublicAccessTokenAction(formData: FormData) {
     .eq("id", homebook_id)
     .single();
 
-  if (!homebook || (homebook as any).properties?.user_id !== session.user.id) return;
+  if (!homebook || (homebook as any).properties?.user_id !== user.id) return;
 
   await (supabase.from("homebooks") as any)
     .update({ public_access_token: generatePublicAccessToken() })
@@ -388,9 +394,10 @@ async function setPublicAccessEnabledAction(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient();
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   const enabled = formData.get("public_access_enabled")?.toString() === "true";
@@ -401,7 +408,7 @@ async function setPublicAccessEnabledAction(formData: FormData) {
     .eq("id", homebook_id)
     .single();
 
-  if (!homebook || (homebook as any).properties?.user_id !== session.user.id) return;
+  if (!homebook || (homebook as any).properties?.user_id !== user.id) return;
 
   await (supabase.from("homebooks") as any)
     .update({ public_access_enabled: enabled })
@@ -426,10 +433,11 @@ export default async function DashboardPage() {
   const supabase = createServerSupabaseClient();
   try {
     const {
-      data: { session }
-    } = await withTimeout(supabase.auth.getSession(), "Sessione");
+      data: { user },
+      error: userError
+    } = await withTimeout(supabase.auth.getUser(), "Utente");
 
-    if (!session) {
+    if (userError || !user) {
       redirect("/login");
     }
 
@@ -471,7 +479,7 @@ export default async function DashboardPage() {
         <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div className="pill">Bentornato</div>
-            <h2 style={{ margin: "8px 0 0", color: "#0e4b58" }}>{session.user.email}</h2>
+            <h2 style={{ margin: "8px 0 0", color: "#0e4b58" }}>{user.email}</h2>
           </div>
           <div style={{ display: "flex", gap: 12 }}>
             <form action="/api/auth/logout" method="post">

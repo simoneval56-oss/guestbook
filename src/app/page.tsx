@@ -10,9 +10,9 @@ export const revalidate = 0;
 export default async function HomePage() {
   const supabase = createServerSupabaseClient() as any;
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  const isAuthenticated = Boolean(session);
+    data: { user }
+  } = await supabase.auth.getUser();
+  const isAuthenticated = Boolean(user);
 
   return (
     <div className="grid" style={{ gap: 32 }}>

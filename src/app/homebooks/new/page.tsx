@@ -19,9 +19,10 @@ async function createHomebook(formData: FormData) {
   "use server";
   const supabase = createServerSupabaseClient() as any;
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const title = formData.get("title")?.toString() ?? "";
@@ -59,9 +60,10 @@ async function createHomebook(formData: FormData) {
 export default async function NewHomebookPage({ searchParams }: NewHomebookPageProps) {
   const supabase = createServerSupabaseClient() as any;
   const {
-    data: { session }
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const requestedLayoutRaw = resolvedSearchParams?.layout;
   const requestedLayout = Array.isArray(requestedLayoutRaw) ? requestedLayoutRaw[0] : requestedLayoutRaw;
