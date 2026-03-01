@@ -435,6 +435,12 @@ async function withTimeout<T = any>(promise: PromiseLike<T>, label: string, ms =
   ]);
 }
 
+function isNextRedirectError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const digest = (error as { digest?: unknown }).digest;
+  return typeof digest === "string" && digest.startsWith("NEXT_REDIRECT");
+}
+
 export default async function DashboardPage() {
   const supabase = createServerSupabaseClient();
   try {
@@ -692,6 +698,9 @@ export default async function DashboardPage() {
       </div>
     );
   } catch (err) {
+    if (isNextRedirectError(err)) {
+      throw err;
+    }
     console.error("Dashboard load error", err);
     const errorMessage = err instanceof Error ? err.message : "Errore inatteso";
     return (
