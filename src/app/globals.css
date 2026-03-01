@@ -4686,7 +4686,7 @@ button {
 .public-homebook--futuristico .classico-sections__grid .classico-card--slug-colazione,
 .futuristico-editor-page .classico-card--slug-colazione,
 .futuristico-editor-page .classico-sections__grid .classico-card--slug-colazione {
-  background: transparent !important;
+  background: #ffffff !important;
   border-color: rgba(176, 164, 214, 0.45) !important;
 }
 
