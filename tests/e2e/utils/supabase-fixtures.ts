@@ -210,6 +210,19 @@ export async function getHomebookPublicAccess(homebookId: string) {
   };
 }
 
+export async function setHomebookLayoutType(homebookId: string, layoutType: string) {
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("homebooks")
+    .update({
+      layout_type: layoutType
+    })
+    .eq("id", homebookId);
+  if (error) {
+    throw new Error(`Unable to update layout ${layoutType} for homebook ${homebookId}: ${error.message}`);
+  }
+}
+
 export async function confirmAuthUserEmail(email: string) {
   const admin = createAdminClient();
   const userId = await getPublicUserIdByEmail(admin, email);

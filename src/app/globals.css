@@ -3140,8 +3140,13 @@ button {
 }
 
 .public-homebook--notturno .classico-editor-modal__sub-heading,
+.public-homebook--notturno .classico-editor-modal__sub-text,
 .notturno-editor-page .classico-editor-modal__sub-heading {
-  color: var(--brand-dark) !important;
+  color: #121a2f !important;
+}
+
+.notturno-editor-page .classico-editor-modal__sub-text {
+  color: #121a2f !important;
 }
 
 .public-homebook--notturno .classico-editor-modal__sub-heading,
@@ -8724,6 +8729,11 @@ img[src*="/Moderno/servizi"] {
 .mediterraneo-editor-page .classico-editor-modal__title,
 .mediterraneo-editor-page .classico-editor-modal__sub-heading {
   color: #2f4f63 !important;
+}
+
+.public-homebook--mediterraneo .public-homebook-cover__address,
+.public-homebook--mediterraneo .public-homebook-cover__description {
+  color: #5a7487 !important;
 }
 
 .public-homebook--mediterraneo .classico-sections__panel:not(.moderno-sections__panel):not(.illustrativo-sections__panel),
