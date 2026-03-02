@@ -13,16 +13,54 @@ function createAdminClient() {
   }) as any;
 }
 
+function wait(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function getPublicUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string) {
   const { data, error } = await admin.from("users").select("id").eq("email", email).maybeSingle();
   if (error) {
     throw new Error(`Unable to read user by email ${email}: ${error.message}`);
   }
   const userId = data?.id;
-  if (!userId || typeof userId !== "string") {
-    throw new Error(`User not found in public.users for email ${email}`);
-  }
+  if (!userId || typeof userId !== "string") return null;
   return userId;
+}
+
+async function getAuthUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string) {
+  const needle = email.toLowerCase();
+  const maxAttempts = 6;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    let page = 1;
+    while (true) {
+      const { data, error } = await admin.auth.admin.listUsers({
+        page,
+        perPage: 200
+      });
+      if (error) {
+        throw new Error(`Unable to list auth users for ${email}: ${error.message}`);
+      }
+      const users = data?.users ?? [];
+      const matched = users.find((user: { id?: unknown; email?: unknown }) => {
+        return typeof user?.id === "string" && typeof user?.email === "string" && user.email.toLowerCase() === needle;
+      });
+      if (matched?.id) {
+        return matched.id as string;
+      }
+
+      if (users.length < 200) break;
+      page += 1;
+    }
+
+    if (attempt < maxAttempts - 1) {
+      await wait(500);
+    }
+  }
+
+  return null;
 }
 
 async function upsertPublicUser(admin: ReturnType<typeof createAdminClient>, userId: string, email: string) {
@@ -225,7 +263,17 @@ export async function setHomebookLayoutType(homebookId: string, layoutType: stri
 
 export async function confirmAuthUserEmail(email: string) {
   const admin = createAdminClient();
-  const userId = await getPublicUserIdByEmail(admin, email);
+  let userId = await getPublicUserIdByEmail(admin, email);
+  if (!userId) {
+    userId = await getAuthUserIdByEmail(admin, email);
+  }
+  if (!userId) {
+    throw new Error(`User not found in auth.users for email ${email}`);
+  }
+
+  // Ensure public.users row exists when signup flow did not persist it yet.
+  await upsertPublicUser(admin, userId, email);
+
   const { error } = await admin.auth.admin.updateUserById(userId, {
     email_confirm: true
   });
@@ -253,11 +301,9 @@ export async function createConfirmedAuthUser(email: string, password: string) {
 
 export async function deleteAuthUserByEmail(email: string) {
   const admin = createAdminClient();
-  let userId: string | null = null;
-  try {
-    userId = await getPublicUserIdByEmail(admin, email);
-  } catch {
-    userId = null;
+  let userId = await getPublicUserIdByEmail(admin, email);
+  if (!userId) {
+    userId = await getAuthUserIdByEmail(admin, email);
   }
   if (!userId) return;
 
