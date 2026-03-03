@@ -217,6 +217,25 @@ export default async function HomePage() {
         </div>
         <LayoutCarousel items={LAYOUTS} isAuthenticated={isAuthenticated} />
       </section>
+
+      <section className="contact-section hero-typeface" id="contatti">
+        <div className="contact-section__inner">
+          <div className="contact-section__text">
+            <span className="pill">Contatti</span>
+            <h2 className="contact-section__title">Hai domande? Scrivici quando vuoi</h2>
+            <p className="contact-section__copy">
+              Se vuoi una mano per partire con il tuo Homebook o vuoi chiarimenti su funzionalita, demo e piani, puoi
+              contattarci direttamente via email.
+            </p>
+          </div>
+          <div className="contact-section__actions">
+            <a className="btn contact-section__mail" href="mailto:info@guesthomebook.it">
+              info@guesthomebook.it
+            </a>
+            <p className="contact-section__note">Rispondiamo normalmente entro 24 ore lavorative.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
