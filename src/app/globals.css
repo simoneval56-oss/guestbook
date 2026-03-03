@@ -1103,6 +1103,122 @@ button {
   }
 }
 
+.pricing-section {
+  display: grid;
+  gap: 16px;
+  padding: clamp(18px, 2.2vw, 28px);
+  margin-top: clamp(24px, 3.5vw, 42px);
+  background: linear-gradient(140deg, #f8fcfd 0%, #edf6f8 100%);
+  border: 1px solid rgba(25, 102, 154, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(14, 75, 88, 0.08);
+}
+
+.pricing-section__header {
+  display: grid;
+  gap: 8px;
+}
+
+.pricing-section__title {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 32px);
+  color: #19669a;
+  letter-spacing: 0.01em;
+}
+
+.pricing-section__subtitle {
+  margin: 0;
+  color: #3a506b;
+  line-height: 1.6;
+  max-width: 760px;
+}
+
+.pricing-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.pricing-tier {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(14, 75, 88, 0.16);
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(14, 75, 88, 0.07);
+}
+
+.pricing-tier--extra {
+  background: linear-gradient(145deg, #f0fbf8 0%, #e4f3f8 100%);
+}
+
+.pricing-tier__label {
+  margin: 0;
+  color: #5e7480;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.pricing-tier__price {
+  margin: 0;
+  color: #0e4b58;
+  font-size: clamp(28px, 4vw, 34px);
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.pricing-tier__meta {
+  margin: 0;
+  color: #486274;
+  line-height: 1.5;
+}
+
+.pricing-panel {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(14, 75, 88, 0.14);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.pricing-panel__title {
+  margin: 0;
+  color: #0e4b58;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.pricing-panel__line {
+  margin: 0;
+  color: #3f5967;
+  line-height: 1.6;
+}
+
+.pricing-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #3f5967;
+  display: grid;
+  gap: 6px;
+}
+
+.pricing-section__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (min-width: 900px) {
+  .pricing-section__actions {
+    justify-content: flex-start;
+  }
+}
+
 .layout-section {
   display: grid;
   gap: 18px;
