@@ -206,6 +206,74 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="pricing-section hero-typeface" id="prezzi">
+        <div className="pricing-section__header">
+          <span className="pill">Prezzi</span>
+          <h2 className="pricing-section__title">Piano Basic</h2>
+          <p className="pricing-section__subtitle">
+            Un servizio semplice per creare, aggiornare e condividere il tuo Homebook digitale.
+            Nessun costo nascosto e prova gratuita di 7 giorni.
+          </p>
+        </div>
+
+        <div className="pricing-tier-grid">
+          <article className="pricing-tier">
+            <p className="pricing-tier__label">1-5 strutture</p>
+            <p className="pricing-tier__price">€9,90</p>
+            <p className="pricing-tier__meta">al mese, prezzo fisso</p>
+          </article>
+          <article className="pricing-tier">
+            <p className="pricing-tier__label">6-10 strutture</p>
+            <p className="pricing-tier__price">€17,90</p>
+            <p className="pricing-tier__meta">al mese, prezzo fisso</p>
+          </article>
+          <article className="pricing-tier pricing-tier--extra">
+            <p className="pricing-tier__label">Dalla 11ª</p>
+            <p className="pricing-tier__price">+€2,40</p>
+            <p className="pricing-tier__meta">al mese per ogni struttura extra</p>
+          </article>
+        </div>
+
+        <div className="pricing-panel">
+          <h3 className="pricing-panel__title">Formula trasparente</h3>
+          <p className="pricing-panel__line">Fino a 5 strutture: €9,90/mese</p>
+          <p className="pricing-panel__line">Da 6 a 10 strutture: €17,90/mese</p>
+          <p className="pricing-panel__line">Dalla 11ª: €17,90 + €2,40 x (strutture oltre 10)</p>
+        </div>
+
+        <div className="pricing-panel">
+          <h3 className="pricing-panel__title">Cosa include</h3>
+          <ul className="pricing-list">
+            <li>Creazione Homebook digitale</li>
+            <li>Modifica contenuti in autonomia</li>
+            <li>Link condivisibile con gli ospiti</li>
+            <li>Gestione di piu strutture in un unico account</li>
+          </ul>
+        </div>
+
+        <div className="pricing-panel">
+          <h3 className="pricing-panel__title">FAQ</h3>
+          <p className="pricing-panel__line">
+            <strong>Il prezzo cambia ogni mese?</strong> Dipende solo dal numero di strutture attive.
+          </p>
+          <p className="pricing-panel__line">
+            <strong>Posso passare da una fascia all&apos;altra?</strong> Si, il piano si aggiorna automaticamente.
+          </p>
+          <p className="pricing-panel__line">
+            <strong>Ci sono costi nascosti?</strong> No, il piano include tutto il necessario per il servizio base.
+          </p>
+        </div>
+
+        <div className="pricing-section__actions">
+          <Link className="btn" href="/register">
+            Prova gratuita 7 giorni
+          </Link>
+          <a className="btn btn-secondary" href="mailto:info@guesthomebook.it">
+            Contattaci
+          </a>
+        </div>
+      </section>
+
       <section className="layout-section">
         <div className="layout-section__header hero-typeface">
           <h2 className="layout-section__title">Scegli il layout</h2>
