@@ -14,6 +14,7 @@ import { PublicLinkActions } from "../../components/public-link-actions";
 import { DeletePropertyButton } from "../../components/delete-property-button";
 import { PropertyImagePicker } from "../../components/property-image-picker";
 import { DashboardLayoutShowcase } from "../../components/dashboard-layout-showcase";
+import { ensureUserBillingState } from "../../lib/subscription";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -127,13 +128,12 @@ async function createPropertyAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
-
-  // Ensure the user exists in public.users (needed for FK on properties)
-  const userPayload: Database["public"]["Tables"]["users"]["Insert"] = {
-    id: user.id,
-    email: user.email ?? ""
-  };
-  await (supabase.from("users") as any).upsert(userPayload, { onConflict: "id" });
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const name = formData.get("name")?.toString() ?? "";
   const address = formData.get("address")?.toString() ?? "";
@@ -151,6 +151,11 @@ async function createPropertyAction(formData: FormData) {
   };
 
   await (supabase.from("properties") as any).insert(propertyPayload);
+  await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
 
   revalidatePath("/dashboard");
 }
@@ -163,6 +168,12 @@ async function updatePropertyAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const name = formData.get("name")?.toString() ?? "";
@@ -232,6 +243,12 @@ async function deletePropertyAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   if (!property_id) return;
@@ -268,6 +285,11 @@ async function deletePropertyAction(formData: FormData) {
   }
 
   await (supabase.from("properties") as any).delete().eq("id", property_id);
+  await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
 
   revalidatePath("/dashboard");
 }
@@ -280,6 +302,12 @@ async function createHomebookAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const title = formData.get("title")?.toString() ?? "";
@@ -335,6 +363,12 @@ async function deleteHomebookAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   if (!homebook_id) return;
@@ -378,6 +412,12 @@ async function rotatePublicAccessTokenAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   if (!homebook_id) return;
@@ -404,6 +444,12 @@ async function setPublicAccessEnabledAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   const enabled = formData.get("public_access_enabled")?.toString() === "true";
@@ -453,6 +499,12 @@ export default async function DashboardPage() {
       redirect("/login");
     }
 
+    const billingState = await ensureUserBillingState(supabase, {
+      userId: user.id,
+      email: user.email ?? null,
+      syncPlan: true
+    });
+
     const { data: properties } = await withTimeout(
       (supabase.from("properties") as any)
         .select("*")
@@ -501,6 +553,17 @@ export default async function DashboardPage() {
           <div>
             <div className="pill">Bentornato</div>
             <h2 style={{ margin: "8px 0 0", color: "#0e4b58" }}>{user.email}</h2>
+            <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div className="pill">Piano: {billingState.planType}</div>
+              <div className="pill">
+                Stato: {billingState.serviceActive ? billingState.status : "non attivo"}
+              </div>
+            </div>
+            {!billingState.serviceActive ? (
+              <p style={{ margin: "8px 0 0", color: "#b42318", fontSize: 13 }}>
+                Abbonamento non attivo: creazione, modifica, pubblicazione e link ospiti sono bloccati.
+              </p>
+            ) : null}
           </div>
           <div style={{ display: "flex", gap: 12 }}>
             <form action="/api/auth/logout" method="post">

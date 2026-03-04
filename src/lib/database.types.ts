@@ -15,6 +15,8 @@ export type Database = {
           email: string;
           subscription_status: string | null;
           plan_type: string | null;
+          trial_ends_at: string | null;
+          subscription_ends_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -22,6 +24,8 @@ export type Database = {
           email: string;
           subscription_status?: string | null;
           plan_type?: string | null;
+          trial_ends_at?: string | null;
+          subscription_ends_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -29,6 +33,8 @@ export type Database = {
           email?: string;
           subscription_status?: string | null;
           plan_type?: string | null;
+          trial_ends_at?: string | null;
+          subscription_ends_at?: string | null;
           created_at?: string;
         };
       };

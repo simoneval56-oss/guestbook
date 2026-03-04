@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { createAdminClient } from "../../../lib/supabase/server";
+import { requireActiveUserService } from "../../../lib/subscription";
 
 export async function requireUser() {
   const admin = createAdminClient();
@@ -13,4 +14,15 @@ export async function requireUser() {
     throw new Error("unauthorized");
   }
   return data.user;
+}
+
+export async function requireServiceUser() {
+  const user = await requireUser();
+  const admin = createAdminClient();
+  await requireActiveUserService(admin, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  return user;
 }

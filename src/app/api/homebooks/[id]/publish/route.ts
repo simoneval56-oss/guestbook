@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createAdminClient, createServerSupabaseClient } from "../../../../../lib/supabase/server";
+import { ensureUserBillingState } from "../../../../../lib/subscription";
 
 export const dynamic = "force-dynamic";
 
@@ -363,6 +364,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }
 
     const admin = createAdminClient() as any;
+    const billing = await ensureUserBillingState(admin, {
+      userId: user.id,
+      email: user.email ?? null,
+      syncPlan: true
+    });
+    if (!billing.serviceActive) {
+      return NextResponse.json({ error: "subscription_inactive" }, { status: 402 });
+    }
     const homebook = await requireOwnedHomebook(admin, user.id, homebookId);
 
     if (action === "draft") {

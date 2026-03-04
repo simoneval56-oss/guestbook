@@ -10,6 +10,8 @@ type OwnerPreviewToggleProps = {
   layoutName: string;
   homebookId?: string;
   isPublished?: boolean;
+  forceReadOnly?: boolean;
+  forceReadOnlyReason?: string;
 };
 
 export function OwnerPreviewToggle({
@@ -18,9 +20,12 @@ export function OwnerPreviewToggle({
   mediaByParent,
   layoutName,
   homebookId,
-  isPublished
+  isPublished,
+  forceReadOnly = false,
+  forceReadOnlyReason
 }: OwnerPreviewToggleProps) {
   const [isGuestPreview, setIsGuestPreview] = useState(false);
+  const effectiveReadOnly = forceReadOnly || isGuestPreview;
 
   return (
     <>
@@ -45,11 +50,22 @@ export function OwnerPreviewToggle({
               type="checkbox"
               checked={isGuestPreview}
               onChange={(event) => setIsGuestPreview(event.target.checked)}
+              disabled={forceReadOnly}
             />
             <span style={{ fontWeight: 600 }}>Preview ospite</span>
           </label>
         </div>
       </section>
+      {forceReadOnly ? (
+        <section className="card" style={{ marginBottom: 16, borderColor: "#f5c2c7", background: "#fff5f5" }}>
+          <div className="pill" style={{ background: "#fdecec", color: "#a12b2b" }}>
+            Modifica disattivata
+          </div>
+          <p className="text-muted" style={{ margin: "8px 0 0", color: "#7a2b2b" }}>
+            {forceReadOnlyReason ?? "Abbonamento non attivo: i contenuti sono in sola lettura."}
+          </p>
+        </section>
+      ) : null}
       {isGuestPreview ? (
         <section className="card" style={{ marginBottom: 16, borderColor: "#f5c2c7", background: "#fff5f5" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
@@ -70,7 +86,7 @@ export function OwnerPreviewToggle({
         subsectionsBySection={subsectionsBySection}
         mediaByParent={mediaByParent}
         layoutName={layoutName}
-        readOnly={isGuestPreview}
+        readOnly={effectiveReadOnly}
         homebookId={homebookId}
         isPublished={isPublished}
         disableLiveMediaFetch

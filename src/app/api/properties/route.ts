@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/server";
-import { requireUser } from "../utils/auth";
+import { requireServiceUser, requireUser } from "../utils/auth";
 import { Database } from "../../../lib/database.types";
+import { ensureUserBillingState } from "../../../lib/subscription";
 
 export async function GET() {
   try {
@@ -18,7 +19,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const user = await requireUser();
+    const user = await requireServiceUser();
     const body = await request.json();
     const supabase = createAdminClient();
     const payload: Database["public"]["Tables"]["properties"]["Insert"] = {
@@ -30,8 +31,19 @@ export async function POST(request: Request) {
     };
     const { data, error } = await (supabase.from("properties") as any).insert(payload).select("*").single();
     if (error) throw error;
+    await ensureUserBillingState(supabase, {
+      userId: user.id,
+      email: user.email ?? null,
+      syncPlan: true
+    });
     return NextResponse.json({ data });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    const status =
+      error?.message === "subscription_inactive"
+        ? 402
+        : error?.message === "unauthorized"
+        ? 401
+        : 400;
+    return NextResponse.json({ error: error.message }, { status });
   }
 }

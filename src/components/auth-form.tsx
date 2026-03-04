@@ -47,11 +47,13 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         });
         if (signUpError) throw signUpError;
         if (data.user) {
+          const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
           await supabase.from("users").upsert({
             id: data.user.id,
             email,
             subscription_status: "trial",
-            plan_type: "starter"
+            plan_type: "starter",
+            trial_ends_at: trialEndsAt
           });
           // Quando è attiva la conferma email, non arriva subito una sessione: informiamo l'utente.
           if (!data.session) {
