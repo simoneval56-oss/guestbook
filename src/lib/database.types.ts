@@ -17,6 +17,8 @@ export type Database = {
           plan_type: string | null;
           trial_ends_at: string | null;
           subscription_ends_at: string | null;
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -26,6 +28,8 @@ export type Database = {
           plan_type?: string | null;
           trial_ends_at?: string | null;
           subscription_ends_at?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
           created_at?: string;
         };
         Update: {
@@ -35,6 +39,8 @@ export type Database = {
           plan_type?: string | null;
           trial_ends_at?: string | null;
           subscription_ends_at?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
           created_at?: string;
         };
       };

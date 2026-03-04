@@ -4,7 +4,7 @@ Base project per creare e condividere homebook digitali per strutture ricettive.
 
 ## Setup rapido
 1. `npm install`
-2. Copia `.env.example` in `.env.local` con le chiavi Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`).
+2. Copia `.env.example` in `.env.local` con le chiavi Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) e Stripe (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`).
 3. Esegui la migration iniziale: `supabase db push` oppure applica `supabase/migrations/0001_init.sql`.
 4. `npm run dev` e apri `http://localhost:3000`.
 
@@ -18,7 +18,7 @@ Base project per creare e condividere homebook digitali per strutture ricettive.
 - `supabase/migrations/0001_init.sql`: schema, relazioni e policy RLS (accesso limitato al proprietario; lettura pubblica solo per homebook pubblicati).
 
 ## Modello dati (Postgres)
-- `users`: id (fk auth.users), email, subscription_status, plan_type.
+- `users`: id (fk auth.users), email, subscription_status, plan_type, trial/subscription dates, riferimenti Stripe (`stripe_customer_id`, `stripe_subscription_id`).
 - `properties`: per struttura ricettiva (fk users).
 - `homebooks`: associato a property, layout_type, public_slug unico, is_published.
 - `sections`: elenco sezioni ordinate per homebook.
@@ -58,7 +58,17 @@ curl -X POST http://localhost:3000/api/sections \
 ```
 
 ## Prossimi passi consigliati
-- Integra Stripe (campi `subscription_status`, `plan_type`) con webhook per aggiornare lo stato.
 - Aggiungi upload media su Supabase Storage con URL sicuri.
 - Migliora i layout pubblici con componenti responsive dedicati per ogni `layout_type`.
 - Aggiungi analytics (aperture link pubblici) e controlli granulari di pubblicazione (password o scadenze).
+
+## Stripe webhook (billing automatico)
+- Endpoint: `POST /api/stripe/webhook`.
+- Eventi gestiti: `checkout.session.completed`, `customer.subscription.created|updated|deleted`, `invoice.paid`, `invoice.payment_failed`.
+- Effetto: aggiorna automaticamente `users.subscription_status`, `users.subscription_ends_at`, `users.trial_ends_at`, `users.stripe_customer_id`, `users.stripe_subscription_id`.
+- Per il matching utente è consigliato passare `metadata.user_id` (UUID Supabase) nella Checkout Session o nella Subscription. In fallback viene usata email e/o customer/subscription ID salvati.
+
+Esempio locale con Stripe CLI:
+```bash
+stripe listen --forward-to http://localhost:3000/api/stripe/webhook
+```
