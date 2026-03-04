@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, createServerSupabaseClient } from "../../../../../lib/supabase/server";
+import { ensureUserBillingState } from "../../../../../lib/subscription";
 
 export const dynamic = "force-dynamic";
 
@@ -79,6 +80,15 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 
     if (homebook.properties?.user_id !== user.id) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    }
+
+    const billing = await ensureUserBillingState(admin, {
+      userId: user.id,
+      email: user.email ?? null,
+      syncPlan: true
+    });
+    if (!billing.serviceActive) {
+      return NextResponse.json({ error: "subscription_inactive" }, { status: 402 });
     }
 
     const { data: sectionsRaw, error: sectionsError } = await admin

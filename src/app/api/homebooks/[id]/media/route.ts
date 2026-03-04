@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, createServerSupabaseClient } from "../../../../../lib/supabase/server";
 import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../../../lib/storage-media";
+import { ensureUserBillingState } from "../../../../../lib/subscription";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,15 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     }
     if (property.user_id !== authData.user.id) {
       return NextResponse.json({ error: "unauthorized" }, { status: 403 });
+    }
+
+    const billing = await ensureUserBillingState(admin, {
+      userId: authData.user.id,
+      email: authData.user.email ?? null,
+      syncPlan: true
+    });
+    if (!billing.serviceActive) {
+      return NextResponse.json({ error: "subscription_inactive" }, { status: 402 });
     }
 
     const { data: section, error: sectionError } = await admin

@@ -13,6 +13,7 @@ import { PublicOfflineManager } from "../../../components/public-offline-manager
 import { Database } from "../../../lib/database.types";
 import { getLayoutById } from "../../../lib/layouts";
 import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../lib/storage-media";
+import { ensureUserBillingState } from "../../../lib/subscription";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -425,20 +426,20 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
   const layoutMeta = getLayoutById(homebook.layout_type);
   const layoutType = layoutMeta.id;
 
-  let allowOfflineCache = true;
+  let allowOfflineCache = false;
   const ownerId = homebook.properties?.user_id ?? null;
   if (!ownerId) {
-    allowOfflineCache = false;
+    notFound();
   } else {
     const ownerClient = process.env.SUPABASE_SERVICE_ROLE_KEY ? createAdminClient() : dataClient;
-    const { data: owner } = await ownerClient
-      .from("users")
-      .select("subscription_status")
-      .eq("id", ownerId)
-      .maybeSingle();
-    const status = owner?.subscription_status ?? null;
-    const isTrial = !status || status === "trial";
-    allowOfflineCache = !isTrial;
+    const billingState = await ensureUserBillingState(ownerClient, {
+      userId: ownerId,
+      syncPlan: false
+    });
+    if (!billingState.serviceActive) {
+      notFound();
+    }
+    allowOfflineCache = billingState.status === "active";
   }
 
   const { data: sections, error: sectionsError } = await dataClient

@@ -13,6 +13,7 @@ import { Database } from "../../../../lib/database.types";
 import { COVER_FILE_ACCEPT, validateUploadCandidate } from "../../../../lib/upload-limits";
 import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../../lib/storage-media";
 import type { MediaItem, Section, Subsection } from "../../../../components/classico-editor-preview";
+import { ensureUserBillingState } from "../../../../lib/subscription";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -120,6 +121,12 @@ async function updatePropertyDetailsAction(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const name = formData.get("name")?.toString() ?? "";
@@ -497,6 +504,11 @@ export default async function EditHomebookPage({ params }: Props) {
   if (userError || !user) {
     redirect("/login");
   }
+  const billingState = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
 
   const { data: homebook } = await supabase
     .from("homebooks")
@@ -692,7 +704,18 @@ export default async function EditHomebookPage({ params }: Props) {
             <span className="structure-summary__layout">Layout: {layoutType}</span>
           </div>
         </div>
-        <PublishControls homebookId={homebook.id} initialIsPublished={homebook.is_published} />
+        {billingState.serviceActive ? (
+          <PublishControls homebookId={homebook.id} initialIsPublished={homebook.is_published} />
+        ) : (
+          <div style={{ maxWidth: 320 }}>
+            <div className="pill" style={{ background: "#fdecec", color: "#8a2d2d" }}>
+              Abbonamento non attivo
+            </div>
+            <p className="text-muted" style={{ margin: "8px 0 0", color: "#8a2d2d", fontSize: 13 }}>
+              Pubblicazione disabilitata finche l&apos;abbonamento non viene riattivato.
+            </p>
+          </div>
+        )}
       </header>
       <section className="card" style={{ padding: 0, overflow: "hidden" }}>
           <div
@@ -838,6 +861,8 @@ export default async function EditHomebookPage({ params }: Props) {
           layoutName={layoutType}
           homebookId={homebook.id}
           isPublished={homebook.is_published}
+          forceReadOnly={!billingState.serviceActive}
+          forceReadOnlyReason="Abbonamento non attivo: le modifiche sono bloccate."
         />
       ) : null}
 

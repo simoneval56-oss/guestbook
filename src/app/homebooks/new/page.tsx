@@ -7,6 +7,7 @@ import { DEFAULT_LAYOUT_ID, LAYOUTS } from "../../../lib/layouts";
 import { getDefaultSections } from "../../../lib/default-sections";
 import { Database } from "../../../lib/database.types";
 import { generatePublicAccessToken } from "../../../lib/homebook-access";
+import { ensureUserBillingState } from "../../../lib/subscription";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -23,6 +24,12 @@ async function createHomebook(formData: FormData) {
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  const billing = await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const title = formData.get("title")?.toString() ?? "";
@@ -71,6 +78,11 @@ export default async function NewHomebookPage({ searchParams }: NewHomebookPageP
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
+  await ensureUserBillingState(supabase, {
+    userId: user.id,
+    email: user.email ?? null,
+    syncPlan: true
+  });
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const requestedLayoutRaw = resolvedSearchParams?.layout;
   const requestedLayout = Array.isArray(requestedLayoutRaw) ? requestedLayoutRaw[0] : requestedLayoutRaw;

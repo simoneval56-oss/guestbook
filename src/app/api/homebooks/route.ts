@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/server";
-import { requireUser } from "../utils/auth";
+import { requireServiceUser, requireUser } from "../utils/auth";
 import { DEFAULT_LAYOUT_ID } from "../../../lib/layouts";
 import { getDefaultSections } from "../../../lib/default-sections";
 import { Database } from "../../../lib/database.types";
@@ -22,7 +22,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const user = await requireUser();
+    const user = await requireServiceUser();
     const body = await request.json();
     const supabase = createAdminClient();
     const propertyId = typeof body.property_id === "string" ? body.property_id.trim() : "";
@@ -67,7 +67,12 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ data });
   } catch (error: any) {
-    const status = error?.message === "unauthorized" ? 401 : 400;
+    const status =
+      error?.message === "subscription_inactive"
+        ? 402
+        : error?.message === "unauthorized"
+        ? 401
+        : 400;
     return NextResponse.json({ error: error.message }, { status });
   }
 }
