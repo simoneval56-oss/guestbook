@@ -115,6 +115,7 @@ export function PublicOfflineManager({ assets, homebookId, enabled = true }: Pub
       {
         type: "PRECACHE_URLS",
         urls: assetList,
+        homebookId,
         maxFileBytes: MAX_FILE_BYTES,
         maxTotalBytes: MAX_TOTAL_BYTES
       },
@@ -125,7 +126,7 @@ export function PublicOfflineManager({ assets, homebookId, enabled = true }: Pub
       localStorage.setItem(syncKey, now);
       setLastSync(now);
     }
-  }, [assetList, enabled, sendMessage, syncKey]);
+  }, [assetList, enabled, homebookId, sendMessage, syncKey]);
 
   useEffect(() => {
     if (enabled) return;
@@ -136,13 +137,14 @@ export function PublicOfflineManager({ assets, homebookId, enabled = true }: Pub
       await sendMessage(
         {
           type: "CLEAR_CACHED_URLS",
-          urls: assetList
+          urls: assetList,
+          homebookId
         },
         false
       );
     };
     run();
-  }, [assetList, enabled, sendMessage, syncKey]);
+  }, [assetList, enabled, homebookId, sendMessage, syncKey]);
 
   useEffect(() => {
     if (!enabled) return;
