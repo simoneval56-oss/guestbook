@@ -1,10 +1,11 @@
-const VERSION = "v28";
+const VERSION = "v29";
 const SHELL_CACHE = `homebook-shell-${VERSION}`;
 const ASSET_CACHE = `homebook-assets-${VERSION}`;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 50 * 1024 * 1024;
 const FALLBACK_BYTES = 512 * 1024;
 const ALLOWLIST_KEY = "/__offline_allowlist__";
+const OFFLINE_TTL_MS = 24 * 60 * 60 * 1000;
 
 const ATTACHMENT_EXTENSIONS = new Set([
   "pdf",
@@ -23,27 +24,111 @@ const ATTACHMENT_EXTENSIONS = new Set([
 const VIDEO_EXTENSIONS = new Set(["mp4", "webm", "mov", "m4v", "mkv", "avi"]);
 
 let allowlist = new Set();
+let cachedAtByUrl = new Map();
+let groupsByHomebookId = new Map();
 let allowlistLoaded = false;
+
+function parseTimestamp(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value !== "string") return null;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function isFresh(url) {
+  const cachedAt = cachedAtByUrl.get(url);
+  if (typeof cachedAt !== "number" || !Number.isFinite(cachedAt)) return false;
+  return Date.now() - cachedAt <= OFFLINE_TTL_MS;
+}
+
+function markFresh(url) {
+  if (!url) return;
+  cachedAtByUrl.set(url, Date.now());
+}
+
+function clearTrackingForUrls(urls) {
+  urls.forEach((url) => {
+    allowlist.delete(url);
+    cachedAtByUrl.delete(url);
+  });
+  for (const [homebookId, groupedUrls] of groupsByHomebookId.entries()) {
+    urls.forEach((url) => groupedUrls.delete(url));
+    if (!groupedUrls.size) {
+      groupsByHomebookId.delete(homebookId);
+    }
+  }
+}
+
+function findHomebookIdByUrl(url) {
+  for (const [homebookId, groupedUrls] of groupsByHomebookId.entries()) {
+    if (groupedUrls.has(url)) return homebookId;
+  }
+  return null;
+}
+
+async function deleteUrlsFromCaches(urls) {
+  if (!urls.length) return;
+  const shellCache = await caches.open(SHELL_CACHE);
+  const assetCache = await caches.open(ASSET_CACHE);
+  await Promise.all(
+    urls.flatMap((url) => [shellCache.delete(url), assetCache.delete(url)])
+  );
+}
 
 async function loadAllowlist() {
   const cache = await caches.open(SHELL_CACHE);
   const response = await cache.match(ALLOWLIST_KEY);
   if (!response) {
     allowlist = new Set();
+    cachedAtByUrl = new Map();
+    groupsByHomebookId = new Map();
     return;
   }
   try {
     const payload = await response.json();
     const urls = Array.isArray(payload?.urls) ? payload.urls : [];
+    const rawTimestamps =
+      payload?.cachedAt && typeof payload.cachedAt === "object" ? payload.cachedAt : {};
+    const rawGroups = payload?.groups && typeof payload.groups === "object" ? payload.groups : {};
     allowlist = new Set(urls.filter(Boolean));
+    cachedAtByUrl = new Map();
+    Object.entries(rawTimestamps).forEach(([url, rawTimestamp]) => {
+      if (!allowlist.has(url)) return;
+      const parsed = parseTimestamp(rawTimestamp);
+      if (parsed === null) return;
+      cachedAtByUrl.set(url, parsed);
+    });
+    groupsByHomebookId = new Map();
+    Object.entries(rawGroups).forEach(([homebookId, rawUrls]) => {
+      if (!homebookId || !Array.isArray(rawUrls)) return;
+      const filteredUrls = rawUrls.filter((url) => allowlist.has(url));
+      if (!filteredUrls.length) return;
+      groupsByHomebookId.set(homebookId, new Set(filteredUrls));
+    });
   } catch {
     allowlist = new Set();
+    cachedAtByUrl = new Map();
+    groupsByHomebookId = new Map();
   }
 }
 
 async function saveAllowlist() {
   const cache = await caches.open(SHELL_CACHE);
-  const body = JSON.stringify({ urls: Array.from(allowlist) });
+  const cachedAt = {};
+  for (const [url, timestamp] of cachedAtByUrl.entries()) {
+    if (allowlist.has(url) && Number.isFinite(timestamp)) {
+      cachedAt[url] = timestamp;
+    }
+  }
+
+  const groups = {};
+  for (const [homebookId, groupedUrls] of groupsByHomebookId.entries()) {
+    const urls = Array.from(groupedUrls).filter((url) => allowlist.has(url));
+    if (!urls.length) continue;
+    groups[homebookId] = urls;
+  }
+
+  const body = JSON.stringify({ urls: Array.from(allowlist), cachedAt, groups });
   await cache.put(
     ALLOWLIST_KEY,
     new Response(body, {
@@ -137,10 +222,24 @@ async function handleNavigation(request) {
     const response = await fetch(request);
     if (response && response.ok && allowlist.has(request.url)) {
       cache.put(request, response.clone());
+      markFresh(request.url);
+      await saveAllowlist();
+    }
+    if (response && !response.ok && allowlist.has(request.url)) {
+      const homebookId = findHomebookIdByUrl(request.url);
+      if (homebookId) {
+        const groupedUrls = Array.from(groupsByHomebookId.get(homebookId) ?? []);
+        clearTrackingForUrls(groupedUrls);
+        await deleteUrlsFromCaches(groupedUrls);
+      } else {
+        clearTrackingForUrls([request.url]);
+        await deleteUrlsFromCaches([request.url]);
+      }
+      await saveAllowlist();
     }
     return response;
   } catch {
-    if (allowlist.has(request.url)) {
+    if (allowlist.has(request.url) && isFresh(request.url)) {
       const cached = await cache.match(request);
       return cached || cache.match("/offline.html");
     }
@@ -154,6 +253,19 @@ async function handleAsset(request) {
   if (!allowlist.has(request.url)) {
     return fetch(request);
   }
+  if (!isFresh(request.url)) {
+    try {
+      const response = await fetch(request);
+      if (response && response.ok && !isVideoRequest(request)) {
+        await cacheResponse(cache, request, response);
+        markFresh(request.url);
+        await saveAllowlist();
+      }
+      return response;
+    } catch {
+      return new Response("", { status: 504, statusText: "offline_cache_expired" });
+    }
+  }
   const cached = await cache.match(request);
   if (cached) return cached;
   const response = await fetch(request);
@@ -161,6 +273,8 @@ async function handleAsset(request) {
     return response;
   }
   await cacheResponse(cache, request, response);
+  markFresh(request.url);
+  await saveAllowlist();
   return response;
 }
 
@@ -199,9 +313,23 @@ self.addEventListener("message", (event) => {
       let cachedCount = 0;
       let skipped = 0;
       const urls = data.urls;
+      const homebookId = typeof data.homebookId === "string" ? data.homebookId.trim() : "";
+      const now = Date.now();
       urls.forEach((url) => {
-        if (url) allowlist.add(url);
+        if (!url) return;
+        allowlist.add(url);
+        cachedAtByUrl.set(url, now);
       });
+      if (homebookId) {
+        const groupedUrls = groupsByHomebookId.get(homebookId) ?? new Set();
+        urls.forEach((url) => {
+          if (!url) return;
+          groupedUrls.add(url);
+        });
+        if (groupedUrls.size) {
+          groupsByHomebookId.set(homebookId, groupedUrls);
+        }
+      }
       await saveAllowlist();
       for (const url of urls) {
         try {
@@ -214,11 +342,17 @@ self.addEventListener("message", (event) => {
             continue;
           }
           const cached = await cacheResponse(cache, request, response);
-          cached ? cachedCount += 1 : skipped += 1;
+          if (cached) {
+            cachedCount += 1;
+            markFresh(url);
+          } else {
+            skipped += 1;
+          }
         } catch {
           skipped += 1;
         }
       }
+      await saveAllowlist();
       if (port) {
         port.postMessage({ cached: cachedCount, skipped });
       }
@@ -233,21 +367,21 @@ self.addEventListener("message", (event) => {
   event.waitUntil(
     (async () => {
       await ensureAllowlistLoaded();
-      const assetCache = await caches.open(ASSET_CACHE);
-      const shellCache = await caches.open(SHELL_CACHE);
+      const homebookId = typeof data.homebookId === "string" ? data.homebookId.trim() : "";
+      const inputUrls = data.urls.filter(Boolean);
+      const groupedUrls = homebookId ? Array.from(groupsByHomebookId.get(homebookId) ?? []) : [];
+      const urlsToClear = Array.from(new Set([...inputUrls, ...groupedUrls]));
       let cleared = 0;
-      for (const url of data.urls) {
-        if (!url) continue;
-        allowlist.delete(url);
-        const assetMatch = await assetCache.match(url);
-        if (assetMatch) {
-          await assetCache.delete(url);
-          cleared += 1;
+      if (urlsToClear.length) {
+        const assetCache = await caches.open(ASSET_CACHE);
+        for (const url of urlsToClear) {
+          const assetMatch = await assetCache.match(url);
+          if (assetMatch) {
+            cleared += 1;
+          }
         }
-        const shellMatch = await shellCache.match(url);
-        if (shellMatch) {
-          await shellCache.delete(url);
-        }
+        clearTrackingForUrls(urlsToClear);
+        await deleteUrlsFromCaches(urlsToClear);
       }
       await saveAllowlist();
       if (port) {
