@@ -5,6 +5,7 @@ const STATUS_ACTIVE = "active";
 const STATUS_EXPIRED = "expired";
 const DEFAULT_PLAN = "starter";
 const ACTIVE_SERVICE_STATUSES = new Set([STATUS_TRIAL, STATUS_ACTIVE]);
+const BILLING_OVERRIDE_FRIEND_FREE = "friend_free";
 
 export const TRIAL_DURATION_DAYS = 7;
 
@@ -25,6 +26,7 @@ export type UserBillingState = {
   propertyCount: number | null;
   trialEndsAt: string | null;
   subscriptionEndsAt: string | null;
+  billingOverride: string | null;
   serviceActive: boolean;
   inactiveReason: "trial_expired" | "subscription_expired" | "inactive_status" | null;
 };
@@ -32,6 +34,11 @@ export type UserBillingState = {
 function normalizeStatus(raw: string | null | undefined) {
   const value = (raw ?? "").trim().toLowerCase();
   return value || STATUS_TRIAL;
+}
+
+function normalizeBillingOverride(raw: string | null | undefined) {
+  const value = (raw ?? "").trim().toLowerCase();
+  return value === BILLING_OVERRIDE_FRIEND_FREE ? value : null;
 }
 
 function isPast(isoValue: string | null | undefined, now: Date) {
@@ -66,7 +73,7 @@ export function resolvePlanTypeByPropertyCount(propertyCount: number) {
 async function readUserRow(client: any, userId: string): Promise<UsersRow | null> {
   const { data, error } = await client
     .from("users")
-    .select("id, email, subscription_status, plan_type, trial_ends_at, subscription_ends_at, created_at")
+    .select("id, email, subscription_status, plan_type, trial_ends_at, subscription_ends_at, billing_override, created_at")
     .eq("id", userId)
     .maybeSingle();
   if (error) {
@@ -115,6 +122,7 @@ export async function ensureUserBillingState(
   }
 
   let status = normalizeStatus(userRow.subscription_status);
+  const billingOverride = normalizeBillingOverride(userRow.billing_override);
   let trialEndsAt =
     userRow.trial_ends_at ??
     (status === STATUS_TRIAL ? buildTrialEndsAtFromCreatedAt(userRow.created_at, now) : null);
@@ -129,6 +137,10 @@ export async function ensureUserBillingState(
     inactiveReason = "subscription_expired";
   } else if (!ACTIVE_SERVICE_STATUSES.has(status)) {
     inactiveReason = "inactive_status";
+  }
+
+  if (billingOverride === BILLING_OVERRIDE_FRIEND_FREE) {
+    inactiveReason = null;
   }
 
   let propertyCount: number | null = null;
@@ -160,7 +172,9 @@ export async function ensureUserBillingState(
     }
   }
 
-  const serviceActive = ACTIVE_SERVICE_STATUSES.has(status) && inactiveReason === null;
+  const serviceActive =
+    billingOverride === BILLING_OVERRIDE_FRIEND_FREE ||
+    (ACTIVE_SERVICE_STATUSES.has(status) && inactiveReason === null);
 
   return {
     status,
@@ -168,6 +182,7 @@ export async function ensureUserBillingState(
     propertyCount,
     trialEndsAt,
     subscriptionEndsAt,
+    billingOverride,
     serviceActive,
     inactiveReason
   };
