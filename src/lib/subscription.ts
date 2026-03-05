@@ -71,15 +71,34 @@ export function resolvePlanTypeByPropertyCount(propertyCount: number) {
 }
 
 async function readUserRow(client: any, userId: string): Promise<UsersRow | null> {
-  const { data, error } = await client
+  const withOverride = await client
     .from("users")
     .select("id, email, subscription_status, plan_type, trial_ends_at, subscription_ends_at, billing_override, created_at")
     .eq("id", userId)
     .maybeSingle();
-  if (error) {
-    throw new Error(`billing_user_lookup_failed:${error.message}`);
+
+  if (!withOverride.error) {
+    return (withOverride.data as UsersRow | null) ?? null;
   }
-  return (data as UsersRow | null) ?? null;
+
+  const missingOverrideColumn = /billing_override/i.test(withOverride.error.message ?? "");
+  if (!missingOverrideColumn) {
+    throw new Error(`billing_user_lookup_failed:${withOverride.error.message}`);
+  }
+
+  // Backward compatibility: environments not yet migrated can still read user billing state.
+  const fallback = await client
+    .from("users")
+    .select("id, email, subscription_status, plan_type, trial_ends_at, subscription_ends_at, created_at")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (fallback.error) {
+    throw new Error(`billing_user_lookup_failed:${fallback.error.message}`);
+  }
+
+  if (!fallback.data) return null;
+  return { ...fallback.data, billing_override: null } as UsersRow;
 }
 
 async function countUserProperties(client: any, userId: string) {
