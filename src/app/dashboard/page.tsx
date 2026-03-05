@@ -556,8 +556,9 @@ export default async function DashboardPage() {
             <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 8 }}>
               <div className="pill">Piano: {billingState.planType}</div>
               <div className="pill">
-                Stato: {billingState.serviceActive ? billingState.status : "non attivo"}
+                Stato: {billingState.billingOverride === "friend_free" ? "omaggio attivo" : billingState.serviceActive ? billingState.status : "non attivo"}
               </div>
+              {billingState.billingOverride === "friend_free" ? <div className="pill">Override: gratuito</div> : null}
             </div>
             {!billingState.serviceActive ? (
               <p style={{ margin: "8px 0 0", color: "#b42318", fontSize: 13 }}>
