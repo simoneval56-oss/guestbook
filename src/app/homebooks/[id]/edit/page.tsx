@@ -1,4 +1,4 @@
-﻿import { Buffer } from "node:buffer";
+import { Buffer } from "node:buffer";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
@@ -21,7 +21,7 @@ export const revalidate = 0;
 const CLASSICO_DEFAULT_SUBSECTIONS = [
   "Prima di partire",
   "Orario",
-  "FormalitÃ ",
+  "Formalità",
   "Self check-in",
   "Check-in in presenza"
 ];
@@ -712,7 +712,7 @@ export default async function EditHomebookPage({ params }: Props) {
               Abbonamento non attivo
             </div>
             <p className="text-muted" style={{ margin: "8px 0 0", color: "#8a2d2d", fontSize: 13 }}>
-              Pubblicazione disabilitata finche l&apos;abbonamento non viene riattivato.
+              Pubblicazione disabilitata finché l&apos;abbonamento non viene riattivato.
             </p>
           </div>
         )}
@@ -788,7 +788,7 @@ export default async function EditHomebookPage({ params }: Props) {
                 <span style={{ fontWeight: 600 }}>Oppure carica dal tuo PC</span>
                 <input className="input" type="file" name="main_image_file" accept={COVER_FILE_ACCEPT} />
                 <span className="text-muted" style={{ fontSize: 12 }}>
-                  Se selezioni un file (JPG/PNG/WEBP, max 12MB), verrÃ  usato al posto dell&apos;URL.
+                  Se selezioni un file (JPG/PNG/WEBP, max 12MB), verrà usato al posto dell&apos;URL.
                 </span>
               </label>
               <label className="grid" style={{ gap: 6 }}>
@@ -843,11 +843,11 @@ export default async function EditHomebookPage({ params }: Props) {
       <section className="card">
         <div className="pill">Sezioni predefinite del layout</div>
         <p className="text-muted" style={{ margin: "8px 0 0" }}>
-          Le sezioni sono giÃ  impostate dal layout: aggiungi contenuti direttamente nei popup delle sottosezioni.
+          Le sezioni sono già impostate dal layout: aggiungi contenuti direttamente nei popup delle sottosezioni.
         </p>
         {sections?.length === 0 ? (
           <p className="text-muted" style={{ marginTop: 10 }}>
-            Una volta che le sezioni verranno popolate dalle sottosezioni interattive, qui si rifletterÃ  lo stato attuale.
+            Una volta che le sezioni verranno popolate dalle sottosezioni interattive, qui si rifletterà lo stato attuale.
           </p>
         ) : null}
       </section>
