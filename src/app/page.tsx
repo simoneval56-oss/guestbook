@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { LayoutCarousel } from "../components/layout-carousel";
 import { LAYOUTS } from "../lib/layouts";
@@ -247,7 +247,7 @@ export default async function HomePage() {
             <li>Creazione Homebook digitale</li>
             <li>Modifica contenuti in autonomia</li>
             <li>Link condivisibile con gli ospiti</li>
-            <li>Gestione di piu strutture in un unico account</li>
+            <li>Gestione di più strutture in un unico account</li>
           </ul>
         </div>
 
@@ -257,7 +257,7 @@ export default async function HomePage() {
             <strong>Il prezzo cambia ogni mese?</strong> Dipende solo dal numero di strutture attive.
           </p>
           <p className="pricing-panel__line">
-            <strong>Posso passare da una fascia all&apos;altra?</strong> Si, il piano si aggiorna automaticamente.
+            <strong>Posso passare da una fascia all&apos;altra?</strong> Sì, il piano si aggiorna automaticamente.
           </p>
           <p className="pricing-panel__line">
             <strong>Ci sono costi nascosti?</strong> No, il piano include tutto il necessario per il servizio base.
@@ -292,7 +292,7 @@ export default async function HomePage() {
             <span className="pill">Contatti</span>
             <h2 className="contact-section__title">Hai domande? Scrivici quando vuoi</h2>
             <p className="contact-section__copy">
-              Se vuoi una mano per partire con il tuo Homebook o vuoi chiarimenti su funzionalita, demo e piani, puoi
+              Se vuoi una mano per partire con il tuo Homebook o vuoi chiarimenti su funzionalità, demo e piani, puoi
               contattarci direttamente via email.
             </p>
           </div>

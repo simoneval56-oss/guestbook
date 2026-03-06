@@ -156,7 +156,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     if (!homebook.properties?.main_image_url) {
       suggestions.push({
         id: "cover-missing",
-        message: "Aggiungi un'immagine di copertina per rendere l'homebook piu chiaro agli ospiti."
+        message: "Aggiungi un'immagine di copertina per rendere l'homebook più chiaro agli ospiti."
       });
     }
 
@@ -191,7 +191,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
       if (meaningfulSubs.length === 0 && sectionMedia + subsectionMedia === 0) {
         suggestions.push({
           id: `core-${coreKey}-empty`,
-          message: `La sezione "${coreKey}" sembra ancora vuota. Puoi pubblicare comunque o completarla piu avanti.`
+          message: `La sezione "${coreKey}" sembra ancora vuota. Puoi pubblicare comunque o completarla più avanti.`
         });
       }
     }

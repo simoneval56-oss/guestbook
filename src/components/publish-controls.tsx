@@ -180,8 +180,8 @@ export function PublishControls({ homebookId, initialIsPublished }: PublishContr
           <div className="pill">{isPublished ? "Pubblicato" : "Bozza modifiche"}</div>
           <p className="text-muted" style={{ margin: "6px 0 0" }}>
             {isPublished
-              ? "Se inizi a modificare, l'homebook passa in bozza finche non premi Salva e pubblica."
-              : "Le modifiche non sono visibili agli ospiti finche non premi Salva e pubblica."}
+              ? "Se inizi a modificare, l'homebook passa in bozza finché non premi Salva e pubblica."
+              : "Le modifiche non sono visibili agli ospiti finché non premi Salva e pubblica."}
           </p>
           {!isPublished ? (
             <p className="text-muted" style={{ margin: "6px 0 0", fontSize: 13 }}>
@@ -276,7 +276,7 @@ export function PublishControls({ homebookId, initialIsPublished }: PublishContr
                 checked={dismissChoice}
                 onChange={(event) => setDismissChoice(event.target.checked)}
               />
-              <span>Non mostrare piu questo avviso per questo homebook</span>
+              <span>Non mostrare più questo avviso per questo homebook</span>
             </label>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
               <button
@@ -334,7 +334,7 @@ export function PublishControls({ homebookId, initialIsPublished }: PublishContr
                 onClick={confirmRestoreLatestPublished}
                 disabled={isPending}
               >
-                Si, ripristina
+                Sì, ripristina
               </button>
             </div>
           </div>
