@@ -78,11 +78,12 @@ export default async function NewHomebookPage({ searchParams }: NewHomebookPageP
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
-  await ensureUserBillingState(supabase, {
+  const billing = await ensureUserBillingState(supabase, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
   });
+  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const requestedLayoutRaw = resolvedSearchParams?.layout;
   const requestedLayout = Array.isArray(requestedLayoutRaw) ? requestedLayoutRaw[0] : requestedLayoutRaw;
