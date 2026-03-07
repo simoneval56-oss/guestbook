@@ -2,49 +2,17 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createAdminClient, createServerSupabaseClient } from "../../../../../lib/supabase/server";
 import { ensureUserBillingState } from "../../../../../lib/subscription";
+import {
+  generateHomebookTranslations,
+  isTranslationEnabled,
+  type HomebookSnapshot
+} from "../../../../../lib/homebook-translations";
 
 export const dynamic = "force-dynamic";
 
 const VERSION_RETENTION = 10;
 
 type PublishAction = "publish" | "draft" | "restore_latest_published";
-
-type HomebookSnapshot = {
-  homebook: {
-    title: string;
-    layout_type: string;
-  };
-  property: {
-    name: string;
-    address: string | null;
-    main_image_url: string | null;
-    short_description: string | null;
-  };
-  sections: Array<{
-    id: string;
-    title: string;
-    order_index: number;
-    visible: boolean | null;
-  }>;
-  subsections: Array<{
-    id: string;
-    section_id: string;
-    content_text: string;
-    visible: boolean | null;
-    order_index: number | null;
-    created_at: string | null;
-  }>;
-  media: Array<{
-    id: string;
-    section_id: string | null;
-    subsection_id: string | null;
-    url: string;
-    type: string;
-    order_index: number | null;
-    description: string | null;
-    created_at: string | null;
-  }>;
-};
 
 function asAction(value: unknown): PublishAction | null {
   if (value === "publish" || value === "draft" || value === "restore_latest_published") {
@@ -390,12 +358,37 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       if (error) {
         throw new Error("publish_update_failed");
       }
+      let translationSummary:
+        | {
+            requested: number;
+            ready: number;
+            failed: number;
+            errors: string[];
+          }
+        | null = null;
+      if (isTranslationEnabled()) {
+        const translationResults = await generateHomebookTranslations({
+          admin,
+          homebookId,
+          versionNo,
+          snapshot
+        });
+        translationSummary = {
+          requested: translationResults.length,
+          ready: translationResults.filter((entry) => entry.ok).length,
+          failed: translationResults.filter((entry) => !entry.ok).length,
+          errors: translationResults
+            .filter((entry) => !entry.ok && entry.error)
+            .map((entry) => entry.error as string)
+        };
+      }
       revalidateHomebookViews(homebookId, homebook.public_slug ?? null);
       return NextResponse.json({
         data: {
           action,
           is_published: true,
-          version_no: versionNo
+          version_no: versionNo,
+          translations: translationSummary
         }
       });
     }
