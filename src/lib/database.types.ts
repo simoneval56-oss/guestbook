@@ -111,6 +111,47 @@ export type Database = {
           created_at?: string;
         };
       };
+      homebook_translations: {
+        Row: {
+          id: string;
+          homebook_id: string;
+          version_no: number;
+          source_lang: string;
+          target_lang: string;
+          content_hash: string;
+          payload: Json;
+          status: string;
+          error_message: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          homebook_id: string;
+          version_no: number;
+          source_lang?: string;
+          target_lang: string;
+          content_hash: string;
+          payload: Json;
+          status?: string;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          homebook_id?: string;
+          version_no?: number;
+          source_lang?: string;
+          target_lang?: string;
+          content_hash?: string;
+          payload?: Json;
+          status?: string;
+          error_message?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       sections: {
         Row: {
           id: string;

@@ -14,13 +14,20 @@ import { Database } from "../../../lib/database.types";
 import { getLayoutById } from "../../../lib/layouts";
 import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../lib/storage-media";
 import { ensureUserBillingState } from "../../../lib/subscription";
+import {
+  applyTranslationPayload,
+  getGuestLanguageOptions,
+  getSourceLanguage,
+  parseTranslationPayload,
+  resolveGuestLanguage
+} from "../../../lib/homebook-translations";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ t?: string | string[]; debug?: string | string[] }>;
+  searchParams?: Promise<{ t?: string | string[]; lang?: string | string[]; debug?: string | string[] }>;
 };
 
 type SectionRow = Database["public"]["Tables"]["sections"]["Row"];
@@ -354,6 +361,10 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
   if (!resolvedToken && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
     resolvedToken = ((resolvedSearchParams as any).get("t") as string | null)?.trim() ?? "";
   }
+  let requestedLanguage = typeof resolvedSearchParams?.lang === "string" ? resolvedSearchParams.lang.trim() : "";
+  if (!requestedLanguage && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
+    requestedLanguage = ((resolvedSearchParams as any).get("lang") as string | null)?.trim() ?? "";
+  }
   let debugFlag = typeof resolvedSearchParams?.debug === "string" ? resolvedSearchParams.debug.trim() : "";
   if (!debugFlag && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
     debugFlag = ((resolvedSearchParams as any).get("debug") as string | null)?.trim() ?? "";
@@ -363,7 +374,11 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
     slug = base;
     const parsed = new URLSearchParams(queryString);
     resolvedToken = parsed.get("t")?.trim() ?? "";
+    requestedLanguage = requestedLanguage || parsed.get("lang")?.trim() || "";
   }
+  const sourceLanguage = getSourceLanguage();
+  const activeLanguage = resolveGuestLanguage(requestedLanguage);
+  const languageOptions = getGuestLanguageOptions();
   if (process.env.NODE_ENV === "development" && debugFlag === "1") {
     return (
       <pre style={{ padding: 24 }}>
@@ -372,6 +387,8 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
             rawSlug,
             slug,
             tokenLength: resolvedToken.length,
+            requestedLanguage,
+            activeLanguage,
             hasSearchParamsGet: Boolean(resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function"),
             debugFlag,
             searchParams: resolvedSearchParams
@@ -417,11 +434,10 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
     }
   }
 
-  const homebook = resolvedHomebook;
-
-  if (!homebook || !homebook.is_published) {
+  if (!resolvedHomebook || !resolvedHomebook.is_published) {
     notFound();
   }
+  let homebook: HomebookRecord = resolvedHomebook;
 
   const layoutMeta = getLayoutById(homebook.layout_type);
   const layoutType = layoutMeta.id;
@@ -551,6 +567,48 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
       .order("created_at", { ascending: true });
     media = fallback.data ?? [];
   }
+  let translatedSections = (resolvedSections ?? []) as SectionPreview[];
+  let translatedSubsections = (resolvedSubsections ?? []) as SubsectionPreview[];
+  let translatedMediaRows = (media ?? []) as MediaPreview[];
+
+  if (activeLanguage !== sourceLanguage) {
+    const translationClient = process.env.SUPABASE_SERVICE_ROLE_KEY ? (createAdminClient() as any) : dataClient;
+    const { data: latestVersion } = await translationClient
+      .from("homebook_versions")
+      .select("version_no")
+      .eq("homebook_id", homebook.id)
+      .order("version_no", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (latestVersion?.version_no) {
+      const { data: translationRow } = await translationClient
+        .from("homebook_translations")
+        .select("payload, status")
+        .eq("homebook_id", homebook.id)
+        .eq("version_no", latestVersion.version_no)
+        .eq("target_lang", activeLanguage)
+        .eq("status", "ready")
+        .maybeSingle();
+
+      const payload = parseTranslationPayload((translationRow as { payload?: Database["public"]["Tables"]["homebook_translations"]["Row"]["payload"] } | null)?.payload);
+      if (payload) {
+        const translated = applyTranslationPayload({
+          payload,
+          homebook,
+          sections: translatedSections,
+          subsections: translatedSubsections,
+          media: translatedMediaRows
+        });
+        homebook = translated.homebook;
+        translatedSections = translated.sections;
+        translatedSubsections = translated.subsections;
+        translatedMediaRows = translated.media;
+      }
+    }
+  }
+  media = translatedMediaRows;
+
   let signedValueMap = new Map<string, string>();
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
     try {
@@ -583,8 +641,8 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
     )
   ) as string[];
 
-  const castSections = (resolvedSections ?? []) as SectionPreview[];
-  const castSubsections = (resolvedSubsections ?? []) as SubsectionPreview[];
+  const castSections = translatedSections;
+  const castSubsections = translatedSubsections;
   const castMedia = resolvedMedia as MediaPreview[];
 
   const isVisible = (value?: boolean | null) => value !== false;
@@ -769,9 +827,66 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
     }
   };
 
+  const buildLanguageHref = (languageCode: string) => {
+    const query = new URLSearchParams();
+    query.set("t", resolvedToken);
+    if (languageCode !== sourceLanguage) {
+      query.set("lang", languageCode);
+    }
+    return `/p/${encodeURIComponent(slug)}?${query.toString()}`;
+  };
+
   return (
     <div className="public-homebook-wrapper">
       <PublicOfflineManager assets={offlineAssets} homebookId={homebook.id} enabled={allowOfflineCache} />
+      {languageOptions.length > 1 ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+            marginBottom: 12,
+            padding: "10px 14px",
+            borderRadius: 12,
+            border: "1px solid rgba(14, 75, 88, 0.15)",
+            background: "rgba(255, 255, 255, 0.8)"
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 13, color: "#0e4b58", fontWeight: 700 }}>Lingua:</span>
+            {languageOptions.map((option) => {
+              const isActive = option.code === activeLanguage;
+              return (
+                <a
+                  key={option.code}
+                  href={buildLanguageHref(option.code)}
+                  style={{
+                    textDecoration: "none",
+                    border: isActive ? "1px solid #0e4b58" : "1px solid rgba(15, 23, 42, 0.15)",
+                    borderRadius: 999,
+                    padding: "4px 10px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    color: isActive ? "#0e4b58" : "#334155",
+                    background: isActive ? "rgba(14, 75, 88, 0.08)" : "#fff",
+                    fontSize: 13
+                  }}
+                  aria-current={isActive ? "true" : undefined}
+                >
+                  <span aria-hidden>{option.flag}</span>
+                  <span>{option.label}</span>
+                </a>
+              );
+            })}
+          </div>
+          {activeLanguage !== sourceLanguage ? (
+            <span style={{ fontSize: 12, color: "#0f766e" }}>Traduzione automatica</span>
+          ) : null}
+        </div>
+      ) : null}
       {renderLayout()}
     </div>
   );

@@ -5,6 +5,7 @@ Base project per creare e condividere homebook digitali per strutture ricettive.
 ## Setup rapido
 1. `npm install`
 2. Copia `.env.example` in `.env.local` con le chiavi Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) e Stripe (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`).
+   - Per attivare le traduzioni automatiche: configura `LIBRETRANSLATE_URL`, `TRANSLATION_SOURCE_LANG` e `TRANSLATION_TARGET_LANGS`.
 3. Esegui la migration iniziale: `supabase db push` oppure applica `supabase/migrations/0001_init.sql`.
 4. `npm run dev` e apri `http://localhost:3000`.
 
@@ -61,6 +62,12 @@ curl -X POST http://localhost:3000/api/sections \
 - Aggiungi upload media su Supabase Storage con URL sicuri.
 - Migliora i layout pubblici con componenti responsive dedicati per ogni `layout_type`.
 - Aggiungi analytics (aperture link pubblici) e controlli granulari di pubblicazione (password o scadenze).
+
+## Traduzioni automatiche homebook
+- Le traduzioni sono generate al momento della pubblicazione (`Salva e pubblica`).
+- Cache DB: `public.homebook_translations` (migration `0016_add_homebook_translations.sql`).
+- Lingue ospite: query `?lang=<codice>` sulla pagina pubblica (`/p/[slug]?t=...&lang=en`), con fallback automatico alla lingua sorgente.
+- Se il provider non è configurato, la funzionalità resta disattivata senza bloccare la pubblicazione.
 
 ## Stripe webhook (billing automatico)
 - Endpoint: `POST /api/stripe/webhook`.

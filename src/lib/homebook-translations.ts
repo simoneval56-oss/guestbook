@@ -1,0 +1,625 @@
+import "server-only";
+
+import { createHash } from "node:crypto";
+import { Json } from "./database.types";
+
+export type HomebookSnapshot = {
+  homebook: {
+    title: string;
+    layout_type: string;
+  };
+  property: {
+    name: string;
+    address: string | null;
+    main_image_url: string | null;
+    short_description: string | null;
+  };
+  sections: Array<{
+    id: string;
+    title: string;
+    order_index: number;
+    visible: boolean | null;
+  }>;
+  subsections: Array<{
+    id: string;
+    section_id: string;
+    content_text: string;
+    visible: boolean | null;
+    order_index: number | null;
+    created_at: string | null;
+  }>;
+  media: Array<{
+    id: string;
+    section_id: string | null;
+    subsection_id: string | null;
+    url: string;
+    type: string;
+    order_index: number | null;
+    description: string | null;
+    created_at: string | null;
+  }>;
+};
+
+export type HomebookTranslationPayload = {
+  homebook: {
+    title: string;
+  };
+  property: {
+    name: string;
+    address: string | null;
+    short_description: string | null;
+  };
+  sections: Array<{
+    id: string;
+    title: string;
+  }>;
+  subsections: Array<{
+    id: string;
+    content_text: string;
+  }>;
+  media: Array<{
+    id: string;
+    description: string | null;
+  }>;
+};
+
+export type HomebookTranslationRow = {
+  homebook_id: string;
+  version_no: number;
+  source_lang: string;
+  target_lang: string;
+  content_hash: string;
+  payload: HomebookTranslationPayload;
+  status: "ready" | "error";
+  error_message: string | null;
+};
+
+export type GuestLanguageOption = {
+  code: string;
+  label: string;
+  flag: string;
+};
+
+type TranslationFieldRef = {
+  source: string;
+  assign: (translated: string) => void;
+};
+
+const FALLBACK_SOURCE_LANGUAGE = "it";
+const MAX_LIBRETRANSLATE_BATCH = 40;
+
+const LANGUAGE_META: Record<string, { label: string; flag: string }> = {
+  it: { label: "Italiano", flag: "🇮🇹" },
+  en: { label: "English", flag: "🇬🇧" },
+  fr: { label: "Francais", flag: "🇫🇷" },
+  de: { label: "Deutsch", flag: "🇩🇪" },
+  es: { label: "Espanol", flag: "🇪🇸" },
+  pt: { label: "Portugues", flag: "🇵🇹" },
+  nl: { label: "Nederlands", flag: "🇳🇱" },
+  ro: { label: "Romana", flag: "🇷🇴" },
+  ja: { label: "Japanese", flag: "🇯🇵" },
+  zh: { label: "Chinese", flag: "🇨🇳" }
+};
+
+function normalizeLanguageCode(value: string | null | undefined) {
+  return (value ?? "").trim().toLowerCase();
+}
+
+function getLanguageMeta(code: string) {
+  return LANGUAGE_META[code] ?? { label: code.toUpperCase(), flag: "🌐" };
+}
+
+function isNonEmptyText(value: string | null | undefined): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function chunkArray<T>(items: T[], chunkSize: number) {
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+function parseStructuredSubsection(value: string | null | undefined) {
+  const safe = value ?? "";
+  try {
+    const parsed = JSON.parse(safe);
+    if (parsed && typeof parsed.title === "string" && typeof parsed.body === "string") {
+      return { title: parsed.title, body: parsed.body };
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function buildTranslationPayload(snapshot: HomebookSnapshot): {
+  payload: HomebookTranslationPayload;
+  fields: TranslationFieldRef[];
+} {
+  const payload: HomebookTranslationPayload = {
+    homebook: {
+      title: snapshot.homebook.title ?? ""
+    },
+    property: {
+      name: snapshot.property.name ?? "",
+      address: snapshot.property.address ?? null,
+      short_description: snapshot.property.short_description ?? null
+    },
+    sections: snapshot.sections.map((section) => ({
+      id: section.id,
+      title: section.title ?? ""
+    })),
+    subsections: [],
+    media: snapshot.media.map((item) => ({
+      id: item.id,
+      description: item.description ?? null
+    }))
+  };
+
+  const fields: TranslationFieldRef[] = [];
+
+  if (isNonEmptyText(payload.homebook.title)) {
+    fields.push({
+      source: payload.homebook.title,
+      assign: (translated) => {
+        payload.homebook.title = translated;
+      }
+    });
+  }
+  if (isNonEmptyText(payload.property.name)) {
+    fields.push({
+      source: payload.property.name,
+      assign: (translated) => {
+        payload.property.name = translated;
+      }
+    });
+  }
+  if (isNonEmptyText(payload.property.address)) {
+    fields.push({
+      source: payload.property.address,
+      assign: (translated) => {
+        payload.property.address = translated;
+      }
+    });
+  }
+  if (isNonEmptyText(payload.property.short_description)) {
+    fields.push({
+      source: payload.property.short_description,
+      assign: (translated) => {
+        payload.property.short_description = translated;
+      }
+    });
+  }
+
+  payload.sections.forEach((section) => {
+    if (!isNonEmptyText(section.title)) return;
+    fields.push({
+      source: section.title,
+      assign: (translated) => {
+        section.title = translated;
+      }
+    });
+  });
+
+  snapshot.subsections.forEach((subsection) => {
+    const structured = parseStructuredSubsection(subsection.content_text);
+    if (structured) {
+      const mutable = { ...structured };
+      const entry = {
+        id: subsection.id,
+        content_text: JSON.stringify(mutable)
+      };
+      payload.subsections.push(entry);
+      if (isNonEmptyText(mutable.title)) {
+        fields.push({
+          source: mutable.title,
+          assign: (translated) => {
+            mutable.title = translated;
+            entry.content_text = JSON.stringify(mutable);
+          }
+        });
+      }
+      if (isNonEmptyText(mutable.body)) {
+        fields.push({
+          source: mutable.body,
+          assign: (translated) => {
+            mutable.body = translated;
+            entry.content_text = JSON.stringify(mutable);
+          }
+        });
+      }
+      return;
+    }
+
+    const entry = {
+      id: subsection.id,
+      content_text: subsection.content_text ?? ""
+    };
+    payload.subsections.push(entry);
+    if (!isNonEmptyText(entry.content_text)) return;
+    fields.push({
+      source: entry.content_text,
+      assign: (translated) => {
+        entry.content_text = translated;
+      }
+    });
+  });
+
+  payload.media.forEach((item) => {
+    if (!isNonEmptyText(item.description)) return;
+    fields.push({
+      source: item.description,
+      assign: (translated) => {
+        item.description = translated;
+      }
+    });
+  });
+
+  return { payload, fields };
+}
+
+async function translateWithLibreTranslate({
+  texts,
+  sourceLanguage,
+  targetLanguage
+}: {
+  texts: string[];
+  sourceLanguage: string;
+  targetLanguage: string;
+}) {
+  const baseUrl = (process.env.LIBRETRANSLATE_URL ?? "").trim().replace(/\/$/, "");
+  if (!baseUrl) {
+    throw new Error("missing_libretranslate_url");
+  }
+
+  const apiKey = (process.env.LIBRETRANSLATE_API_KEY ?? "").trim();
+  const batches = chunkArray(texts, MAX_LIBRETRANSLATE_BATCH);
+  const translated: string[] = [];
+
+  for (const batch of batches) {
+    const response = await fetch(`${baseUrl}/translate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        q: batch,
+        source: sourceLanguage,
+        target: targetLanguage,
+        format: "text",
+        api_key: apiKey || undefined
+      }),
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => "");
+      throw new Error(`libretranslate_request_failed:${response.status}:${errorBody}`);
+    }
+
+    const json = await response.json().catch(() => null);
+    if (!json) {
+      throw new Error("libretranslate_invalid_response");
+    }
+
+    if (Array.isArray(json.translatedText)) {
+      translated.push(...json.translatedText.map((value: unknown) => String(value ?? "")));
+      continue;
+    }
+
+    if (typeof json.translatedText === "string" && batch.length === 1) {
+      translated.push(json.translatedText);
+      continue;
+    }
+
+    if (Array.isArray(json) && json.every((entry) => entry && typeof entry.translatedText === "string")) {
+      translated.push(...json.map((entry) => String(entry.translatedText)));
+      continue;
+    }
+
+    throw new Error("libretranslate_unexpected_payload");
+  }
+
+  if (translated.length !== texts.length) {
+    throw new Error("libretranslate_count_mismatch");
+  }
+
+  return translated;
+}
+
+async function translateTexts({
+  texts,
+  sourceLanguage,
+  targetLanguage
+}: {
+  texts: string[];
+  sourceLanguage: string;
+  targetLanguage: string;
+}) {
+  return translateWithLibreTranslate({
+    texts,
+    sourceLanguage,
+    targetLanguage
+  });
+}
+
+function computeContentHash(snapshot: HomebookSnapshot) {
+  return createHash("sha256").update(JSON.stringify(snapshot)).digest("hex");
+}
+
+export function getSourceLanguage() {
+  const configured = normalizeLanguageCode(process.env.TRANSLATION_SOURCE_LANG);
+  return configured || FALLBACK_SOURCE_LANGUAGE;
+}
+
+export function getTargetLanguages() {
+  const source = getSourceLanguage();
+  const configured = (process.env.TRANSLATION_TARGET_LANGS ?? "")
+    .split(",")
+    .map((item) => normalizeLanguageCode(item))
+    .filter(Boolean);
+  return Array.from(new Set(configured)).filter((code) => code !== source);
+}
+
+export function getGuestLanguageOptions() {
+  const source = getSourceLanguage();
+  const codes = [source, ...getTargetLanguages()];
+  const uniqueCodes = Array.from(new Set(codes));
+  return uniqueCodes.map((code) => {
+    const meta = getLanguageMeta(code);
+    return {
+      code,
+      label: meta.label,
+      flag: meta.flag
+    };
+  });
+}
+
+export function isTranslationEnabled() {
+  return Boolean((process.env.LIBRETRANSLATE_URL ?? "").trim()) && getTargetLanguages().length > 0;
+}
+
+export function resolveGuestLanguage(requested: string | null | undefined) {
+  const normalized = normalizeLanguageCode(requested);
+  const source = getSourceLanguage();
+  const available = new Set(getGuestLanguageOptions().map((option) => option.code));
+  if (!normalized || !available.has(normalized)) {
+    return source;
+  }
+  return normalized;
+}
+
+export async function buildTranslatedPayload({
+  snapshot,
+  sourceLanguage,
+  targetLanguage
+}: {
+  snapshot: HomebookSnapshot;
+  sourceLanguage: string;
+  targetLanguage: string;
+}) {
+  const { payload, fields } = buildTranslationPayload(snapshot);
+  const sourceTexts = fields.map((field) => field.source);
+  if (!sourceTexts.length || sourceLanguage === targetLanguage) {
+    return payload;
+  }
+
+  const translatedTexts = await translateTexts({
+    texts: sourceTexts,
+    sourceLanguage,
+    targetLanguage
+  });
+
+  fields.forEach((field, index) => {
+    const translated = translatedTexts[index];
+    field.assign(isNonEmptyText(translated) ? translated : field.source);
+  });
+
+  return payload;
+}
+
+export async function generateHomebookTranslations({
+  admin,
+  homebookId,
+  versionNo,
+  snapshot
+}: {
+  admin: any;
+  homebookId: string;
+  versionNo: number;
+  snapshot: HomebookSnapshot;
+}) {
+  const sourceLanguage = getSourceLanguage();
+  const targetLanguages = getTargetLanguages();
+  const contentHash = computeContentHash(snapshot);
+  const now = new Date().toISOString();
+  const results: Array<{ language: string; ok: boolean; error?: string }> = [];
+
+  for (const targetLanguage of targetLanguages) {
+    try {
+      const payload = await buildTranslatedPayload({
+        snapshot,
+        sourceLanguage,
+        targetLanguage
+      });
+      const { error } = await admin.from("homebook_translations").upsert(
+        {
+          homebook_id: homebookId,
+          version_no: versionNo,
+          source_lang: sourceLanguage,
+          target_lang: targetLanguage,
+          content_hash: contentHash,
+          payload,
+          status: "ready",
+          error_message: null,
+          created_at: now,
+          updated_at: now
+        },
+        {
+          onConflict: "homebook_id,version_no,target_lang"
+        }
+      );
+      if (error) {
+        throw error;
+      }
+      results.push({ language: targetLanguage, ok: true });
+    } catch (error: any) {
+      const message = typeof error?.message === "string" ? error.message : "translation_failed";
+      await admin.from("homebook_translations").upsert(
+        {
+          homebook_id: homebookId,
+          version_no: versionNo,
+          source_lang: sourceLanguage,
+          target_lang: targetLanguage,
+          content_hash: contentHash,
+          payload: {
+            homebook: { title: snapshot.homebook.title ?? "" },
+            property: {
+              name: snapshot.property.name ?? "",
+              address: snapshot.property.address ?? null,
+              short_description: snapshot.property.short_description ?? null
+            },
+            sections: [],
+            subsections: [],
+            media: []
+          },
+          status: "error",
+          error_message: message,
+          created_at: now,
+          updated_at: now
+        },
+        {
+          onConflict: "homebook_id,version_no,target_lang"
+        }
+      );
+      results.push({ language: targetLanguage, ok: false, error: message });
+    }
+  }
+
+  return results;
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function asString(value: unknown, fallback = "") {
+  return typeof value === "string" ? value : fallback;
+}
+
+function asNullableString(value: unknown) {
+  return typeof value === "string" ? value : null;
+}
+
+export function parseTranslationPayload(value: Json | null | undefined): HomebookTranslationPayload | null {
+  if (!isObject(value)) return null;
+  const homebook = isObject(value.homebook) ? value.homebook : null;
+  const property = isObject(value.property) ? value.property : null;
+  const sections = Array.isArray(value.sections) ? value.sections : null;
+  const subsections = Array.isArray(value.subsections) ? value.subsections : null;
+  const media = Array.isArray(value.media) ? value.media : null;
+  if (!homebook || !property || !sections || !subsections || !media) return null;
+
+  return {
+    homebook: {
+      title: asString(homebook.title)
+    },
+    property: {
+      name: asString(property.name),
+      address: asNullableString(property.address),
+      short_description: asNullableString(property.short_description)
+    },
+    sections: sections
+      .map((item) => {
+        if (!isObject(item)) return null;
+        return {
+          id: asString(item.id),
+          title: asString(item.title)
+        };
+      })
+      .filter((item): item is { id: string; title: string } => item !== null),
+    subsections: subsections
+      .map((item) => {
+        if (!isObject(item)) return null;
+        return {
+          id: asString(item.id),
+          content_text: asString(item.content_text)
+        };
+      })
+      .filter((item): item is { id: string; content_text: string } => item !== null),
+    media: media
+      .map((item) => {
+        if (!isObject(item)) return null;
+        return {
+          id: asString(item.id),
+          description: asNullableString(item.description)
+        };
+      })
+      .filter((item): item is { id: string; description: string | null } => item !== null)
+  };
+}
+
+export function applyTranslationPayload<
+  THomebook extends {
+    title: string;
+    properties: {
+      name: string | null;
+      address: string | null;
+      short_description: string | null;
+    } | null;
+  },
+  TSection extends { id: string; title: string },
+  TSubsection extends { id: string; content_text: string },
+  TMedia extends { id: string; description: string | null }
+>({
+  payload,
+  homebook,
+  sections,
+  subsections,
+  media
+}: {
+  payload: HomebookTranslationPayload;
+  homebook: THomebook;
+  sections: TSection[];
+  subsections: TSubsection[];
+  media: TMedia[];
+}) {
+  const translatedHomebook: THomebook = {
+    ...homebook,
+    title: payload.homebook.title || homebook.title,
+    properties: homebook.properties
+      ? {
+          ...homebook.properties,
+          name: payload.property.name || homebook.properties.name,
+          address: payload.property.address ?? homebook.properties.address,
+          short_description: payload.property.short_description ?? homebook.properties.short_description
+        }
+      : homebook.properties
+  };
+
+  const sectionTitleMap = new Map(payload.sections.map((item) => [item.id, item.title]));
+  const subsectionTextMap = new Map(payload.subsections.map((item) => [item.id, item.content_text]));
+  const mediaDescriptionMap = new Map(payload.media.map((item) => [item.id, item.description]));
+
+  const translatedSections = sections.map((section) => ({
+    ...section,
+    title: sectionTitleMap.get(section.id) || section.title
+  }));
+  const translatedSubsections = subsections.map((subsection) => ({
+    ...subsection,
+    content_text: subsectionTextMap.get(subsection.id) || subsection.content_text
+  }));
+  const translatedMedia = media.map((item) => ({
+    ...item,
+    description: mediaDescriptionMap.has(item.id) ? mediaDescriptionMap.get(item.id) ?? null : item.description
+  }));
+
+  return {
+    homebook: translatedHomebook,
+    sections: translatedSections,
+    subsections: translatedSubsections,
+    media: translatedMedia
+  };
+}
