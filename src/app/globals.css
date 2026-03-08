@@ -3319,6 +3319,11 @@ button {
   font-size: clamp(20px, 1.6vw + 12px, 24px);
 }
 
+:is(.public-homebook--notturno, .notturno-editor-page) .classico-editor-modal__sub-heading--notturno-formalita {
+  font-family: "Playfair Display", "Lora", serif !important;
+  font-style: italic;
+}
+
 :is(.public-homebook--notturno, .notturno-editor-page) .classico-editor-modal__sub-heading-row .classico-editor-modal__icon,
 :is(.public-homebook--notturno, .notturno-editor-page) .classico-editor-modal__title-block .classico-editor-modal__icon {
   background: transparent !important;

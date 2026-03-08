@@ -3530,10 +3530,12 @@ function parseLinkWithDescription(m: MediaItem) {
                       .normalize("NFD")
                       .replace(/[\u0300-\u036f]/g, "");
                     let displayTitle = normalizeKnownSubsectionTitle(subTitle);
+                    let isNotturnoFormalitaTitle = false;
                     if (isNotturnoLayout && sectionNormalized.includes("check-in")) {
                       const displayNormalized = normalizeKey(displayTitle);
                       if (displayNormalized === "formalita" || displayNormalized === "formalit") {
                         displayTitle = "Formalità";
+                        isNotturnoFormalitaTitle = true;
                       }
                     }
                     const isTrainSubsection =
@@ -4498,7 +4500,14 @@ function parseLinkWithDescription(m: MediaItem) {
                             <span className={`classico-editor-modal__icon valigia-icon${isRomanticoSubsection ? " valigia-icon--romantico" : ""}`} aria-hidden="true">
                               <img src={iconSrc} alt="" className="classico-card__icon-img" />
                             </span>
-                            <div className="classico-editor-modal__sub-heading" style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              className={`classico-editor-modal__sub-heading${
+                                isNotturnoFormalitaTitle
+                                  ? " classico-editor-modal__sub-heading--notturno-formalita"
+                                  : ""
+                              }`}
+                              style={{ flex: 1, minWidth: 0 }}
+                            >
                               {displayTitle}
                             </div>
                           </div>
