@@ -2723,6 +2723,20 @@ button {
   color: #ffffff;
 }
 
+.oro-editor-page .structure-summary {
+  color: #f1fbff;
+}
+
+.oro-editor-page .structure-summary__label,
+.oro-editor-page .structure-summary__layout {
+  color: #d3ebf5;
+}
+
+.oro-editor-page .structure-summary__name {
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(3, 23, 30, 0.35);
+}
+
 .public-homebook--oro .classico-sections__grid {
   grid-template-columns: repeat(3, minmax(180px, 1fr));
   gap: 18px 20px;
@@ -3305,12 +3319,11 @@ button {
   font-size: clamp(20px, 1.6vw + 12px, 24px);
 }
 
-:is(.public-homebook--notturno, .notturno-editor-page) .classico-editor-modal__sub-heading-row .classico-editor-modal__icon {
-  background: rgb(224, 205, 187);
-}
-
+:is(.public-homebook--notturno, .notturno-editor-page) .classico-editor-modal__sub-heading-row .classico-editor-modal__icon,
 :is(.public-homebook--notturno, .notturno-editor-page) .classico-editor-modal__title-block .classico-editor-modal__icon {
-  background: rgb(224, 205, 187);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 :is(.public-homebook--futuristico, .futuristico-editor-page) .classico-sections__panel {

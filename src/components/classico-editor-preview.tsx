@@ -3525,11 +3525,17 @@ function parseLinkWithDescription(m: MediaItem) {
                       .replace(/[\u0300-\u036f]/g, "");
                     const normalizedKey = normalized.replace(/\s+/g, "");
                     const normalizedNoHyphen = normalized.replace(/-/g, " ");
-                    const displayTitle = normalizeKnownSubsectionTitle(subTitle);
                     const sectionNormalized = activeSectionCanonicalTitle
                       .toLowerCase()
                       .normalize("NFD")
                       .replace(/[\u0300-\u036f]/g, "");
+                    let displayTitle = normalizeKnownSubsectionTitle(subTitle);
+                    if (isNotturnoLayout && sectionNormalized.includes("check-in")) {
+                      const displayNormalized = normalizeKey(displayTitle);
+                      if (displayNormalized === "formalita" || displayNormalized === "formalit") {
+                        displayTitle = "Formalità";
+                      }
+                    }
                     const isTrainSubsection =
                       normalized.includes("treno") || normalized.includes("treni");
                     const isRomanticoSubsection = isRomanticoLayout;
