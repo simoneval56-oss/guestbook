@@ -4936,6 +4936,17 @@ button {
   transform-origin: center;
 }
 
+.oro-editor-page .classico-card--slug-colazione .classico-card__icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 14px;
+}
+
+.oro-editor-page .classico-card--slug-colazione .classico-card__icon-img {
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
 .oro-editor-page .classico-card__icon-img,
 .oro-editor-page .classico-editor-modal__icon img,
 .classico-editor-modal__card--oro .classico-editor-modal__icon img {
@@ -8220,6 +8231,23 @@ img[src*="/Moderno/servizi"] {
 }
 
 .public-homebook--oro .classico-card--slug-dove-mangiare .classico-card__icon-img {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1.25) !important;
+  transform-origin: center !important;
+  object-fit: contain !important;
+}
+
+.public-homebook--oro .classico-card--slug-colazione .classico-card__icon {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+}
+
+.public-homebook--oro .classico-card--slug-colazione .classico-card__icon-img {
   width: 100% !important;
   height: 100% !important;
   transform: scale(1.25) !important;
