@@ -92,16 +92,16 @@ const MAX_DEEPL_BATCH = 50;
 type TranslationProvider = "libretranslate" | "deepl";
 
 const LANGUAGE_META: Record<string, { label: string; flag: string }> = {
-  it: { label: "Italiano", flag: "🇮🇹" },
-  en: { label: "English", flag: "🇬🇧" },
-  fr: { label: "Francais", flag: "🇫🇷" },
-  de: { label: "Deutsch", flag: "🇩🇪" },
-  es: { label: "Espanol", flag: "🇪🇸" },
-  pt: { label: "Portugues", flag: "🇵🇹" },
-  nl: { label: "Nederlands", flag: "🇳🇱" },
-  ro: { label: "Romana", flag: "🇷🇴" },
-  ja: { label: "Japanese", flag: "🇯🇵" },
-  zh: { label: "Chinese", flag: "🇨🇳" }
+  it: { label: "Italiano", flag: "ðŸ‡®ðŸ‡¹" },
+  en: { label: "English", flag: "ðŸ‡¬ðŸ‡§" },
+  fr: { label: "Francais", flag: "ðŸ‡«ðŸ‡·" },
+  de: { label: "Deutsch", flag: "ðŸ‡©ðŸ‡ª" },
+  es: { label: "Espanol", flag: "ðŸ‡ªðŸ‡¸" },
+  pt: { label: "Portugues", flag: "ðŸ‡µðŸ‡¹" },
+  nl: { label: "Nederlands", flag: "ðŸ‡³ðŸ‡±" },
+  ro: { label: "Romana", flag: "ðŸ‡·ðŸ‡´" },
+  ja: { label: "Japanese", flag: "ðŸ‡¯ðŸ‡µ" },
+  zh: { label: "Chinese", flag: "ðŸ‡¨ðŸ‡³" }
 };
 
 function normalizeLanguageCode(value: string | null | undefined) {
@@ -130,6 +130,7 @@ function mapLanguageToDeepL(code: string) {
     de: "DE",
     es: "ES",
     pt: "PT-PT",
+    ru: "RU",
     nl: "NL",
     ro: "RO",
     ja: "JA",
@@ -143,7 +144,10 @@ function mapLanguageToDeepL(code: string) {
 }
 
 function getLanguageMeta(code: string) {
-  return LANGUAGE_META[code] ?? { label: code.toUpperCase(), flag: "🌐" };
+  if (code === "ru") {
+    return { label: "Russian", flag: "\u{1F1F7}\u{1F1FA}" };
+  }
+  return LANGUAGE_META[code] ?? { label: code.toUpperCase(), flag: "ðŸŒ" };
 }
 
 function isNonEmptyText(value: string | null | undefined): value is string {
@@ -178,8 +182,8 @@ function normalizeKnownSubsectionTitle(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
-  if (normalized === "formalita" || normalized === "formalit") return "Formalità";
-  if (normalized === "accessibilita" || normalized === "accessibilit") return "Accessibilità";
+  if (normalized === "formalita" || normalized === "formalit") return "FormalitÃ ";
+  if (normalized === "accessibilita" || normalized === "accessibilit") return "AccessibilitÃ ";
   return value;
 }
 
