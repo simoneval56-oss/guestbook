@@ -1,7 +1,7 @@
 ﻿"use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useMemo, useRef, useState, useTransition, type DragEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition, type DragEvent, type ReactNode } from "react";
 import { createBrowserSupabaseClient } from "../lib/supabase/client";
 import { getRomanticoIconCandidates } from "../lib/romantico-icons";
 import { getFuturisticoIconCandidates } from "../lib/futuristico-icons";
@@ -901,6 +901,8 @@ type ClassicoEditorPreviewProps = {
   sections: Section[];
   subsectionsBySection: Record<string, Subsection[]>;
   mediaByParent: Record<string, MediaItem[]>;
+  sectionCanonicalTitleById?: Record<string, string>;
+  subsectionCanonicalTitleById?: Record<string, string>;
   layoutName?: string;
   readOnly?: boolean;
   homebookId?: string;
@@ -912,6 +914,8 @@ export function ClassicoEditorPreview({
   sections,
   subsectionsBySection,
   mediaByParent,
+  sectionCanonicalTitleById = {},
+  subsectionCanonicalTitleById = {},
   layoutName = "classico",
   readOnly = false,
   homebookId,
@@ -935,6 +939,17 @@ export function ClassicoEditorPreview({
   const isModernoLike = isModernoLayout || isIllustrativo;
   const isReadOnly = readOnly;
   const isVisible = (value: boolean | null) => value !== false;
+  const resolveSectionCanonicalTitle = useCallback((section: Pick<Section, "id" | "title"> | null | undefined) => {
+    if (!section) return "";
+    const canonical = sectionCanonicalTitleById[section.id]?.trim();
+    return canonical || section.title;
+  }, [sectionCanonicalTitleById]);
+  const resolveSubCanonicalTitle = useCallback((sub: Pick<Subsection, "id" | "content_text"> | null | undefined) => {
+    if (!sub) return "";
+    const canonical = subsectionCanonicalTitleById[sub.id]?.trim();
+    if (canonical) return canonical;
+    return parseSubContent(sub.content_text).title;
+  }, [subsectionCanonicalTitleById]);
   const rusticoLikeIconProps = { isRustico: isRusticoLikeLayout, rusticoFolder: rusticoIconFolder };
 
   const renderIconForKey = (iconKey: IconKey) => {
@@ -1035,7 +1050,7 @@ export function ClassicoEditorPreview({
   const lastSectionFetchRef = useRef<string | null>(null);
   const activeSubs = useMemo(() => {
     if (!activeSection) return [];
-    const sectionKey = normalizeKey(activeSection.title);
+    const sectionKey = normalizeKey(resolveSectionCanonicalTitle(activeSection));
     const sectionOrder = SUBSECTION_ORDER_BY_SECTION[sectionKey] ?? [];
     const sectionSubs = subsState[activeSection.id] ?? [];
     const hasManualOrder = sectionSubs.some(
@@ -1047,8 +1062,8 @@ export function ClassicoEditorPreview({
         const orderB = b.order_index ?? Number.MAX_SAFE_INTEGER;
         if (orderA !== orderB) return orderA - orderB;
       } else {
-        const titleA = normalizeKey(parseSubContent(a.content_text).title);
-        const titleB = normalizeKey(parseSubContent(b.content_text).title);
+        const titleA = normalizeKey(resolveSubCanonicalTitle(a));
+        const titleB = normalizeKey(resolveSubCanonicalTitle(b));
         const orderA = sectionOrder.indexOf(titleA);
         const orderB = sectionOrder.indexOf(titleB);
         const fallbackA = orderA === -1 ? Number.MAX_SAFE_INTEGER : orderA;
@@ -1072,10 +1087,11 @@ export function ClassicoEditorPreview({
       seen.add(key);
       return true;
     });
-  }, [activeSection, subsState]);
+  }, [activeSection, resolveSectionCanonicalTitle, resolveSubCanonicalTitle, subsState]);
   const [sectionMediaDrafts, setSectionMediaDrafts] = useState<Record<string, { url: string; type: "link" }>>({});
-  const activeSectionSlug = activeSection ? normalizeTitle(activeSection.title)?.replace(/\s+/g, "-") : null;
-  const activeSectionIconSlug = activeSectionSlug ?? (activeSection ? slugify(activeSection.title, `sezione-${activeSection.order_index}`) : "");
+  const activeSectionCanonicalTitle = resolveSectionCanonicalTitle(activeSection);
+  const activeSectionSlug = activeSection ? normalizeTitle(activeSectionCanonicalTitle)?.replace(/\s+/g, "-") : null;
+  const activeSectionIconSlug = activeSectionSlug ?? (activeSection ? slugify(activeSectionCanonicalTitle, `sezione-${activeSection.order_index}`) : "");
   const titleSlugClass = activeSectionSlug ? ` classico-editor-modal__title--${activeSectionSlug}` : "";
   const [sectionDrinkLinkDrafts, setSectionDrinkLinkDrafts] = useState<
     Record<string, { url: string; description: string }>
@@ -1394,7 +1410,7 @@ function parseLinkWithDescription(m: MediaItem) {
   return { id: m.id, url: m.url, description: m.description ?? "" };
 }
 
-  const iconKey = activeSection ? normalizeTitle(activeSection.title) : null;
+  const iconKey = activeSection ? normalizeTitle(activeSectionCanonicalTitle) : null;
   const baseModalIcon = iconKey ? renderIconForKey(iconKey) : null;
   const modalIconNode = iconKey && baseModalIcon
     ? isRomanticoLayout
@@ -1532,7 +1548,7 @@ function parseLinkWithDescription(m: MediaItem) {
     });
     const hasLinkDrafts = sectionSubs.some((sub) => Boolean(linkDrafts[sub.id]?.trim()));
     const hasSectionLinkDraft = Boolean(sectionMediaDrafts[sectionId]?.url?.trim());
-    const sectionKey = normalizeTitle(activeSection?.title ?? "");
+    const sectionKey = normalizeTitle(activeSectionCanonicalTitle);
     const hasSpecialLinkDraft =
       (sectionKey === "dove mangiare" && Boolean(sectionFoodLinkDrafts[sectionId]?.url?.trim())) ||
       (sectionKey === "cosa visitare" && Boolean(sectionVisitLinkDrafts[sectionId]?.url?.trim())) ||
@@ -1560,7 +1576,7 @@ function parseLinkWithDescription(m: MediaItem) {
       hasSectionMediaCommentChanges
     );
   }, [
-    activeSection,
+    activeSectionCanonicalTitle,
     activeSectionId,
     sectionMediaDrafts,
     sectionFoodLinkDrafts,
@@ -1603,7 +1619,7 @@ function parseLinkWithDescription(m: MediaItem) {
     if (!hasUnsavedChanges) return;
     const sectionId = activeSectionId;
     const sectionSubs = subsState[sectionId] ?? [];
-    const sectionKey = normalizeTitle(activeSection?.title ?? "");
+    const sectionKey = normalizeTitle(activeSectionCanonicalTitle);
     const sectionDraft = sectionMediaDrafts[sectionId];
 
     startTransition(async () => {
@@ -2591,7 +2607,8 @@ function parseLinkWithDescription(m: MediaItem) {
           ) : (
             <div className={`classico-sections__grid${isModernoLayout ? " moderno-sections__grid" : ""}${isIllustrativo ? " illustrativo-sections__grid" : ""}`}>
               {filteredSections.map((section, index) => {
-                const sectionIcon = normalizeTitle(section.title);
+                const canonicalSectionTitle = resolveSectionCanonicalTitle(section);
+                const sectionIcon = normalizeTitle(canonicalSectionTitle);
                 const needsInlineTitleAndToggle =
                   isClassicLayout && (sectionIcon === "come raggiungerci" || sectionIcon === "funzionamento");
                 const needsOverlayToggle = isPastelloLayout && sectionIcon === "come raggiungerci";
@@ -2641,7 +2658,7 @@ function parseLinkWithDescription(m: MediaItem) {
                 if (sectionIcon === "la nostra struttura") extraMods += " classico-card--struttura";
                 const isSectionVisible = isVisible(section.visible);
                 const isCenterCard = (index + 1) % 3 === 0;
-                const sectionSlug = slugify(section.title, `sezione-${section.order_index}`);
+                const sectionSlug = slugify(canonicalSectionTitle, `sezione-${section.order_index}`);
                 const baseIcon = sectionIcon ? renderIconForKey(sectionIcon) : null;
                 const iconNode = sectionIcon && baseIcon
                   ? isRomanticoLayout
@@ -3494,7 +3511,8 @@ function parseLinkWithDescription(m: MediaItem) {
                     const uploadDraftVideos = uploadDraftEntries.filter((draft) => draft.file.type.startsWith("video"));
                     const parsed = parseSubContent(sub.content_text);
                     const subTitle = parsed.title.trim() || `Nota ${idx + 1}`;
-                    const normalized = subTitle
+                    const canonicalSubTitle = (subsectionCanonicalTitleById[sub.id] ?? subTitle).trim() || subTitle;
+                    const normalized = canonicalSubTitle
                       .toLowerCase()
                       .normalize("NFD")
                       .replace(/[\u0300-\u036f]/g, "");
@@ -3506,7 +3524,7 @@ function parseLinkWithDescription(m: MediaItem) {
                         : normalizedKey === "accessibilita" || normalizedKey === "accessibilit"
                         ? "Accessibilita"
                         : subTitle;
-                    const sectionNormalized = activeSection.title
+                    const sectionNormalized = activeSectionCanonicalTitle
                       .toLowerCase()
                       .normalize("NFD")
                       .replace(/[\u0300-\u036f]/g, "");
