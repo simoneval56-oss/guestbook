@@ -7344,6 +7344,17 @@ img[src*="/Moderno/servizi"] {
     flex-wrap: wrap;
   }
 
+  .classico-editor-page .card,
+  .classico-editor-preview,
+  .classico-editor-page .classico-sections__panel,
+  .classico-editor-page .classico-sections__content,
+  .classico-editor-page .classico-sections__grid,
+  .classico-editor-page .classico-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
   .public-homebook-cover__body {
     padding: 18px 16px 20px;
   }
@@ -7373,9 +7384,12 @@ img[src*="/Moderno/servizi"] {
   }
 
   .classico-editor-modal__header {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    gap: 10px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-right: 40px;
   }
 
   .classico-editor-modal__controls {
@@ -7397,6 +7411,53 @@ img[src*="/Moderno/servizi"] {
   .classico-editor-modal__chip video {
     width: 100px;
     height: 70px;
+  }
+
+  .classico-editor-modal__title-block {
+    order: 2;
+    width: 100%;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .classico-editor-modal__title {
+    font-size: 24px;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+
+  .classico-editor-modal__save,
+  .classico-editor-modal__reload,
+  .classico-editor-modal__unsaved,
+  .classico-editor-modal__saved,
+  .classico-editor-modal__error {
+    position: static;
+    left: auto;
+    top: auto;
+  }
+
+  .classico-editor-modal__save,
+  .classico-editor-modal__reload {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .classico-editor-modal__unsaved,
+  .classico-editor-modal__saved,
+  .classico-editor-modal__error {
+    margin: 0;
+    font-size: 11px;
+  }
+
+  .classico-editor-modal__body {
+    padding-top: 18px;
+    max-height: calc(85vh - 156px);
+  }
+
+  .classico-editor-modal__close {
+    right: 8px;
+    top: 8px;
   }
 
   .section-modal__card {
