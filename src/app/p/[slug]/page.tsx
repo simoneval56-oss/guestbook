@@ -570,6 +570,15 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
   let translatedSections = (resolvedSections ?? []) as SectionPreview[];
   let translatedSubsections = (resolvedSubsections ?? []) as SubsectionPreview[];
   let translatedMediaRows = (media ?? []) as MediaPreview[];
+  const sectionCanonicalTitleById = Object.fromEntries(
+    (resolvedSections ?? []).map((section: SectionPreview) => [section.id, section.title ?? ""])
+  ) as Record<string, string>;
+  const subsectionCanonicalTitleById = Object.fromEntries(
+    (resolvedSubsections ?? []).map((subsection: SubsectionPreview) => [
+      subsection.id,
+      parseSubContent(subsection.content_text).title
+    ])
+  ) as Record<string, string>;
 
   if (activeLanguage !== sourceLanguage) {
     const translationClient = process.env.SUPABASE_SERVICE_ROLE_KEY ? (createAdminClient() as any) : dataClient;
@@ -809,6 +818,8 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
             sections={visibleSections}
             subsectionsBySection={subsectionsBySection}
             mediaByParent={mediaByParent}
+            sectionCanonicalTitleById={sectionCanonicalTitleById}
+            subsectionCanonicalTitleById={subsectionCanonicalTitleById}
             layoutName={layoutMeta.id}
             readOnly
           />

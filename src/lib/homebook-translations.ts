@@ -134,14 +134,6 @@ function parseStructuredSubsection(value: string | null | undefined) {
   return null;
 }
 
-function splitFallbackSubsectionContent(value: string) {
-  const [titleLine = "", ...bodyLines] = value.split("\n");
-  return {
-    titleLine,
-    bodyText: bodyLines.join("\n")
-  };
-}
-
 function buildTranslationPayload(snapshot: HomebookSnapshot): {
   payload: HomebookTranslationPayload;
   fields: TranslationFieldRef[];
@@ -201,7 +193,15 @@ function buildTranslationPayload(snapshot: HomebookSnapshot): {
     });
   }
 
-  // Section titles stay in source language to preserve icon/ordering logic tied to canonical labels.
+  payload.sections.forEach((section) => {
+    if (!isNonEmptyText(section.title)) return;
+    fields.push({
+      source: section.title,
+      assign: (translated) => {
+        section.title = translated;
+      }
+    });
+  });
 
   snapshot.subsections.forEach((subsection) => {
     const structured = parseStructuredSubsection(subsection.content_text);
@@ -212,6 +212,15 @@ function buildTranslationPayload(snapshot: HomebookSnapshot): {
         content_text: JSON.stringify(mutable)
       };
       payload.subsections.push(entry);
+      if (isNonEmptyText(mutable.title)) {
+        fields.push({
+          source: mutable.title,
+          assign: (translated) => {
+            mutable.title = translated;
+            entry.content_text = JSON.stringify(mutable);
+          }
+        });
+      }
       if (isNonEmptyText(mutable.body)) {
         fields.push({
           source: mutable.body,
@@ -224,19 +233,16 @@ function buildTranslationPayload(snapshot: HomebookSnapshot): {
       return;
     }
 
-    const rawContent = subsection.content_text ?? "";
-    const { titleLine, bodyText } = splitFallbackSubsectionContent(rawContent);
     const entry = {
       id: subsection.id,
-      content_text: rawContent
+      content_text: subsection.content_text ?? ""
     };
     payload.subsections.push(entry);
-    if (!isNonEmptyText(bodyText)) return;
+    if (!isNonEmptyText(entry.content_text)) return;
     fields.push({
-      source: bodyText,
+      source: entry.content_text,
       assign: (translated) => {
-        const resolvedBody = isNonEmptyText(translated) ? translated : bodyText;
-        entry.content_text = titleLine ? `${titleLine}\n${resolvedBody}` : resolvedBody;
+        entry.content_text = translated;
       }
     });
   });
