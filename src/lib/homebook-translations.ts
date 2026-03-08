@@ -171,6 +171,28 @@ function parseStructuredSubsection(value: string | null | undefined) {
   return null;
 }
 
+function normalizeKnownSubsectionTitle(value: string) {
+  const normalized = value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  if (normalized === "formalita" || normalized === "formalit") return "Formalità";
+  if (normalized === "accessibilita" || normalized === "accessibilit") return "Accessibilità";
+  return value;
+}
+
+function normalizeKnownSubsectionTitleInText(value: string) {
+  if (!value) return value;
+  const lines = value.split("\n");
+  if (!lines.length) return value;
+  const normalizedFirstLine = normalizeKnownSubsectionTitle(lines[0] ?? "");
+  if (normalizedFirstLine === lines[0]) return value;
+  lines[0] = normalizedFirstLine;
+  return lines.join("\n");
+}
+
 function buildTranslationPayload(snapshot: HomebookSnapshot): {
   payload: HomebookTranslationPayload;
   fields: TranslationFieldRef[];
@@ -243,7 +265,10 @@ function buildTranslationPayload(snapshot: HomebookSnapshot): {
   snapshot.subsections.forEach((subsection) => {
     const structured = parseStructuredSubsection(subsection.content_text);
     if (structured) {
-      const mutable = { ...structured };
+      const mutable = {
+        ...structured,
+        title: normalizeKnownSubsectionTitle(structured.title)
+      };
       const entry = {
         id: subsection.id,
         content_text: JSON.stringify(mutable)
@@ -272,7 +297,7 @@ function buildTranslationPayload(snapshot: HomebookSnapshot): {
 
     const entry = {
       id: subsection.id,
-      content_text: subsection.content_text ?? ""
+      content_text: normalizeKnownSubsectionTitleInText(subsection.content_text ?? "")
     };
     payload.subsections.push(entry);
     if (!isNonEmptyText(entry.content_text)) return;

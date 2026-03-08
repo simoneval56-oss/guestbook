@@ -42,6 +42,13 @@ function normalizeKey(value: string) {
     .trim();
 }
 
+function normalizeKnownSubsectionTitle(value: string) {
+  const normalized = normalizeKey(value);
+  if (normalized === "formalita" || normalized === "formalit") return "Formalità";
+  if (normalized === "accessibilita" || normalized === "accessibilit") return "Accessibilità";
+  return value;
+}
+
 function normalizeSearchValue(value: string) {
   const base = value
     .toLowerCase()
@@ -66,7 +73,7 @@ function matchesSearchValue(text: string, queryTokens: string[], queryCompact: s
 }
 
 const SUBSECTION_ORDER_RAW: Record<string, string[]> = {
-  "check-in": ["Prima di partire", "Orario", "Formalita", "Self check-in", "Check-in in presenza"],
+  "check-in": ["Prima di partire", "Orario", "Formalità", "Self check-in", "Check-in in presenza"],
   "come raggiungerci": ["Auto", "Aereo", "Bus", "Traghetto", "Metro", "Treno", "Noleggio"],
   "la nostra struttura": [
     "La casa",
@@ -108,12 +115,12 @@ function parseSubContent(raw: string | null | undefined) {
   try {
     const parsed = JSON.parse(safe);
     if (parsed && typeof parsed.title === "string" && typeof parsed.body === "string") {
-      return { title: parsed.title, body: parsed.body };
+      return { title: normalizeKnownSubsectionTitle(parsed.title), body: parsed.body };
     }
   } catch (e) {
     // ignore parsing errors
   }
-  const title = safe.trim().split("\n")[0] || safe;
+  const title = normalizeKnownSubsectionTitle(safe.trim().split("\n")[0] || safe);
   return { title, body: safe };
 }
 
@@ -3518,12 +3525,7 @@ function parseLinkWithDescription(m: MediaItem) {
                       .replace(/[\u0300-\u036f]/g, "");
                     const normalizedKey = normalized.replace(/\s+/g, "");
                     const normalizedNoHyphen = normalized.replace(/-/g, " ");
-                    const displayTitle =
-                      normalizedKey === "formalita" || normalizedKey === "formalit"
-                        ? "Formalita"
-                        : normalizedKey === "accessibilita" || normalizedKey === "accessibilit"
-                        ? "Accessibilita"
-                        : subTitle;
+                    const displayTitle = normalizeKnownSubsectionTitle(subTitle);
                     const sectionNormalized = activeSectionCanonicalTitle
                       .toLowerCase()
                       .normalize("NFD")
