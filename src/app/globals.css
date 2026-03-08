@@ -180,6 +180,7 @@ button {
 
 .grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
 }
 
@@ -727,8 +728,36 @@ button {
 }
 
 @media (max-width: 640px) {
+  .topbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .topbar .brand {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .topbar .brand .brand-wordmark {
+    margin-left: 0;
+    min-width: 0;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .topbar-actions .btn {
+    flex: 1 1 140px;
+    text-align: center;
+  }
+
   .brand-wordmark-img {
-    width: clamp(240px, 46vw, 280px);
+    width: min(100%, 240px);
     height: 32px;
   }
 }
@@ -1343,8 +1372,8 @@ button {
 }
 
 .layout-carousel__nav {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #ffffff;
@@ -1820,7 +1849,7 @@ button {
   }
 
   .section-3__image {
-    width: min(520px, 88vw);
+    width: min(100%, 520px);
   }
 }
 
@@ -1838,7 +1867,7 @@ button {
   }
 
   .section-4__image {
-    width: min(580px, 96vw);
+    width: min(100%, 580px);
   }
 }
 
@@ -1856,7 +1885,7 @@ button {
   }
 
   .section-5__image {
-    width: min(540px, 96vw);
+    width: min(100%, 540px);
   }
 }
 
@@ -7570,6 +7599,31 @@ img[src*="/Moderno/servizi"] {
 
   .section-modal .media-chip__url {
     max-width: 55vw;
+  }
+
+  .public-homebook--classico .public-homebook-cover__body,
+  .public-homebook--classico .public-homebook-cover__title,
+  .public-homebook--classico .public-homebook-cover__address,
+  .public-homebook--classico .public-homebook-cover__description,
+  .public-homebook--classico .classico-sections__panel,
+  .public-homebook--classico .classico-sections__content,
+  .public-homebook--classico .classico-sections__grid,
+  .public-homebook--classico .classico-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .public-homebook--classico .public-homebook-cover__title,
+  .public-homebook--classico .public-homebook-cover__address,
+  .public-homebook--classico .public-homebook-cover__description {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .public-homebook--classico .classico-sections__grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-content: stretch;
   }
 }
 
