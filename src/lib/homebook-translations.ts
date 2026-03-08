@@ -87,6 +87,9 @@ type TranslationFieldRef = {
 
 const FALLBACK_SOURCE_LANGUAGE = "it";
 const MAX_LIBRETRANSLATE_BATCH = 40;
+const MAX_DEEPL_BATCH = 50;
+
+type TranslationProvider = "libretranslate" | "deepl";
 
 const LANGUAGE_META: Record<string, { label: string; flag: string }> = {
   it: { label: "Italiano", flag: "🇮🇹" },
@@ -103,6 +106,40 @@ const LANGUAGE_META: Record<string, { label: string; flag: string }> = {
 
 function normalizeLanguageCode(value: string | null | undefined) {
   return (value ?? "").trim().toLowerCase();
+}
+
+function getConfiguredTranslationProvider(): TranslationProvider {
+  const configured = (process.env.TRANSLATION_PROVIDER ?? "").trim().toLowerCase();
+  return configured === "deepl" ? "deepl" : "libretranslate";
+}
+
+function isLibreTranslateConfigured() {
+  return Boolean((process.env.LIBRETRANSLATE_URL ?? "").trim());
+}
+
+function isDeepLConfigured() {
+  return Boolean((process.env.DEEPL_API_KEY ?? "").trim());
+}
+
+function mapLanguageToDeepL(code: string) {
+  const normalized = normalizeLanguageCode(code);
+  const mapped: Record<string, string> = {
+    it: "IT",
+    en: "EN",
+    fr: "FR",
+    de: "DE",
+    es: "ES",
+    pt: "PT-PT",
+    nl: "NL",
+    ro: "RO",
+    ja: "JA",
+    zh: "ZH",
+    "zh-hans": "ZH",
+    "zh-cn": "ZH",
+    "zh-hant": "ZH",
+    "zh-tw": "ZH"
+  };
+  return mapped[normalized] ?? normalized.toUpperCase();
 }
 
 function getLanguageMeta(code: string) {
@@ -329,6 +366,72 @@ async function translateWithLibreTranslate({
   return translated;
 }
 
+async function translateWithDeepL({
+  texts,
+  sourceLanguage,
+  targetLanguage
+}: {
+  texts: string[];
+  sourceLanguage: string;
+  targetLanguage: string;
+}) {
+  const apiKey = (process.env.DEEPL_API_KEY ?? "").trim();
+  if (!apiKey) {
+    throw new Error("missing_deepl_api_key");
+  }
+
+  const baseUrl = (process.env.DEEPL_API_URL ?? "https://api-free.deepl.com").trim().replace(/\/$/, "");
+  const endpoint = `${baseUrl}/v2/translate`;
+  const source = mapLanguageToDeepL(sourceLanguage);
+  const target = mapLanguageToDeepL(targetLanguage);
+  const batches = chunkArray(texts, MAX_DEEPL_BATCH);
+  const translated: string[] = [];
+
+  for (const batch of batches) {
+    const body = new URLSearchParams();
+    body.set("source_lang", source);
+    body.set("target_lang", target);
+    batch.forEach((text) => body.append("text", text));
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `DeepL-Auth-Key ${apiKey}`
+      },
+      body: body.toString(),
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => "");
+      throw new Error(`deepl_request_failed:${response.status}:${errorBody}`);
+    }
+
+    const json = await response.json().catch(() => null);
+    if (!json || !Array.isArray(json.translations)) {
+      throw new Error("deepl_invalid_response");
+    }
+
+    const batchTexts = json.translations
+      .map((entry: unknown) => {
+        if (entry && typeof entry === "object" && typeof (entry as { text?: unknown }).text === "string") {
+          return (entry as { text: string }).text;
+        }
+        return null;
+      })
+      .filter((entry: string | null): entry is string => entry !== null);
+
+    translated.push(...batchTexts);
+  }
+
+  if (translated.length !== texts.length) {
+    throw new Error("deepl_count_mismatch");
+  }
+
+  return translated;
+}
+
 async function translateTexts({
   texts,
   sourceLanguage,
@@ -338,6 +441,27 @@ async function translateTexts({
   sourceLanguage: string;
   targetLanguage: string;
 }) {
+  const provider = getConfiguredTranslationProvider();
+
+  if (provider === "deepl") {
+    try {
+      return await translateWithDeepL({
+        texts,
+        sourceLanguage,
+        targetLanguage
+      });
+    } catch (deepLError: any) {
+      if (!isLibreTranslateConfigured()) {
+        throw deepLError;
+      }
+      return translateWithLibreTranslate({
+        texts,
+        sourceLanguage,
+        targetLanguage
+      });
+    }
+  }
+
   return translateWithLibreTranslate({
     texts,
     sourceLanguage,
@@ -378,7 +502,14 @@ export function getGuestLanguageOptions() {
 }
 
 export function isTranslationEnabled() {
-  return Boolean((process.env.LIBRETRANSLATE_URL ?? "").trim()) && getTargetLanguages().length > 0;
+  if (getTargetLanguages().length === 0) return false;
+
+  const provider = getConfiguredTranslationProvider();
+  if (provider === "deepl") {
+    return isDeepLConfigured() || isLibreTranslateConfigured();
+  }
+
+  return isLibreTranslateConfigured();
 }
 
 export function resolveGuestLanguage(requested: string | null | undefined) {
