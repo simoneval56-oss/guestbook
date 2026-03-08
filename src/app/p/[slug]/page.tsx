@@ -899,7 +899,17 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
                   }}
                   aria-current={isActive ? "true" : undefined}
                 >
-                  <span aria-hidden>{option.flag}</span>
+                  <span
+                    aria-hidden
+                    style={{
+                      fontSize: 16,
+                      lineHeight: 1,
+                      display: "inline-flex",
+                      alignItems: "center"
+                    }}
+                  >
+                    {option.flag}
+                  </span>
                   <span>{option.label}</span>
                 </a>
               );
