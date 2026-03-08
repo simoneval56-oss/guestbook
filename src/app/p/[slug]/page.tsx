@@ -59,18 +59,30 @@ function groupBy<T extends Record<string, any>>(items: T[], key: (item: T) => st
   }, {});
 }
 
+function normalizeKnownSubsectionTitle(value: string) {
+  const normalized = value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  if (normalized === "formalita" || normalized === "formalit") return "Formalità";
+  if (normalized === "accessibilita" || normalized === "accessibilit") return "Accessibilità";
+  return value;
+}
+
 function parseSubContent(raw: string | null | undefined) {
   const safe = raw ?? "";
   try {
     const parsed = JSON.parse(safe);
     if (parsed && typeof parsed.title === "string" && typeof parsed.body === "string") {
-      return { title: parsed.title, body: parsed.body };
+      return { title: normalizeKnownSubsectionTitle(parsed.title), body: parsed.body };
     }
   } catch (e) {
     // ignore parsing errors
   }
   const trimmed = safe.trim();
-  const title = trimmed.split("\n")[0] || trimmed;
+  const title = normalizeKnownSubsectionTitle(trimmed.split("\n")[0] || trimmed);
   return { title, body: safe };
 }
 
@@ -79,12 +91,12 @@ function parseSubTitle(raw: string | null | undefined) {
   try {
     const parsed = JSON.parse(safe);
     if (parsed && typeof parsed.title === "string") {
-      return parsed.title;
+      return normalizeKnownSubsectionTitle(parsed.title);
     }
   } catch (e) {
     // ignore parsing errors
   }
-  return safe.trim().split("\n")[0] || safe;
+  return normalizeKnownSubsectionTitle(safe.trim().split("\n")[0] || safe);
 }
 
 function normalizeKey(value: string) {
