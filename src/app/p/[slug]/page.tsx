@@ -71,6 +71,11 @@ function normalizeKnownSubsectionTitle(value: string) {
   return value;
 }
 
+function getFlagImageUrl(flagCountry: string | null | undefined) {
+  if (!flagCountry) return null;
+  return `https://flagcdn.com/w20/${flagCountry.toLowerCase()}.png`;
+}
+
 function parseSubContent(raw: string | null | undefined) {
   const safe = raw ?? "";
   try {
@@ -881,6 +886,7 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
             <span style={{ fontSize: 13, color: "#0e4b58", fontWeight: 700 }}>Lingua:</span>
             {languageOptions.map((option) => {
               const isActive = option.code === activeLanguage;
+              const flagImageUrl = getFlagImageUrl(option.flagCountry);
               return (
                 <a
                   key={option.code}
@@ -899,17 +905,35 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
                   }}
                   aria-current={isActive ? "true" : undefined}
                 >
-                  <span
-                    aria-hidden
-                    style={{
-                      fontSize: 16,
-                      lineHeight: 1,
-                      display: "inline-flex",
-                      alignItems: "center"
-                    }}
-                  >
-                    {option.flag}
-                  </span>
+                  {flagImageUrl ? (
+                    // Using a fixed small image keeps flags consistent on OSes that do not render emoji flags.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={flagImageUrl}
+                      alt=""
+                      aria-hidden
+                      width={20}
+                      height={14}
+                      loading="lazy"
+                      style={{
+                        display: "inline-block",
+                        borderRadius: 2,
+                        boxShadow: "0 0 0 1px rgba(15, 23, 42, 0.08)"
+                      }}
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      style={{
+                        fontSize: 16,
+                        lineHeight: 1,
+                        display: "inline-flex",
+                        alignItems: "center"
+                      }}
+                    >
+                      {option.flag}
+                    </span>
+                  )}
                   <span>{option.label}</span>
                 </a>
               );
