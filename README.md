@@ -5,7 +5,10 @@ Base project per creare e condividere homebook digitali per strutture ricettive.
 ## Setup rapido
 1. `npm install`
 2. Copia `.env.example` in `.env.local` con le chiavi Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) e Stripe (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`).
-   - Per attivare le traduzioni automatiche: configura `LIBRETRANSLATE_URL`, `TRANSLATION_SOURCE_LANG` e `TRANSLATION_TARGET_LANGS`.
+   - Per attivare le traduzioni automatiche: configura `TRANSLATION_SOURCE_LANG`, `TRANSLATION_TARGET_LANGS` e `TRANSLATION_PROVIDER`.
+   - Provider disponibili:
+     - `TRANSLATION_PROVIDER=libretranslate` con `LIBRETRANSLATE_URL` (self-hosted).
+     - `TRANSLATION_PROVIDER=deepl` con `DEEPL_API_KEY` (fallback automatico su LibreTranslate se configurato).
 3. Esegui la migration iniziale: `supabase db push` oppure applica `supabase/migrations/0001_init.sql`.
 4. `npm run dev` e apri `http://localhost:3000`.
 
@@ -67,13 +70,15 @@ curl -X POST http://localhost:3000/api/sections \
 - Le traduzioni sono generate al momento della pubblicazione (`Salva e pubblica`).
 - Cache DB: `public.homebook_translations` (migration `0016_add_homebook_translations.sql`).
 - Lingue ospite: query `?lang=<codice>` sulla pagina pubblica (`/p/[slug]?t=...&lang=en`), con fallback automatico alla lingua sorgente.
-- Se il provider non è configurato, la funzionalità resta disattivata senza bloccare la pubblicazione.
+- `TRANSLATION_PROVIDER` seleziona il motore (`libretranslate` o `deepl`).
+- Con `deepl`, se la chiamata fallisce e `LIBRETRANSLATE_URL` e' disponibile, il sistema usa LibreTranslate come fallback.
+- Se nessun provider e' configurato, la funzionalita' resta disattivata senza bloccare la pubblicazione.
 
 ## Stripe webhook (billing automatico)
 - Endpoint: `POST /api/stripe/webhook`.
 - Eventi gestiti: `checkout.session.completed`, `customer.subscription.created|updated|deleted`, `invoice.paid`, `invoice.payment_failed`.
 - Effetto: aggiorna automaticamente `users.subscription_status`, `users.subscription_ends_at`, `users.trial_ends_at`, `users.stripe_customer_id`, `users.stripe_subscription_id`.
-- Per il matching utente è consigliato passare `metadata.user_id` (UUID Supabase) nella Checkout Session o nella Subscription. In fallback viene usata email e/o customer/subscription ID salvati.
+- Per il matching utente e' consigliato passare `metadata.user_id` (UUID Supabase) nella Checkout Session o nella Subscription. In fallback viene usata email e/o customer/subscription ID salvati.
 
 Esempio locale con Stripe CLI:
 ```bash
