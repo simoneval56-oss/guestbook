@@ -80,6 +80,17 @@ curl -X POST http://localhost:3000/api/sections \
 - Effetto: aggiorna automaticamente `users.subscription_status`, `users.subscription_ends_at`, `users.trial_ends_at`, `users.stripe_customer_id`, `users.stripe_subscription_id`.
 - Per il matching utente e' consigliato passare `metadata.user_id` (UUID Supabase) nella Checkout Session o nella Subscription. In fallback viene usata email e/o customer/subscription ID salvati.
 
+## Stripe self-service (checkout + portale)
+- Checkout abbonamento: `POST /api/stripe/checkout` (usato dalla dashboard).
+- Portale cliente: `POST /api/stripe/portal` (gestione metodo di pagamento/cancellazione da Stripe Customer Portal).
+- Variabili richieste:
+  - `STRIPE_SECRET_KEY`
+  - `STRIPE_WEBHOOK_SECRET`
+  - `STRIPE_PRICE_BASIC_1_5`
+  - `STRIPE_PRICE_BASIC_6_10`
+  - `STRIPE_PRICE_EXTRA` (necessario quando l'utente supera 10 strutture)
+- Redirect dashboard con stato via query `?billing=...` (`checkout_success`, `checkout_cancel`, `checkout_error`, `portal_error`, ecc.).
+
 Esempio locale con Stripe CLI:
 ```bash
 stripe listen --forward-to http://localhost:3000/api/stripe/webhook
