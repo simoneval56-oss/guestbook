@@ -15,6 +15,7 @@ import { DeletePropertyButton } from "../../components/delete-property-button";
 import { PropertyImagePicker } from "../../components/property-image-picker";
 import { DashboardLayoutShowcase } from "../../components/dashboard-layout-showcase";
 import { ensureUserBillingState } from "../../lib/subscription";
+import { syncStripeSubscriptionForUserSafely } from "../../lib/stripe-subscription-sync";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -155,10 +156,16 @@ async function createPropertyAction(formData: FormData) {
   };
 
   await (supabase.from("properties") as any).insert(propertyPayload);
-  await ensureUserBillingState(supabase, {
+  const billingAfterCreate = await ensureUserBillingState(supabase, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
+  });
+  await syncStripeSubscriptionForUserSafely(createAdminClient(), {
+    userId: user.id,
+    email: user.email ?? null,
+    propertyCount: billingAfterCreate.propertyCount,
+    context: "dashboard_create_property"
   });
 
   revalidatePath("/dashboard");
@@ -289,10 +296,16 @@ async function deletePropertyAction(formData: FormData) {
   }
 
   await (supabase.from("properties") as any).delete().eq("id", property_id);
-  await ensureUserBillingState(supabase, {
+  const billingAfterDelete = await ensureUserBillingState(supabase, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
+  });
+  await syncStripeSubscriptionForUserSafely(createAdminClient(), {
+    userId: user.id,
+    email: user.email ?? null,
+    propertyCount: billingAfterDelete.propertyCount,
+    context: "dashboard_delete_property"
   });
 
   revalidatePath("/dashboard");

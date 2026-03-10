@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient, createServerSupabaseClient } from "../../../../lib/supabase/server";
 import { ensureUserBillingState } from "../../../../lib/subscription";
+import { buildStripeLineItemsForPropertyCount, getStripePriceConfig } from "../../../../lib/stripe-pricing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,33 +22,6 @@ function resolveBaseUrl(request: Request) {
 function asNonEmpty(value: string | null | undefined) {
   const normalized = (value ?? "").trim();
   return normalized.length ? normalized : null;
-}
-
-function buildCheckoutLineItems(propertyCount: number) {
-  const basic1to5 = asNonEmpty(process.env.STRIPE_PRICE_BASIC_1_5);
-  const basic6to10 = asNonEmpty(process.env.STRIPE_PRICE_BASIC_6_10);
-  const extraBeyond10 = asNonEmpty(process.env.STRIPE_PRICE_EXTRA);
-
-  if (!basic1to5 || !basic6to10) {
-    throw new Error("checkout_prices_not_configured");
-  }
-
-  if (propertyCount <= 5) {
-    return [{ price: basic1to5, quantity: 1 }];
-  }
-
-  if (propertyCount <= 10) {
-    return [{ price: basic6to10, quantity: 1 }];
-  }
-
-  if (!extraBeyond10) {
-    throw new Error("checkout_extra_price_not_configured");
-  }
-
-  return [
-    { price: basic6to10, quantity: 1 },
-    { price: extraBeyond10, quantity: propertyCount - 10 }
-  ];
 }
 
 export async function POST(request: Request) {
@@ -117,10 +91,14 @@ export async function POST(request: Request) {
   }
 
   const propertyCount = Math.max(propertyCountRaw ?? 0, 1);
+  const priceConfig = getStripePriceConfig();
+  if (!priceConfig) {
+    return NextResponse.redirect(new URL("/dashboard?billing=checkout_not_configured", baseUrl), { status: 303 });
+  }
 
   let lineItems: Array<{ price: string; quantity: number }>;
   try {
-    lineItems = buildCheckoutLineItems(propertyCount);
+    lineItems = buildStripeLineItemsForPropertyCount(propertyCount, priceConfig);
   } catch {
     return NextResponse.redirect(new URL("/dashboard?billing=checkout_not_configured", baseUrl), { status: 303 });
   }
