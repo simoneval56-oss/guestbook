@@ -3,6 +3,7 @@ import { createAdminClient } from "../../../lib/supabase/server";
 import { requireServiceUser, requireUser } from "../utils/auth";
 import { Database } from "../../../lib/database.types";
 import { ensureUserBillingState } from "../../../lib/subscription";
+import { syncStripeSubscriptionForUserSafely } from "../../../lib/stripe-subscription-sync";
 
 export async function GET() {
   try {
@@ -31,10 +32,16 @@ export async function POST(request: Request) {
     };
     const { data, error } = await (supabase.from("properties") as any).insert(payload).select("*").single();
     if (error) throw error;
-    await ensureUserBillingState(supabase, {
+    const billingAfterCreate = await ensureUserBillingState(supabase, {
       userId: user.id,
       email: user.email ?? null,
       syncPlan: true
+    });
+    await syncStripeSubscriptionForUserSafely(supabase, {
+      userId: user.id,
+      email: user.email ?? null,
+      propertyCount: billingAfterCreate.propertyCount,
+      context: "api_properties_post"
     });
     return NextResponse.json({ data });
   } catch (error: any) {

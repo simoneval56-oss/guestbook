@@ -83,6 +83,7 @@ curl -X POST http://localhost:3000/api/sections \
 ## Stripe self-service (checkout + portale)
 - Checkout abbonamento: `POST /api/stripe/checkout` (usato dalla dashboard).
 - Portale cliente: `POST /api/stripe/portal` (gestione metodo di pagamento/cancellazione da Stripe Customer Portal).
+- Sync automatico post-checkout: quando il numero di `properties` cambia (create/delete), il backend riallinea gli item della subscription Stripe in base alla fascia (1-5, 6-10, oltre 10 con extra quantita).
 - Variabili richieste:
   - `STRIPE_SECRET_KEY`
   - `STRIPE_WEBHOOK_SECRET`
