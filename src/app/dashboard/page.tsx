@@ -19,6 +19,10 @@ import { ensureUserBillingState } from "../../lib/subscription";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+type DashboardSearchParams = {
+  billing?: string | string[];
+};
+
 const CLASSICO_DEFAULT_SUBSECTIONS = ["Prima di partire", "Orario", "Formalità", "Self check-in", "Check-in in presenza"];
 const CLASSICO_LIKE_LAYOUTS = new Set([
   "classico",
@@ -487,9 +491,78 @@ function isNextRedirectError(error: unknown): boolean {
   return typeof digest === "string" && digest.startsWith("NEXT_REDIRECT");
 }
 
-export default async function DashboardPage() {
+function readQueryValue(searchParams: DashboardSearchParams | undefined, key: keyof DashboardSearchParams) {
+  const raw = searchParams?.[key];
+  if (typeof raw === "string") return raw;
+  if (Array.isArray(raw)) return raw[0] ?? "";
+  return "";
+}
+
+function getBillingBanner(code: string) {
+  switch (code) {
+    case "inactive":
+      return {
+        tone: "warning" as const,
+        message: "Abbonamento non attivo. Attiva un piano per sbloccare tutte le funzionalita."
+      };
+    case "checkout_success":
+      return {
+        tone: "success" as const,
+        message: "Pagamento completato. Lo stato abbonamento si aggiornara automaticamente tra pochi secondi."
+      };
+    case "checkout_cancel":
+      return {
+        tone: "warning" as const,
+        message: "Checkout annullato. Nessun addebito effettuato."
+      };
+    case "checkout_not_configured":
+      return {
+        tone: "danger" as const,
+        message: "Checkout non configurato: mancano i price id Stripe nel progetto."
+      };
+    case "checkout_error":
+      return {
+        tone: "danger" as const,
+        message: "Errore durante la creazione del checkout. Riprova tra poco."
+      };
+    case "portal_not_configured":
+      return {
+        tone: "danger" as const,
+        message: "Portale fatturazione non configurato: verifica la chiave Stripe in produzione."
+      };
+    case "portal_unavailable":
+      return {
+        tone: "warning" as const,
+        message: "Portale non disponibile per questo account: attiva prima un abbonamento."
+      };
+    case "portal_error":
+      return {
+        tone: "danger" as const,
+        message: "Errore nell'apertura del portale Stripe. Riprova tra poco."
+      };
+    case "portal_return":
+      return {
+        tone: "success" as const,
+        message: "Rientro dal portale abbonamento completato."
+      };
+    case "gift_active":
+      return {
+        tone: "warning" as const,
+        message: "Questo account ha un omaggio attivo: checkout disabilitato finche resta l'override gratuito."
+      };
+    default:
+      return null;
+  }
+}
+
+export default async function DashboardPage({
+  searchParams
+}: {
+  searchParams?: Promise<DashboardSearchParams>;
+}) {
   const supabase = createServerSupabaseClient();
   try {
+    const resolvedSearchParams = searchParams ? await searchParams : undefined;
     const {
       data: { user },
       error: userError
@@ -504,6 +577,17 @@ export default async function DashboardPage() {
       email: user.email ?? null,
       syncPlan: true
     });
+    const billingMessage = getBillingBanner(readQueryValue(resolvedSearchParams, "billing"));
+
+    const { data: billingUserRow } = await withTimeout(
+      (supabase.from("users") as any)
+        .select("stripe_customer_id, stripe_subscription_id, billing_override")
+        .eq("id", user.id)
+        .maybeSingle(),
+      "Profilo billing"
+    );
+    const hasStripeCustomer = Boolean((billingUserRow?.stripe_customer_id ?? "").trim());
+    const hasActiveGiftOverride = (billingUserRow?.billing_override ?? "").toLowerCase() === "friend_free";
 
     const { data: properties } = await withTimeout(
       (supabase.from("properties") as any)
@@ -549,6 +633,33 @@ export default async function DashboardPage() {
 
     return (
       <div className="grid dashboard-page" style={{ gap: 24 }}>
+        {billingMessage ? (
+          <div
+            className="card"
+            style={{
+              border:
+                billingMessage.tone === "success"
+                  ? "1px solid #b7ebc6"
+                  : billingMessage.tone === "warning"
+                  ? "1px solid #f5d48a"
+                  : "1px solid #f3b0b0",
+              background:
+                billingMessage.tone === "success"
+                  ? "#f0fff4"
+                  : billingMessage.tone === "warning"
+                  ? "#fff8e8"
+                  : "#fff1f1",
+              color:
+                billingMessage.tone === "success"
+                  ? "#14532d"
+                  : billingMessage.tone === "warning"
+                  ? "#7a4b00"
+                  : "#8b1b1b"
+            }}
+          >
+            {billingMessage.message}
+          </div>
+        ) : null}
         <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div className="pill">Bentornato</div>
@@ -566,7 +677,21 @@ export default async function DashboardPage() {
               </p>
             ) : null}
           </div>
-          <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            {!hasActiveGiftOverride ? (
+              <form action="/api/stripe/checkout" method="post">
+                <button className="btn" type="submit">
+                  {billingState.serviceActive ? "Aggiorna piano" : "Attiva abbonamento"}
+                </button>
+              </form>
+            ) : null}
+            {hasStripeCustomer ? (
+              <form action="/api/stripe/portal" method="post">
+                <button className="btn btn-secondary" type="submit">
+                  Gestisci abbonamento
+                </button>
+              </form>
+            ) : null}
             <form action="/api/auth/logout" method="post">
               <button className="btn btn-secondary" type="submit">
                 Logout
