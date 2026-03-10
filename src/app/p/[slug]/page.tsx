@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { unstable_noStore as noStore } from "next/cache";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createAdminClient, createServerSupabaseClient } from "../../../lib/supabase/server";
 import { ClassicoEditorPreview } from "../../../components/classico-editor-preview";
@@ -21,6 +22,7 @@ import {
   parseTranslationPayload,
   resolveGuestLanguage
 } from "../../../lib/homebook-translations";
+import { getSiteUrl } from "../../../lib/site-url";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -111,6 +113,133 @@ function normalizeKey(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+}
+
+type HomebookSearchParams = { t?: string | string[]; lang?: string | string[]; debug?: string | string[] };
+
+function resolveSearchParam(
+  searchParams: HomebookSearchParams | undefined,
+  key: "t" | "lang" | "debug"
+) {
+  if (!searchParams) return "";
+  const directValue = searchParams[key];
+  if (typeof directValue === "string") return directValue.trim();
+  if (Array.isArray(directValue)) return directValue.find((value) => typeof value === "string")?.trim() ?? "";
+  if (typeof (searchParams as { get?: (name: string) => string | null }).get === "function") {
+    return (searchParams as { get: (name: "t" | "lang" | "debug") => string | null }).get(key)?.trim() ?? "";
+  }
+  return "";
+}
+
+function resolvePublicHomebookParams(rawSlug: string, searchParams: HomebookSearchParams | undefined) {
+  let slug = rawSlug;
+  let token = resolveSearchParam(searchParams, "t");
+  let lang = resolveSearchParam(searchParams, "lang");
+  const debug = resolveSearchParam(searchParams, "debug");
+
+  if (!token && rawSlug.includes("?")) {
+    const [base, queryString] = rawSlug.split("?");
+    slug = base;
+    const parsed = new URLSearchParams(queryString);
+    token = parsed.get("t")?.trim() ?? token;
+    lang = lang || parsed.get("lang")?.trim() || "";
+  }
+
+  return { slug, token, lang, debug };
+}
+
+function getPublicHomebookMetadataDefaults() {
+  const siteUrl = getSiteUrl();
+  return {
+    title: "Homebook ospiti | GuestHomeBook",
+    description: "Homebook digitale con tutte le informazioni utili per il tuo soggiorno."
+  };
+}
+
+async function fetchPublicHomebookForMetadata(homebookSlug: string, accessToken: string) {
+  const anonSupabase = createServerSupabaseClient({
+    extraHeaders: {
+      "x-homebook-token": accessToken
+    }
+  }) as any;
+  const { data: homebookData } = await anonSupabase
+    .from("homebooks")
+    .select("id, title, layout_type, is_published, properties(name,address,main_image_url,short_description,user_id)")
+    .eq("public_slug", homebookSlug)
+    .eq("public_access_token", accessToken)
+    .eq("public_access_enabled", true)
+    .eq("is_published", true)
+    .single();
+
+  if (homebookData) {
+    return homebookData as HomebookRecord;
+  }
+
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return null;
+  }
+
+  const adminSupabase = createAdminClient() as any;
+  const { data: adminHomebookData } = await adminSupabase
+    .from("homebooks")
+    .select("id, title, layout_type, is_published, properties(name,address,main_image_url,short_description,user_id)")
+    .eq("public_slug", homebookSlug)
+    .eq("public_access_token", accessToken)
+    .eq("public_access_enabled", true)
+    .eq("is_published", true)
+    .single();
+
+  return (adminHomebookData as HomebookRecord | null) ?? null;
+}
+
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const resolvedParams = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const { slug, token } = resolvePublicHomebookParams(resolvedParams.slug ?? "", resolvedSearchParams);
+
+  if (!token) {
+    const defaults = getPublicHomebookMetadataDefaults();
+    return {
+      ...defaults,
+      robots: {
+        index: false,
+        follow: false
+      }
+    };
+  }
+
+  const homebook = await fetchPublicHomebookForMetadata(slug, token);
+  if (!homebook || !homebook.is_published) {
+    const defaults = getPublicHomebookMetadataDefaults();
+    return {
+      ...defaults,
+      robots: {
+        index: false,
+        follow: false
+      }
+    };
+  }
+
+  const title = homebook.properties?.name ?? homebook.title;
+  const description = homebook.properties?.short_description?.trim() || "Scopri tutte le informazioni della struttura.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${getSiteUrl()}/p/${encodeURIComponent(slug)}`
+    },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      siteName: "GuestHomeBook"
+    },
+    robots: {
+      index: true,
+      follow: true
+    }
+  };
 }
 
 async function ensureIllustrativoColazioneSectionPublic(
@@ -373,26 +502,10 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
   const resolvedParams = await params;
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const rawSlug = resolvedParams.slug ?? "";
-  let slug = rawSlug;
-  let resolvedToken = typeof resolvedSearchParams?.t === "string" ? resolvedSearchParams.t.trim() : "";
-  if (!resolvedToken && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
-    resolvedToken = ((resolvedSearchParams as any).get("t") as string | null)?.trim() ?? "";
-  }
-  let requestedLanguage = typeof resolvedSearchParams?.lang === "string" ? resolvedSearchParams.lang.trim() : "";
-  if (!requestedLanguage && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
-    requestedLanguage = ((resolvedSearchParams as any).get("lang") as string | null)?.trim() ?? "";
-  }
-  let debugFlag = typeof resolvedSearchParams?.debug === "string" ? resolvedSearchParams.debug.trim() : "";
-  if (!debugFlag && resolvedSearchParams && typeof (resolvedSearchParams as any).get === "function") {
-    debugFlag = ((resolvedSearchParams as any).get("debug") as string | null)?.trim() ?? "";
-  }
-  if (!resolvedToken && rawSlug.includes("?")) {
-    const [base, queryString] = rawSlug.split("?");
-    slug = base;
-    const parsed = new URLSearchParams(queryString);
-    resolvedToken = parsed.get("t")?.trim() ?? "";
-    requestedLanguage = requestedLanguage || parsed.get("lang")?.trim() || "";
-  }
+  const { slug, token: resolvedToken, lang: requestedLanguage, debug: debugFlag } = resolvePublicHomebookParams(
+    rawSlug,
+    resolvedSearchParams
+  );
   const sourceLanguage = getSourceLanguage();
   const activeLanguage = resolveGuestLanguage(requestedLanguage);
   const languageOptions = getGuestLanguageOptions();
