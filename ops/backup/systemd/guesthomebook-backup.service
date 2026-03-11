@@ -1,0 +1,15 @@
+[Unit]
+Description=GuestHomebook backup and restore verification
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/guesthomebook-backup.env
+WorkingDirectory=/opt/guestbook
+ExecStart=/opt/guestbook/ops/backup/backup-and-verify.sh
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

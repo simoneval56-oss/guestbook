@@ -7,6 +7,7 @@ import {
   isTranslationEnabled,
   type HomebookSnapshot
 } from "../../../../../lib/homebook-translations";
+import { sendOpsAlert } from "../../../../../lib/ops-alerts";
 
 export const dynamic = "force-dynamic";
 
@@ -381,6 +382,23 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
             .filter((entry) => !entry.ok && entry.error)
             .map((entry) => entry.error as string)
         };
+        if (translationSummary.failed > 0) {
+          await sendOpsAlert({
+            source: "homebook_translation",
+            severity: "warning",
+            title: "Homebook translation failed",
+            message: `Homebook ${homebookId} version ${versionNo} has ${translationSummary.failed} failed translation(s).`,
+            details: {
+              user_id: user.id,
+              homebook_id: homebookId,
+              version_no: versionNo,
+              requested: translationSummary.requested,
+              ready: translationSummary.ready,
+              failed: translationSummary.failed,
+              errors: translationSummary.errors.slice(0, 10)
+            }
+          });
+        }
       }
       revalidateHomebookViews(homebookId, homebook.public_slug ?? null);
       return NextResponse.json({

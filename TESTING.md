@@ -42,6 +42,12 @@ npx playwright test tests/e2e/auth-critical.spec.ts
 npx playwright test tests/e2e/contrast-critical.spec.ts
 ```
 
+Suite manuale traduzioni mobile (non inclusa nella suite standard/CI):
+
+```bash
+npm run test:e2e:manual
+```
+
 ## 3) Cosa coprono i test critici
 
 - `access-critical.spec.ts`
@@ -81,3 +87,10 @@ Per bloccare merge quando i test falliscono:
 2. Crea/modifica regola su `main`.
 3. Abilita `Require status checks to pass before merging`.
 4. Seleziona il check del workflow `E2E Critical`.
+
+## 6) Test manuale traduzioni (opzionale)
+
+- Spec: `tests/e2e/public-translation-mobile.manual.spec.ts`
+- Obiettivo: verificare traduzioni su mobile per tutti i 10 layout.
+- Non viene eseguito automaticamente da `npx playwright test` e dalla CI critica.
+- Eseguirlo prima di rilasci importanti su traduzioni/layout.
