@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { Database } from "../../../../lib/database.types";
 import { createAdminClient } from "../../../../lib/supabase/server";
+import { sendOpsAlert } from "../../../../lib/ops-alerts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -364,9 +365,20 @@ export async function POST(request: Request) {
     const admin = createAdminClient();
     await processEvent(admin, stripe, event);
   } catch (error: any) {
+    const errorMessage = error?.message ?? "unknown_error";
     console.error("stripe_webhook_processing_failed", {
       eventType: event.type,
-      error: error?.message ?? "unknown_error"
+      error: errorMessage
+    });
+    await sendOpsAlert({
+      source: "stripe_webhook",
+      severity: "critical",
+      title: "Stripe webhook processing failed",
+      message: `Event ${event.type} failed during processing.`,
+      details: {
+        event_type: event.type,
+        error: errorMessage
+      }
     });
     return NextResponse.json({ error: "stripe_webhook_processing_failed" }, { status: 500 });
   }

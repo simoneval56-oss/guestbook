@@ -6,6 +6,8 @@ Base project per creare e condividere homebook digitali per strutture ricettive.
 1. `npm install`
 2. Copia `.env.example` in `.env.local` con le chiavi Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) e Stripe (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`).
    - Per attivare le traduzioni automatiche: configura `TRANSLATION_SOURCE_LANG`, `TRANSLATION_TARGET_LANGS` e `TRANSLATION_PROVIDER`.
+   - Per attivare alert operativi: configura `ALERT_WEBHOOK_URL` (opzionale, ma consigliato).
+   - Per i cron job protetti: configura `CRON_SECRET` (oppure `RECONCILIATION_CRON_SECRET` dedicato).
    - Provider disponibili:
      - `TRANSLATION_PROVIDER=libretranslate` con `LIBRETRANSLATE_URL` (self-hosted).
      - `TRANSLATION_PROVIDER=deepl` con `DEEPL_API_KEY` (fallback automatico su LibreTranslate se configurato).
@@ -91,6 +93,34 @@ curl -X POST http://localhost:3000/api/sections \
   - `STRIPE_PRICE_BASIC_6_10`
   - `STRIPE_PRICE_EXTRA` (necessario quando l'utente supera 10 strutture)
 - Redirect dashboard con stato via query `?billing=...` (`checkout_success`, `checkout_cancel`, `checkout_error`, `portal_error`, ecc.).
+
+## Alert operativi (webhook)
+- Variabili:
+  - `ALERT_WEBHOOK_URL` (endpoint webhook per alert; Slack/Discord/automation webhook compatibili)
+  - `ALERT_WEBHOOK_TIMEOUT_MS` (default 3500 ms)
+- Eventi attualmente notificati:
+  - errore in `POST /api/stripe/webhook` durante il processing evento Stripe
+  - traduzioni fallite durante publish homebook (`failed > 0`)
+- Payload JSON include: `app`, `environment`, `source`, `severity`, `title`, `message`, `occurred_at`, `details`.
+
+## Riconciliazione giornaliera Stripe
+- Route: `GET/POST /api/cron/reconcile-subscriptions`.
+- Sicurezza: richiede bearer token uguale a `RECONCILIATION_CRON_SECRET` (fallback su `CRON_SECRET`).
+- Funzione: ogni giorno verifica utenti con subscription Stripe attiva (`active|trial|past_due`), confronta il numero strutture e riallinea gli item subscription.
+- Scheduling Vercel: configurato in `vercel.json` (`0 3 * * *`, orario UTC).
+- Trigger manuale esempio:
+
+```bash
+curl -X POST https://www.guesthomebook.it/api/cron/reconcile-subscriptions \
+  -H "Authorization: Bearer $CRON_SECRET"
+```
+
+## Backup operativo (VPS + restore testato)
+- Script pronti in `ops/backup/`.
+- Entry point: `ops/backup/backup-and-verify.sh`.
+- Fa `pg_dump`, checksum, restore su Postgres temporaneo Docker e validazione tabelle critiche.
+- Scheduling consigliato via `systemd` usando i file in `ops/backup/systemd/`.
+- Guida completa: `ops/backup/README.md`.
 
 Esempio locale con Stripe CLI:
 ```bash

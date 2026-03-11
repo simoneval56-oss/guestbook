@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily GuestHomebook backup timer
+
+[Timer]
+OnCalendar=*-*-* 02:30:00
+Persistent=true
+Unit=guesthomebook-backup.service
+
+[Install]
+WantedBy=timers.target
