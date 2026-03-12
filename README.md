@@ -122,6 +122,16 @@ curl -X POST https://www.guesthomebook.it/api/cron/reconcile-subscriptions \
 - Scheduling consigliato via `systemd` usando i file in `ops/backup/systemd/`.
 - Guida completa: `ops/backup/README.md`.
 
+## SEO monitoring (Search Console)
+- Piano operativo 4-8 settimane: `ops/seo/search-console-monitoring.md`.
+- Tracker settimanale KPI: `ops/seo/seo-weekly-tracker.csv`.
+- Check tecnico live rapido (home/robots/sitemap): `ops/seo/check-live-seo.ps1`.
+- Esempio:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ops/seo/check-live-seo.ps1
+```
+
 Esempio locale con Stripe CLI:
 ```bash
 stripe listen --forward-to http://localhost:3000/api/stripe/webhook
