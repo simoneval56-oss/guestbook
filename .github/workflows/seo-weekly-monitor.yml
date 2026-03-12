@@ -11,6 +11,7 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   monitor:
@@ -44,14 +45,16 @@ jobs:
       - name: Run SEO weekly monitor
         run: npm run seo:weekly-monitor
 
-      - name: Commit tracker update
-        run: |
-          if git diff --quiet -- ops/seo/seo-weekly-tracker.csv; then
-            echo "No tracker changes"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ops/seo/seo-weekly-tracker.csv
-          git commit -m "chore(seo): update weekly tracker"
-          git push
+      - name: Create or update PR with tracker changes
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(seo): update weekly tracker"
+          title: "chore(seo): update weekly tracker"
+          body: |
+            Aggiornamento automatico settimanale del tracker SEO.
+            - source: GitHub Actions `seo-weekly-monitor.yml`
+            - file: `ops/seo/seo-weekly-tracker.csv`
+          branch: "chore/seo-weekly-tracker"
+          delete-branch: false
+          add-paths: |
+            ops/seo/seo-weekly-tracker.csv
