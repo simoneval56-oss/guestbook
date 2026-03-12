@@ -12,3 +12,4 @@ supabase/.temp/
 playwright-report/
 test-results/
 tests/e2e/.fixtures/
+ops/seo/live-seo-latest.json

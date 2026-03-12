@@ -12,7 +12,9 @@
     "test:e2e:manual": "playwright test -c playwright.manual.config.ts",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:install": "playwright install"
+    "test:e2e:install": "playwright install",
+    "seo:check-live": "node ops/seo/check-live-seo.mjs --output-json ops/seo/live-seo-latest.json",
+    "seo:weekly-monitor": "node ops/seo/run-seo-weekly-monitor.mjs"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",
