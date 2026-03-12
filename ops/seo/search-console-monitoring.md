@@ -94,6 +94,7 @@ Limite API Google:
 3. GitHub repository secrets:
    - `GSC_SERVICE_ACCOUNT_JSON`: contenuto JSON completo della chiave.
    - `GSC_SITE_URL`: ad esempio `sc-domain:guesthomebook.it`.
+   - `WORKFLOW_TRIGGER_TOKEN` (opzionale ma consigliato): PAT classico o fine-grained token/GitHub App token con permessi `contents: write` e `pull requests: write`, usato per creare la PR automatica in modo che i workflow `pull_request` richiesti possano partire.
 4. (Opzionale) repository variables:
    - `SEO_BASE_URL`: default `https://www.guesthomebook.it`.
    - `SEO_BRAND_TERMS`: default `guesthomebook,guest homebook,guesthomebook.it`.
@@ -108,4 +109,8 @@ Trigger:
 
 Output:
 1. aggiorna `ops/seo/seo-weekly-tracker.csv`,
-2. committa in automatico su `main` solo se ci sono modifiche.
+2. apre o aggiorna la PR `chore(seo): update weekly tracker` solo se ci sono modifiche.
+
+Nota:
+1. Senza `WORKFLOW_TRIGGER_TOKEN`, la PR automatica viene creata con il token standard di GitHub Actions e i workflow `pull_request` richiesti possono restare in stato `Expected`.
+2. Il trigger manuale di `E2E Critical` non sblocca automaticamente la PR se viene eseguito su un branch o commit diversi dalla head della PR.
