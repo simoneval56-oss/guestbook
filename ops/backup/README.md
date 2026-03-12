@@ -12,6 +12,7 @@ Questo pacchetto crea:
 - `docker` installato e attivo
 - client postgres: `pg_dump`, `pg_restore`, `psql`
 - (opzionale snapshot Hetzner) `hcloud` CLI
+- (opzionale snapshot retention) `jq`
 - immagine restore consigliata: `public.ecr.aws/supabase/postgres:17.6.1.054`
 
 ## 2) Configura env backup
@@ -37,11 +38,22 @@ Alternativa senza password DB:
 - installa `supabase` CLI sulla VPS
 - assicurati che esistano `/opt/guestbook/supabase/.temp/project-ref` e `pooler-url`
 
+Snapshot Hetzner (opzionale):
+
+- `ENABLE_VPS_SNAPSHOT=true`
+- `HCLOUD_SERVER_ID=<id server>`
+- `HCLOUD_SNAPSHOT_DESCRIPTION=guesthomebook-auto`
+- `HCLOUD_SNAPSHOT_FILTER_PREFIX=guesthomebook-auto`
+- `HCLOUD_RETENTION_ENABLED=true`
+- `HCLOUD_RETENTION_COUNT=7` (mantiene solo gli ultimi 7 snapshot matching)
+- Consigliato: usa `HCLOUD_TOKEN_FILE` invece di `HCLOUD_TOKEN` inline.
+
 ## 3) Rendi eseguibili gli script
 
 ```bash
 sudo chmod +x /opt/guestbook/ops/backup/backup-and-verify.sh
 sudo chmod +x /opt/guestbook/ops/backup/hetzner-snapshot.sh
+sudo chmod +x /opt/guestbook/ops/backup/rotate-hcloud-token.sh
 ```
 
 ## 4) Test manuale (restore testato)
@@ -71,4 +83,27 @@ Per vedere ultimo run:
 ```bash
 sudo systemctl status guesthomebook-backup.service
 sudo journalctl -u guesthomebook-backup.service -n 200 --no-pager
+```
+
+## Rotazione token Hetzner (senza downtime)
+
+1. Crea un nuovo API token in Hetzner Cloud.
+2. Salvalo in file token (atomico):
+
+```bash
+sudo NEW_HCLOUD_TOKEN='<new_token>' HCLOUD_TOKEN_FILE=/etc/guesthomebook/hcloud-token /opt/guestbook/ops/backup/rotate-hcloud-token.sh
+```
+
+3. In `/etc/guesthomebook-backup.env` tieni:
+
+```bash
+HCLOUD_TOKEN_FILE=/etc/guesthomebook/hcloud-token
+HCLOUD_TOKEN=
+```
+
+4. Verifica con un run manuale:
+
+```bash
+sudo systemctl start guesthomebook-backup.service
+sudo journalctl -u guesthomebook-backup.service -n 120 --no-pager
 ```
