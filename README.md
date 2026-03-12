@@ -126,6 +126,14 @@ curl -X POST https://www.guesthomebook.it/api/cron/reconcile-subscriptions \
 - Piano operativo 4-8 settimane: `ops/seo/search-console-monitoring.md`.
 - Tracker settimanale KPI: `ops/seo/seo-weekly-tracker.csv`.
 - Check tecnico live rapido (home/robots/sitemap): `ops/seo/check-live-seo.ps1`.
+- Check tecnico live cross-platform (Node): `npm run seo:check-live`.
+- Aggiornamento settimanale automatico tracker (Search Console API + check live): `npm run seo:weekly-monitor`.
+- Workflow schedulato GitHub: `.github/workflows/seo-weekly-monitor.yml`.
+- Variabili/secrets richiesti per automazione:
+  - `GSC_SITE_URL` (es. `sc-domain:guesthomebook.it`)
+  - `GSC_SERVICE_ACCOUNT_JSON` (JSON completo service account)
+  - opzionali `SEO_BASE_URL`, `SEO_BRAND_TERMS`.
+- Nota: i dati `pages_indexed/pages_excluded` non sono disponibili via Search Console API; restano da compilare da UI.
 - Esempio:
 
 ```powershell

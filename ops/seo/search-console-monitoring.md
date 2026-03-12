@@ -63,3 +63,49 @@ Obiettivo: verificare che Google indicizzi correttamente il sito e che la query 
 ## Log operativo
 
 Compila il file `ops/seo/seo-weekly-tracker.csv` ad ogni controllo.
+
+## Automazione (API + scheduler)
+
+E' disponibile uno script automatico:
+
+```bash
+npm run seo:weekly-monitor
+```
+
+Cosa aggiorna in automatico:
+1. Metriche brand da Search Console API (`brand_clicks`, `brand_impressions`, `brand_ctr_pct`, `brand_avg_position`).
+2. Stato tecnico live (`home_status`, `robots_status`, `sitemap_status`, `sitemap_url_count`).
+3. `notes/actions` con note operative automatiche.
+
+Limite API Google:
+1. I conteggi `pages_indexed/pages_excluded` e motivi di esclusione aggregati non sono esposti da Search Console API.
+2. Questi campi restano da compilare manualmente da UI Search Console.
+
+## Setup credenziali Search Console API
+
+1. Google Cloud Console:
+   - crea progetto (o usa esistente),
+   - abilita `Google Search Console API`,
+   - crea `Service Account`,
+   - genera chiave JSON.
+2. Search Console:
+   - proprieta dominio `guesthomebook.it`,
+   - aggiungi la mail del service account come proprietario (o owner verificato).
+3. GitHub repository secrets:
+   - `GSC_SERVICE_ACCOUNT_JSON`: contenuto JSON completo della chiave.
+   - `GSC_SITE_URL`: ad esempio `sc-domain:guesthomebook.it`.
+4. (Opzionale) repository variables:
+   - `SEO_BASE_URL`: default `https://www.guesthomebook.it`.
+   - `SEO_BRAND_TERMS`: default `guesthomebook,guest homebook,guesthomebook.it`.
+
+## Scheduler automatico GitHub
+
+Workflow: `.github/workflows/seo-weekly-monitor.yml`
+
+Trigger:
+1. ogni lunedi (cron),
+2. manuale (`Run workflow`).
+
+Output:
+1. aggiorna `ops/seo/seo-weekly-tracker.csv`,
+2. committa in automatico su `main` solo se ci sono modifiche.
