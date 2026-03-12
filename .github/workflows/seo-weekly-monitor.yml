@@ -48,6 +48,9 @@ jobs:
       - name: Create or update PR with tracker changes
         uses: peter-evans/create-pull-request@v6
         with:
+          # Use a dedicated PAT or GitHub App token when available so downstream
+          # pull_request workflows can start on the bot-created PR.
+          token: ${{ secrets.WORKFLOW_TRIGGER_TOKEN || github.token }}
           commit-message: "chore(seo): update weekly tracker"
           title: "chore(seo): update weekly tracker"
           body: |

@@ -132,6 +132,7 @@ curl -X POST https://www.guesthomebook.it/api/cron/reconcile-subscriptions \
 - Variabili/secrets richiesti per automazione:
   - `GSC_SITE_URL` (es. `sc-domain:guesthomebook.it`)
   - `GSC_SERVICE_ACCOUNT_JSON` (JSON completo service account)
+  - `WORKFLOW_TRIGGER_TOKEN` opzionale ma consigliato, per far partire i workflow `pull_request` richiesti sulle PR create dal bot
   - opzionali `SEO_BASE_URL`, `SEO_BRAND_TERMS`.
 - Nota: i dati `pages_indexed/pages_excluded` non sono disponibili via Search Console API; restano da compilare da UI.
 - Esempio:
