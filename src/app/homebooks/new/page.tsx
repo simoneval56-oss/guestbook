@@ -1,12 +1,13 @@
 ﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createServerSupabaseClient } from "../../../lib/supabase/server";
+import { createAdminClient, createServerSupabaseClient } from "../../../lib/supabase/server";
 import { LayoutCard } from "../../../components/layout-card";
 import { DEFAULT_LAYOUT_ID, LAYOUTS } from "../../../lib/layouts";
 import { getDefaultSections } from "../../../lib/default-sections";
 import { Database } from "../../../lib/database.types";
 import { generatePublicAccessToken } from "../../../lib/homebook-access";
+import { requireCurrentLegalAcceptance } from "../../../lib/legal-acceptance";
 import { ensureUserBillingState } from "../../../lib/subscription";
 
 export const dynamic = "force-dynamic";
@@ -16,20 +17,37 @@ type NewHomebookPageProps = {
   searchParams?: Promise<{ layout?: string | string[] }>;
 };
 
-async function createHomebook(formData: FormData) {
-  "use server";
+async function requireNewHomebookAccess() {
   const supabase = createServerSupabaseClient() as any;
   const {
     data: { user },
     error: userError
   } = await supabase.auth.getUser();
   if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
+
+  const admin = createAdminClient() as any;
+  try {
+    await requireCurrentLegalAcceptance(admin, user.id);
+  } catch (error: any) {
+    if (error?.message === "legal_acceptance_required") {
+      redirect("/dashboard?legal=required");
+    }
+    throw error;
+  }
+
+  const billing = await ensureUserBillingState(admin, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
   });
   if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+
+  return { supabase, user };
+}
+
+async function createHomebook(formData: FormData) {
+  "use server";
+  const { supabase, user } = await requireNewHomebookAccess();
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const title = formData.get("title")?.toString() ?? "";
@@ -72,18 +90,7 @@ async function createHomebook(formData: FormData) {
 }
 
 export default async function NewHomebookPage({ searchParams }: NewHomebookPageProps) {
-  const supabase = createServerSupabaseClient() as any;
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
-  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+  const { supabase, user } = await requireNewHomebookAccess();
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const requestedLayoutRaw = resolvedSearchParams?.layout;
   const requestedLayout = Array.isArray(requestedLayoutRaw) ? requestedLayoutRaw[0] : requestedLayoutRaw;

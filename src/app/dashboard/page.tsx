@@ -14,6 +14,9 @@ import { PublicLinkActions } from "../../components/public-link-actions";
 import { DeletePropertyButton } from "../../components/delete-property-button";
 import { PropertyImagePicker } from "../../components/property-image-picker";
 import { DashboardLayoutShowcase } from "../../components/dashboard-layout-showcase";
+import { LegalLinks } from "../../components/legal-links";
+import { LEGAL_ACCEPTANCE_SOURCE_RENEWAL, LEGAL_LAST_UPDATED_LABEL } from "../../lib/legal";
+import { acceptCurrentLegalDocuments, getLegalAcceptanceState, requireCurrentLegalAcceptance } from "../../lib/legal-acceptance";
 import { ensureUserBillingState } from "../../lib/subscription";
 import { syncStripeSubscriptionForUserSafely } from "../../lib/stripe-subscription-sync";
 
@@ -22,6 +25,7 @@ export const revalidate = 0;
 
 type DashboardSearchParams = {
   billing?: string | string[];
+  legal?: string | string[];
 };
 
 const CLASSICO_DEFAULT_SUBSECTIONS = ["Prima di partire", "Orario", "Formalità", "Self check-in", "Check-in in presenza"];
@@ -125,20 +129,59 @@ async function insertDefaultSubsectionsForClassicLayouts(
   }
 }
 
-async function createPropertyAction(formData: FormData) {
-  "use server";
-  const supabase = createServerSupabaseClient();
+async function requireDashboardSession() {
+  const supabase = createServerSupabaseClient() as any;
+  const admin = createAdminClient() as any;
   const {
     data: { user },
     error: userError
   } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
+
+  if (userError || !user) {
+    redirect("/login");
+  }
+
+  return { supabase, admin, user };
+}
+
+async function requireDashboardServiceAccess() {
+  const { supabase, admin, user } = await requireDashboardSession();
+
+  try {
+    await requireCurrentLegalAcceptance(admin, user.id);
+  } catch (error: any) {
+    if (error?.message === "legal_acceptance_required") {
+      redirect("/dashboard?legal=required");
+    }
+    throw error;
+  }
+
+  const billing = await ensureUserBillingState(admin, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
   });
   if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+
+  return { supabase, admin, user, billing };
+}
+
+async function acceptUpdatedLegalDocumentsAction() {
+  "use server";
+
+  const { admin, user } = await requireDashboardSession();
+  await acceptCurrentLegalDocuments(admin, {
+    userId: user.id,
+    email: user.email ?? null,
+    source: LEGAL_ACCEPTANCE_SOURCE_RENEWAL
+  });
+  revalidatePath("/dashboard");
+  redirect("/dashboard?legal=updated");
+}
+
+async function createPropertyAction(formData: FormData) {
+  "use server";
+  const { supabase, admin, user } = await requireDashboardServiceAccess();
 
   const name = formData.get("name")?.toString() ?? "";
   const address = formData.get("address")?.toString() ?? "";
@@ -156,12 +199,12 @@ async function createPropertyAction(formData: FormData) {
   };
 
   await (supabase.from("properties") as any).insert(propertyPayload);
-  const billingAfterCreate = await ensureUserBillingState(supabase, {
+  const billingAfterCreate = await ensureUserBillingState(admin, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
   });
-  await syncStripeSubscriptionForUserSafely(createAdminClient(), {
+  await syncStripeSubscriptionForUserSafely(admin, {
     userId: user.id,
     email: user.email ?? null,
     propertyCount: billingAfterCreate.propertyCount,
@@ -173,18 +216,7 @@ async function createPropertyAction(formData: FormData) {
 
 async function updatePropertyAction(formData: FormData) {
   "use server";
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
-  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+  const { supabase, user } = await requireDashboardServiceAccess();
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const name = formData.get("name")?.toString() ?? "";
@@ -248,18 +280,7 @@ async function uploadImageToStorage(file: File | null, pathPrefix: string) {
 
 async function deletePropertyAction(formData: FormData) {
   "use server";
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
-  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+  const { supabase, admin, user } = await requireDashboardServiceAccess();
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   if (!property_id) return;
@@ -296,12 +317,12 @@ async function deletePropertyAction(formData: FormData) {
   }
 
   await (supabase.from("properties") as any).delete().eq("id", property_id);
-  const billingAfterDelete = await ensureUserBillingState(supabase, {
+  const billingAfterDelete = await ensureUserBillingState(admin, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
   });
-  await syncStripeSubscriptionForUserSafely(createAdminClient(), {
+  await syncStripeSubscriptionForUserSafely(admin, {
     userId: user.id,
     email: user.email ?? null,
     propertyCount: billingAfterDelete.propertyCount,
@@ -313,18 +334,7 @@ async function deletePropertyAction(formData: FormData) {
 
 async function createHomebookAction(formData: FormData) {
   "use server";
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
-  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+  const { supabase, user } = await requireDashboardServiceAccess();
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const title = formData.get("title")?.toString() ?? "";
@@ -374,18 +384,7 @@ async function createHomebookAction(formData: FormData) {
 
 async function deleteHomebookAction(formData: FormData) {
   "use server";
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
-  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+  const { supabase, user } = await requireDashboardServiceAccess();
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   if (!homebook_id) return;
@@ -423,18 +422,7 @@ async function deleteHomebookAction(formData: FormData) {
 
 async function rotatePublicAccessTokenAction(formData: FormData) {
   "use server";
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
-  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+  const { supabase, user } = await requireDashboardServiceAccess();
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   if (!homebook_id) return;
@@ -455,18 +443,7 @@ async function rotatePublicAccessTokenAction(formData: FormData) {
 
 async function setPublicAccessEnabledAction(formData: FormData) {
   "use server";
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
-  if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+  const { supabase, user } = await requireDashboardServiceAccess();
 
   const homebook_id = formData.get("homebook_id")?.toString() ?? "";
   const enabled = formData.get("public_access_enabled")?.toString() === "true";
@@ -568,33 +545,54 @@ function getBillingBanner(code: string) {
   }
 }
 
+function getLegalBanner(code: string) {
+  switch (code) {
+    case "required":
+      return {
+        tone: "warning" as const,
+        message: "Prima di continuare devi accettare la versione aggiornata di Termini e Privacy."
+      };
+    case "updated":
+      return {
+        tone: "success" as const,
+        message: "Documenti legali aggiornati accettati correttamente."
+      };
+    default:
+      return null;
+  }
+}
+
+function getBannerStyles(tone: "success" | "warning" | "danger") {
+  return {
+    border:
+      tone === "success" ? "1px solid #b7ebc6" : tone === "warning" ? "1px solid #f5d48a" : "1px solid #f3b0b0",
+    background: tone === "success" ? "#f0fff4" : tone === "warning" ? "#fff8e8" : "#fff1f1",
+    color: tone === "success" ? "#14532d" : tone === "warning" ? "#7a4b00" : "#8b1b1b"
+  };
+}
+
 export default async function DashboardPage({
   searchParams
 }: {
   searchParams?: Promise<DashboardSearchParams>;
 }) {
-  const supabase = createServerSupabaseClient();
   try {
     const resolvedSearchParams = searchParams ? await searchParams : undefined;
-    const {
-      data: { user },
-      error: userError
-    } = await withTimeout(supabase.auth.getUser(), "Utente");
-
-    if (userError || !user) {
-      redirect("/login");
-    }
-
-    const billingState = await ensureUserBillingState(supabase, {
+    const { supabase, admin, user } = await requireDashboardSession();
+    const billingState = await ensureUserBillingState(admin, {
       userId: user.id,
       email: user.email ?? null,
       syncPlan: true
     });
+    const legalState = await getLegalAcceptanceState(admin, user.id);
     const billingMessage = getBillingBanner(readQueryValue(resolvedSearchParams, "billing"));
+    const legalBannerCode = readQueryValue(resolvedSearchParams, "legal");
+    const legalMessage =
+      legalBannerCode === "required" && !legalState.requiresAcceptance ? null : getLegalBanner(legalBannerCode);
 
     const { data: billingUserRow } = await withTimeout(
-      (supabase.from("users") as any)
-        .select("stripe_customer_id, stripe_subscription_id, billing_override")
+      (admin.from("users") as any)
+        .select("stripe_customer_id, stripe_subscription_id, billing_override, subscription_status, plan_type")
         .eq("id", user.id)
         .maybeSingle(),
       "Profilo billing"
@@ -644,32 +642,91 @@ export default async function DashboardPage({
       );
     });
 
+    if (legalState.requiresAcceptance) {
+      const legalReasonMessage =
+        legalState.reason === "outdated"
+          ? `Abbiamo aggiornato i documenti legali il ${LEGAL_LAST_UPDATED_LABEL}. Per continuare a usare dashboard, editor, pubblicazione e checkout devi confermare la nuova versione.`
+          : "Prima di continuare devi registrare l'accettazione corrente di Termini e Privacy per questo account.";
+
+      return (
+        <div className="grid dashboard-page" style={{ gap: 24 }}>
+          {legalMessage ? (
+            <div className="card" style={getBannerStyles(legalMessage.tone)}>
+              {legalMessage.message}
+            </div>
+          ) : null}
+          {billingMessage ? (
+            <div className="card" style={getBannerStyles(billingMessage.tone)}>
+              {billingMessage.message}
+            </div>
+          ) : null}
+          <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <div>
+              <div className="pill">Bentornato</div>
+              <h2 style={{ margin: "8px 0 0", color: "#0e4b58" }}>{user.email}</h2>
+              <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <div className="pill">Piano: {billingState.planType}</div>
+                <div className="pill">
+                  Stato: {billingState.billingOverride === "friend_free" ? "omaggio attivo" : billingState.serviceActive ? billingState.status : "non attivo"}
+                </div>
+                {billingState.billingOverride === "friend_free" ? <div className="pill">Override: gratuito</div> : null}
+              </div>
+              <p style={{ margin: "8px 0 0", color: "#7a4b00", fontSize: 13 }}>
+                Accesso operativo sospeso finche non completi la riaccettazione dei documenti.
+              </p>
+            </div>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              {hasStripeCustomer ? (
+                <form action="/api/stripe/portal" method="post">
+                  <button className="btn btn-secondary" type="submit">
+                    Gestisci abbonamento
+                  </button>
+                </form>
+              ) : null}
+              <form action="/api/auth/logout" method="post">
+                <button className="btn btn-secondary" type="submit">
+                  Logout
+                </button>
+              </form>
+            </div>
+          </header>
+
+          <section
+            className="card"
+            style={{ display: "grid", gap: 16, border: "1px solid #f5d48a", background: "#fffdf6" }}
+          >
+            <div className="pill" style={{ width: "fit-content", background: "#fff4cf", color: "#7a4b00" }}>
+              Azione richiesta
+            </div>
+            <div>
+              <h3 style={{ margin: 0, color: "#0e4b58" }}>Accetta i documenti aggiornati</h3>
+              <p style={{ margin: "10px 0 0", color: "#41545c", lineHeight: 1.7 }}>{legalReasonMessage}</p>
+            </div>
+            <div style={{ color: "#5b6d76", fontSize: 14 }}>
+              Riferimento corrente: documenti aggiornati al {LEGAL_LAST_UPDATED_LABEL}.
+            </div>
+            <LegalLinks compact />
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <form action={acceptUpdatedLegalDocumentsAction}>
+                <button className="btn" type="submit">
+                  Accetta e continua
+                </button>
+              </form>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
     return (
       <div className="grid dashboard-page" style={{ gap: 24 }}>
+        {legalMessage ? (
+          <div className="card" style={getBannerStyles(legalMessage.tone)}>
+            {legalMessage.message}
+          </div>
+        ) : null}
         {billingMessage ? (
-          <div
-            className="card"
-            style={{
-              border:
-                billingMessage.tone === "success"
-                  ? "1px solid #b7ebc6"
-                  : billingMessage.tone === "warning"
-                  ? "1px solid #f5d48a"
-                  : "1px solid #f3b0b0",
-              background:
-                billingMessage.tone === "success"
-                  ? "#f0fff4"
-                  : billingMessage.tone === "warning"
-                  ? "#fff8e8"
-                  : "#fff1f1",
-              color:
-                billingMessage.tone === "success"
-                  ? "#14532d"
-                  : billingMessage.tone === "warning"
-                  ? "#7a4b00"
-                  : "#8b1b1b"
-            }}
-          >
+          <div className="card" style={getBannerStyles(billingMessage.tone)}>
             {billingMessage.message}
           </div>
         ) : null}

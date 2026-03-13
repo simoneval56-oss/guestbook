@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     subscription_status: "trial",
     plan_type: "starter",
     trial_ends_at: buildTrialEndsAt(),
-    ...buildLegalAcceptanceFields(acceptedAt)
+    ...buildLegalAcceptanceFields({ acceptedAt })
   });
 
   if (profileError) {

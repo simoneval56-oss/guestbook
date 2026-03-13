@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/server";
-import { requireServiceUser, requireUser } from "../utils/auth";
+import { requireAcceptedUser, requireServiceUser } from "../utils/auth";
 import { DEFAULT_LAYOUT_ID } from "../../../lib/layouts";
 import { getDefaultSections } from "../../../lib/default-sections";
 import { Database } from "../../../lib/database.types";
@@ -8,7 +8,7 @@ import { generatePublicAccessToken } from "../../../lib/homebook-access";
 
 export async function GET() {
   try {
-    const user = await requireUser();
+    const user = await requireAcceptedUser();
     const supabase = createAdminClient();
     const homebooksQuery = supabase.from("homebooks").select("*, properties!inner(name,user_id)");
     // Supabase types don't expose joined column paths, use an untyped call for the join filter.
@@ -16,7 +16,13 @@ export async function GET() {
     if (error) throw error;
     return NextResponse.json({ data });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 401 });
+    const status =
+      error?.message === "legal_acceptance_required"
+        ? 428
+        : error?.message === "unauthorized"
+        ? 401
+        : 400;
+    return NextResponse.json({ error: error.message }, { status });
   }
 }
 
@@ -70,6 +76,8 @@ export async function POST(request: Request) {
     const status =
       error?.message === "subscription_inactive"
         ? 402
+        : error?.message === "legal_acceptance_required"
+        ? 428
         : error?.message === "unauthorized"
         ? 401
         : 400;

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, createServerSupabaseClient } from "../../../../../lib/supabase/server";
+import { requireCurrentLegalAcceptance } from "../../../../../lib/legal-acceptance";
 import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../../../lib/storage-media";
 import { ensureUserBillingState } from "../../../../../lib/subscription";
 
@@ -21,6 +22,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     }
 
     const admin = createAdminClient() as any;
+    await requireCurrentLegalAcceptance(admin, authData.user.id);
     const { data: homebook, error: homebookError } = await admin
       .from("homebooks")
       .select("id, property_id")
@@ -103,6 +105,17 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       }
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error?.message ?? "unknown_error" }, { status: 500 });
+    const message = error?.message ?? "unknown_error";
+    const status =
+      message === "legal_acceptance_required"
+        ? 428
+        : message === "subscription_inactive"
+        ? 402
+        : message === "unauthorized"
+        ? 401
+        : message === "not_found"
+        ? 404
+        : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }

@@ -10,6 +10,7 @@ import { DEFAULT_LAYOUT_ID } from "../../../../lib/layouts";
 import { OwnerPreviewToggle } from "../../../../components/owner-preview-toggle";
 import { PublishControls } from "../../../../components/publish-controls";
 import { Database } from "../../../../lib/database.types";
+import { requireCurrentLegalAcceptance } from "../../../../lib/legal-acceptance";
 import { COVER_FILE_ACCEPT, validateUploadCandidate } from "../../../../lib/upload-limits";
 import { createSignedUrlMapForValues, resolveStorageValueWithSignedMap } from "../../../../lib/storage-media";
 import type { MediaItem, Section, Subsection } from "../../../../components/classico-editor-preview";
@@ -113,20 +114,40 @@ function groupBy<T extends Record<string, any>>(items: T[], key: (item: T) => st
   }, {});
 }
 
-async function updatePropertyDetailsAction(formData: FormData) {
-  "use server";
+async function requireEditHomebookAccess() {
   const supabase = createServerSupabaseClient() as any;
+  const admin = createAdminClient() as any;
   const {
     data: { user },
     error: userError
   } = await supabase.auth.getUser();
-  if (userError || !user) redirect("/login");
-  const billing = await ensureUserBillingState(supabase, {
+
+  if (userError || !user) {
+    redirect("/login");
+  }
+
+  try {
+    await requireCurrentLegalAcceptance(admin, user.id);
+  } catch (error: any) {
+    if (error?.message === "legal_acceptance_required") {
+      redirect("/dashboard?legal=required");
+    }
+    throw error;
+  }
+
+  const billing = await ensureUserBillingState(admin, {
     userId: user.id,
     email: user.email ?? null,
     syncPlan: true
   });
   if (!billing.serviceActive) redirect("/dashboard?billing=inactive");
+
+  return { supabase, admin, user, billing };
+}
+
+async function updatePropertyDetailsAction(formData: FormData) {
+  "use server";
+  const { supabase, user } = await requireEditHomebookAccess();
 
   const property_id = formData.get("property_id")?.toString() ?? "";
   const name = formData.get("name")?.toString() ?? "";
@@ -494,21 +515,8 @@ async function uploadImageToStorage(file: File | null, pathPrefix: string) {
 
 export default async function EditHomebookPage({ params }: Props) {
   const { id: homebookId } = await params;
-  const supabase = createServerSupabaseClient() as any;
-  const admin = createAdminClient() as any;
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    redirect("/login");
-  }
-  const billingState = await ensureUserBillingState(supabase, {
-    userId: user.id,
-    email: user.email ?? null,
-    syncPlan: true
-  });
+  const { supabase, admin, user, billing } = await requireEditHomebookAccess();
+  const billingState = billing;
 
   const { data: homebook } = await supabase
     .from("homebooks")

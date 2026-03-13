@@ -11,6 +11,7 @@ export const LEGAL_TERMS_VERSION = LEGAL_LAST_UPDATED_ISO;
 export const LEGAL_PRIVACY_VERSION = LEGAL_LAST_UPDATED_ISO;
 export const LEGAL_TRIAL_DAYS = TRIAL_DURATION_DAYS;
 export const LEGAL_ACCEPTANCE_SOURCE_REGISTER = "register";
+export const LEGAL_ACCEPTANCE_SOURCE_RENEWAL = "renewal";
 
 export const LEGAL_PRICE_SUMMARY = [
   {
@@ -40,12 +41,20 @@ export function buildLegalMetadata(title: string, path: string, description: str
   };
 }
 
-export function buildLegalAcceptanceFields(acceptedAt = new Date().toISOString()) {
+type BuildLegalAcceptanceFieldsOptions = {
+  acceptedAt?: string;
+  source?: string;
+};
+
+export function buildLegalAcceptanceFields(options: BuildLegalAcceptanceFieldsOptions = {}) {
+  const acceptedAt = options.acceptedAt ?? new Date().toISOString();
+  const source = options.source ?? LEGAL_ACCEPTANCE_SOURCE_REGISTER;
+
   return {
     terms_version: LEGAL_TERMS_VERSION,
     privacy_version: LEGAL_PRIVACY_VERSION,
     terms_accepted_at: acceptedAt,
     privacy_accepted_at: acceptedAt,
-    legal_acceptance_source: LEGAL_ACCEPTANCE_SOURCE_REGISTER
+    legal_acceptance_source: source
   };
 }
