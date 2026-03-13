@@ -75,6 +75,7 @@ test.describe("Auth e link ospite critici", () => {
       await page.goto("/register");
       await page.locator('input[type="email"]').fill(email);
       await page.locator('input[type="password"]').fill(password);
+      await page.locator('input[type="checkbox"]').check();
       await page.getByRole("button", { name: "Registrati" }).click();
       const outcome = await waitRegistrationOutcome(page);
 

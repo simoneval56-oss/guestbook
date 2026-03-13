@@ -690,26 +690,49 @@ export default async function DashboardPage({
               </p>
             ) : null}
           </div>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            {!hasActiveGiftOverride ? (
-              <form action="/api/stripe/checkout" method="post">
-                <button className="btn" type="submit">
-                  {billingState.serviceActive ? "Aggiorna piano" : "Attiva abbonamento"}
-                </button>
-              </form>
-            ) : null}
-            {hasStripeCustomer ? (
-              <form action="/api/stripe/portal" method="post">
+          <div style={{ display: "grid", gap: 10, justifyItems: "flex-end" }}>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              {!hasActiveGiftOverride ? (
+                <form action="/api/stripe/checkout" method="post">
+                  <button className="btn" type="submit">
+                    {billingState.serviceActive ? "Aggiorna piano" : "Attiva abbonamento"}
+                  </button>
+                </form>
+              ) : null}
+              {hasStripeCustomer ? (
+                <form action="/api/stripe/portal" method="post">
+                  <button className="btn btn-secondary" type="submit">
+                    Gestisci abbonamento
+                  </button>
+                </form>
+              ) : null}
+              <form action="/api/auth/logout" method="post">
                 <button className="btn btn-secondary" type="submit">
-                  Gestisci abbonamento
+                  Logout
                 </button>
               </form>
-            ) : null}
-            <form action="/api/auth/logout" method="post">
-              <button className="btn btn-secondary" type="submit">
-                Logout
-              </button>
-            </form>
+            </div>
+            <p style={{ margin: 0, maxWidth: 470, color: "#5b6d76", fontSize: 13, lineHeight: 1.65, textAlign: "right" }}>
+              L&apos;abbonamento e&apos; mensile con rinnovo automatico finche&apos; non lo annulli dal customer portal
+              Stripe. Il prezzo puo&apos; riallinearsi in base al numero di strutture presenti nell&apos;account. Dettagli:
+              {" "}
+              <Link href="/termini" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Termini
+              </Link>
+              ,{" "}
+              <Link href="/recesso" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Recesso
+              </Link>
+              ,{" "}
+              <Link href="/privacy" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Privacy
+              </Link>{" "}
+              e{" "}
+              <Link href="/cookie" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Cookie
+              </Link>
+              .
+            </p>
           </div>
         </header>
 

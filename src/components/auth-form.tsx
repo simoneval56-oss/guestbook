@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { LEGAL_TRIAL_DAYS } from "../lib/legal";
 import { createBrowserSupabaseClient } from "../lib/supabase/client";
 
 type Mode = "login" | "register";
@@ -17,12 +19,27 @@ function sanitizeRedirectPath(value: string | undefined) {
   return value;
 }
 
+function mapRegistrationError(rawMessage: string) {
+  switch (rawMessage) {
+    case "legal_acceptance_required":
+      return "Per creare l'account devi accettare i Termini di servizio e prendere visione della Privacy.";
+    case "missing_credentials":
+    case "invalid_request_body":
+      return "Inserisci email e password valide per completare la registrazione.";
+    case "profile_setup_failed":
+      return "Registrazione non completata per un errore tecnico interno. Riprova tra poco.";
+    default:
+      return rawMessage || "Errore inatteso";
+  }
+}
+
 export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const router = useRouter();
   const supabase = createBrowserSupabaseClient();
   const safeRedirectPath = sanitizeRedirectPath(redirectTo);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptLegal, setAcceptLegal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -31,6 +48,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   useEffect(() => {
     setError(null);
     setMessage(null);
+    setAcceptLegal(false);
   }, [mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,28 +56,35 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
     setLoading(true);
     setError(null);
     setMessage(null);
+
     try {
       if (mode === "register") {
-        const { error: signUpError, data } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${location.origin}${safeRedirectPath}` }
-        });
-        if (signUpError) throw signUpError;
-        if (data.user) {
-          const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-          await supabase.from("users").upsert({
-            id: data.user.id,
+        if (!acceptLegal) {
+          throw new Error("legal_acceptance_required");
+        }
+
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
             email,
-            subscription_status: "trial",
-            plan_type: "starter",
-            trial_ends_at: trialEndsAt
-          });
-          // Quando è attiva la conferma email, non arriva subito una sessione: informiamo l'utente.
-          if (!data.session) {
-            setMessage("Ti abbiamo inviato un link di conferma via email. Aprilo e poi accedi con le tue credenziali.");
-            return;
-          }
+            password,
+            redirectTo: safeRedirectPath,
+            acceptLegal: true
+          })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(mapRegistrationError(payload?.error ?? ""));
+        }
+
+        if (payload?.needsEmailConfirmation) {
+          setPassword("");
+          setMessage("Ti abbiamo inviato un link di conferma via email. Aprilo e poi accedi con le tue credenziali.");
+          return;
         }
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -68,6 +93,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         });
         if (signInError) throw signInError;
       }
+
       router.push(safeRedirectPath);
       router.refresh();
     } catch (err: any) {
@@ -105,6 +131,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
             style={inputStyle}
           />
         </label>
+
         <label className="grid" style={{ gap: 6 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ color: "var(--brand-dark)" }}>Password</span>
@@ -131,19 +158,68 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
             style={inputStyle}
           />
         </label>
+
+        {mode === "register" ? (
+          <label
+            style={{
+              display: "flex",
+              gap: 10,
+              alignItems: "flex-start",
+              color: "#36505a",
+              lineHeight: 1.6,
+              fontSize: 13
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={acceptLegal}
+              onChange={(e) => setAcceptLegal(e.target.checked)}
+              style={{ marginTop: 3 }}
+            />
+            <span>
+              Ho letto e accetto i{" "}
+              <Link href="/termini" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Termini di servizio
+              </Link>{" "}
+              e dichiaro di aver preso visione della{" "}
+              <Link href="/privacy" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Privacy
+              </Link>
+              . Per il funzionamento del servizio consulta anche{" "}
+              <Link href="/cookie" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Cookie
+              </Link>{" "}
+              e{" "}
+              <Link href="/recesso" style={{ color: "#0e4b58", textDecoration: "underline" }}>
+                Recesso
+              </Link>
+              .
+            </span>
+          </label>
+        ) : null}
+
         {error && (
           <div className="text-muted" style={{ color: "#fca5a5" }}>
             {error}
           </div>
         )}
+
         {message && (
           <div className="text-muted" style={{ color: "#2563eb" }}>
             {message}
           </div>
         )}
+
         <button className="btn" type="submit" disabled={loading}>
           {loading ? "Attendere..." : cta}
         </button>
+
+        {mode === "register" ? (
+          <p style={{ margin: 0, color: "#5b6d76", fontSize: 13, lineHeight: 1.65 }}>
+            Creando un account avvii la prova gratuita di {LEGAL_TRIAL_DAYS} giorni. Salviamo anche data e versione
+            dei documenti accettati per poter dimostrare il consenso associato all&apos;account.
+          </p>
+        ) : null}
       </div>
     </form>
   );

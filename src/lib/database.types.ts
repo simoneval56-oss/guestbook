@@ -20,6 +20,11 @@ export type Database = {
           billing_override: string | null;
           stripe_customer_id: string | null;
           stripe_subscription_id: string | null;
+          terms_version: string | null;
+          privacy_version: string | null;
+          terms_accepted_at: string | null;
+          privacy_accepted_at: string | null;
+          legal_acceptance_source: string | null;
           created_at: string;
         };
         Insert: {
@@ -32,6 +37,11 @@ export type Database = {
           billing_override?: string | null;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
+          terms_version?: string | null;
+          privacy_version?: string | null;
+          terms_accepted_at?: string | null;
+          privacy_accepted_at?: string | null;
+          legal_acceptance_source?: string | null;
           created_at?: string;
         };
         Update: {
@@ -44,6 +54,11 @@ export type Database = {
           billing_override?: string | null;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
+          terms_version?: string | null;
+          privacy_version?: string | null;
+          terms_accepted_at?: string | null;
+          privacy_accepted_at?: string | null;
+          legal_acceptance_source?: string | null;
           created_at?: string;
         };
       };
