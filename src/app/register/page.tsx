@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthForm } from "../../components/auth-form";
+import { LegalLinks } from "../../components/legal-links";
 
 export default function RegisterPage() {
   return (
@@ -11,6 +12,9 @@ export default function RegisterPage() {
         </Link>
       </header>
       <AuthForm mode="register" />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <LegalLinks compact justify="center" />
+      </div>
     </div>
   );
 }

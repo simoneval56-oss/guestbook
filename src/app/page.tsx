@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LegalLinks } from "../components/legal-links";
 import { LayoutCarousel } from "../components/layout-carousel";
+import { LEGAL_TRIAL_DAYS } from "../lib/legal";
 import { LAYOUTS } from "../lib/layouts";
 import { createServerSupabaseClient } from "../lib/supabase/server";
 
@@ -272,6 +274,23 @@ export default async function HomePage() {
             Contattaci
           </a>
         </div>
+        <p
+          style={{
+            margin: 0,
+            color: "#36505a",
+            lineHeight: 1.7,
+            textAlign: "center",
+            maxWidth: 820,
+            justifySelf: "center"
+          }}
+        >
+          Prova gratuita di {LEGAL_TRIAL_DAYS} giorni. L&apos;abbonamento e&apos; mensile con rinnovo automatico
+          finche&apos; non viene annullato dal portale cliente Stripe; il prezzo puo&apos; riallinearsi in base al
+          numero di strutture presenti nell&apos;account.
+        </p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <LegalLinks compact justify="center" />
+        </div>
       </section>
 
       <section className="layout-section">
@@ -304,6 +323,15 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <footer className="card" style={{ display: "grid", gap: 12, textAlign: "center" }}>
+        <div className="pill">Area legale</div>
+        <p style={{ margin: 0, color: "#36505a", lineHeight: 1.7 }}>
+          Privacy, cookie, termini del servizio e recesso sono disponibili in pagine dedicate e allineate al flusso
+          di prova gratuita, checkout e customer portal.
+        </p>
+        <LegalLinks justify="center" />
+      </footer>
     </div>
   );
 }

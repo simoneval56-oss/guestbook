@@ -18,6 +18,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.75
+    },
+    {
+      url: `${siteUrl}/privacy`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.4
+    },
+    {
+      url: `${siteUrl}/cookie`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.4
+    },
+    {
+      url: `${siteUrl}/termini`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.45
+    },
+    {
+      url: `${siteUrl}/recesso`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.45
     }
   ];
 }

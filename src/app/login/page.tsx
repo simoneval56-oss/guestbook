@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthForm } from "../../components/auth-form";
+import { LegalLinks } from "../../components/legal-links";
 
 type LoginPageProps = {
   searchParams?: Promise<{ next?: string | string[] }>;
@@ -26,6 +27,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </Link>
       </header>
       <AuthForm mode="login" redirectTo={redirectTo} />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <LegalLinks compact justify="center" />
+      </div>
     </div>
   );
 }
