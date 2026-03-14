@@ -50,6 +50,8 @@ export async function POST(request: Request) {
     const status =
       error?.message === "subscription_inactive"
         ? 402
+        : error?.message === "legal_acceptance_required"
+        ? 428
         : error?.message === "unauthorized"
         ? 401
         : 400;

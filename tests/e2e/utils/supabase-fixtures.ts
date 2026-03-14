@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import { buildLegalAcceptanceFields } from "../../../src/lib/legal";
 import type { E2EFixture, E2EOwnerFixture } from "./fixture-store";
 import { getSupabaseEnv } from "./env";
 
@@ -64,12 +65,14 @@ async function getAuthUserIdByEmail(admin: ReturnType<typeof createAdminClient>,
 }
 
 async function upsertPublicUser(admin: ReturnType<typeof createAdminClient>, userId: string, email: string) {
+  const legalFields = buildLegalAcceptanceFields();
   const { error } = await admin.from("users").upsert(
     {
       id: userId,
       email,
       subscription_status: "trial",
-      plan_type: "starter"
+      plan_type: "starter",
+      ...legalFields
     },
     {
       onConflict: "id"
@@ -110,7 +113,8 @@ async function createOwnerFixture(
     id: userId,
     email,
     subscription_status: "active",
-    plan_type: "starter"
+    plan_type: "starter",
+    ...buildLegalAcceptanceFields()
   });
   if (userError) {
     throw new Error(`Failed inserting users row ${label}: ${userError.message}`);

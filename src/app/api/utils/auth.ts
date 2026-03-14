@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { createAdminClient } from "../../../lib/supabase/server";
+import { requireCurrentLegalAcceptance } from "../../../lib/legal-acceptance";
 import { requireActiveUserService } from "../../../lib/subscription";
 
 export async function requireUser() {
@@ -16,8 +17,15 @@ export async function requireUser() {
   return data.user;
 }
 
-export async function requireServiceUser() {
+export async function requireAcceptedUser() {
   const user = await requireUser();
+  const admin = createAdminClient();
+  await requireCurrentLegalAcceptance(admin, user.id);
+  return user;
+}
+
+export async function requireServiceUser() {
+  const user = await requireAcceptedUser();
   const admin = createAdminClient();
   await requireActiveUserService(admin, {
     userId: user.id,

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createAdminClient, createServerSupabaseClient } from "../../../../../lib/supabase/server";
+import { requireCurrentLegalAcceptance } from "../../../../../lib/legal-acceptance";
 import { ensureUserBillingState } from "../../../../../lib/subscription";
 import {
   generateHomebookTranslations,
@@ -333,6 +334,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }
 
     const admin = createAdminClient() as any;
+    await requireCurrentLegalAcceptance(admin, user.id);
     const billing = await ensureUserBillingState(admin, {
       userId: user.id,
       email: user.email ?? null,
@@ -443,7 +445,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   } catch (error: any) {
     const message = error?.message ?? "unknown_error";
     const status =
-      message === "forbidden"
+      message === "legal_acceptance_required"
+        ? 428
+        : message === "subscription_inactive"
+        ? 402
+        : message === "unauthorized"
+        ? 401
+        : message === "forbidden"
         ? 403
         : message === "not_found"
         ? 404

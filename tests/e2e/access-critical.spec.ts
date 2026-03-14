@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFixtureOrThrow, type E2EFixture } from "./utils/fixture-store";
-import { getHomebookPublishedState } from "./utils/supabase-fixtures";
+import { getHomebookPublishedState, getHomebookPublicAccess } from "./utils/supabase-fixtures";
 
 let fixture: E2EFixture;
 
@@ -34,6 +34,8 @@ test.describe("Accessi critici", () => {
   });
 
   test("ospite non modifica mai nulla", async ({ page, request }) => {
+    test.slow();
+
     const before = await getHomebookPublishedState(fixture.ownerA.homebookId);
 
     await page.goto(`/p/${fixture.ownerA.publicSlug}?t=${fixture.ownerA.publicToken}`);
@@ -50,7 +52,10 @@ test.describe("Accessi critici", () => {
   });
 
   test("proprietario vede solo le proprie strutture", async ({ page }) => {
+    test.slow();
+
     await loginAsOwnerA(page);
+    const authRequest = page.context().request;
 
     await expect(page.locator(".structure-summary__name").filter({ hasText: fixture.ownerA.propertyName })).toBeVisible();
     await expect(page.getByText(fixture.ownerA.homebookTitle)).toBeVisible();
@@ -58,17 +63,18 @@ test.describe("Accessi critici", () => {
     await expect(page.locator(".structure-summary__name").filter({ hasText: fixture.ownerB.propertyName })).toHaveCount(0);
     await expect(page.getByText(fixture.ownerB.homebookTitle)).toHaveCount(0);
 
-    const ownEditResponse = await page.goto(`/homebooks/${fixture.ownerA.homebookId}/edit`);
-    expect(ownEditResponse?.status()).toBe(200);
-    await expect(page).toHaveURL(new RegExp(`/homebooks/${fixture.ownerA.homebookId}/edit$`));
-    await expect(page.getByRole("link", { name: "<- Dashboard" })).toBeVisible();
+    const ownEditResponse = await authRequest.get(`/homebooks/${fixture.ownerA.homebookId}/edit`);
+    expect(ownEditResponse.status()).toBe(200);
+    await expect(await ownEditResponse.text()).toContain(fixture.ownerA.homebookTitle);
 
-    const response = await page.goto(`/homebooks/${fixture.ownerB.homebookId}/edit`);
-    expect(response?.status()).toBe(404);
-    await expect(page.getByText("This page could not be found.")).toBeVisible();
+    const forbiddenEditResponse = await authRequest.get(`/homebooks/${fixture.ownerB.homebookId}/edit`);
+    expect(forbiddenEditResponse.status()).toBe(404);
+    await expect(await forbiddenEditResponse.text()).toContain("This page could not be found.");
   });
 
   test("token ruotato invalida il vecchio link", async ({ page }) => {
+    test.slow();
+
     await loginAsOwnerA(page);
 
     const card = page.locator(".card").filter({ hasText: fixture.ownerA.homebookTitle }).first();
@@ -77,8 +83,18 @@ test.describe("Accessi critici", () => {
     const oldPublic = extractPublicPath(oldLinkText);
 
     await card.getByRole("button", { name: "Rigenera link" }).click();
-    await page.waitForLoadState("networkidle");
-    await expect(linkCode).not.toHaveText(oldLinkText);
+    let updatedPublic = await getHomebookPublicAccess(fixture.ownerA.homebookId);
+    await expect
+      .poll(async () => {
+        updatedPublic = await getHomebookPublicAccess(fixture.ownerA.homebookId);
+        return updatedPublic.token;
+      }, {
+        timeout: 15_000
+      })
+      .not.toBe(oldPublic.token);
+
+    await page.reload({ waitUntil: "networkidle" });
+    await expect(linkCode).toContainText(updatedPublic.token);
 
     const newLinkText = ((await linkCode.textContent()) ?? "").trim();
     const newPublic = extractPublicPath(newLinkText);

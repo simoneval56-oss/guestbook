@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient, createServerSupabaseClient } from "../../../../lib/supabase/server";
+import { requireCurrentLegalAcceptance } from "../../../../lib/legal-acceptance";
 import { ensureUserBillingState } from "../../../../lib/subscription";
 import { buildStripeLineItemsForPropertyCount, getStripePriceConfig } from "../../../../lib/stripe-pricing";
 
@@ -42,6 +43,15 @@ export async function POST(request: Request) {
   }
 
   const admin = createAdminClient() as any;
+
+  try {
+    await requireCurrentLegalAcceptance(admin, user.id);
+  } catch (error: any) {
+    if (error?.message === "legal_acceptance_required") {
+      return NextResponse.redirect(new URL("/dashboard?legal=required", baseUrl), { status: 303 });
+    }
+    return NextResponse.redirect(new URL("/dashboard?billing=checkout_error", baseUrl), { status: 303 });
+  }
 
   await ensureUserBillingState(admin, {
     userId: user.id,
