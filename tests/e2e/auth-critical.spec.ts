@@ -35,36 +35,14 @@ function resolveRegistrationEmailDomain() {
   }
 }
 
-async function waitRegistrationOutcome(page: Page) {
-  const startedAt = Date.now();
-  while (Date.now() - startedAt < 15_000) {
-    if (page.url().includes("/dashboard")) {
-      return { status: "dashboard" as const };
-    }
-
-    const feedbacks = await page.locator("form .text-muted").allTextContents();
-    const feedback = feedbacks.map((text) => text.trim()).filter(Boolean).join(" | ");
-    if (feedback.includes("Ti abbiamo inviato un link di conferma via email")) {
-      return { status: "email-confirmation" as const };
-    }
-    if (/rate limit/i.test(feedback)) {
-      return { status: "rate-limit" as const };
-    }
-    if (feedback.length > 0 && !/Attendere/i.test(feedback)) {
-      return { status: "error" as const, feedback };
-    }
-
-    await page.waitForTimeout(250);
-  }
-  return { status: "timeout" as const };
-}
-
 test.describe("Auth e link ospite critici", () => {
   test.beforeAll(() => {
     fixture = readFixtureOrThrow();
   });
 
   test("registrazione, login e logout funzionano", async ({ page }) => {
+    test.slow();
+
     const runSuffix = fixture.runId.replace(/[^a-z0-9]/gi, "").slice(0, 12).toLowerCase();
     const nonce = Date.now().toString(36);
     const emailDomain = resolveRegistrationEmailDomain();
@@ -76,26 +54,31 @@ test.describe("Auth e link ospite critici", () => {
       await page.locator('input[type="email"]').fill(email);
       await page.locator('input[type="password"]').fill(password);
       await page.locator('input[type="checkbox"]').check();
+      const registerResponsePromise = page.waitForResponse((response) => {
+        return response.url().includes("/api/auth/register") && response.request().method() === "POST";
+      });
       await page.getByRole("button", { name: "Registrati" }).click();
-      const outcome = await waitRegistrationOutcome(page);
+      const registerResponse = await registerResponsePromise;
+      const payload = await registerResponse.json().catch(() => ({}));
 
-      if (outcome.status === "email-confirmation") {
+      if (registerResponse.ok() && payload?.needsEmailConfirmation) {
+        await expect(
+          page.getByText("Ti abbiamo inviato un link di conferma via email. Aprilo e poi accedi con le tue credenziali.")
+        ).toBeVisible();
         await confirmAuthUserEmail(email);
         await loginWithCredentials(page, email, password);
-      } else if (outcome.status === "rate-limit") {
+      } else if (!registerResponse.ok() && /rate limit/i.test(String(payload?.error ?? ""))) {
         await createConfirmedAuthUser(email, password);
         await loginWithCredentials(page, email, password);
-      } else if (outcome.status === "dashboard") {
-        // already authenticated by signup (email confirmation disabled)
-      } else if (outcome.status === "error") {
-        throw new Error(`Registrazione fallita: ${outcome.feedback}`);
+      } else if (registerResponse.ok()) {
+        await page.waitForURL(/\/dashboard(?:\?|$)/, { timeout: 30_000 });
       } else {
-        throw new Error("Registrazione in timeout: nessun esito rilevato");
+        throw new Error(`Registrazione fallita: ${String(payload?.error ?? registerResponse.status())}`);
       }
 
       await expect(page.getByText(email)).toBeVisible();
       await Promise.all([
-        page.waitForURL("**/"),
+        page.waitForURL((url) => url.pathname === "/"),
         page.getByRole("button", { name: "Logout" }).click()
       ]);
       await page.goto("/dashboard");
