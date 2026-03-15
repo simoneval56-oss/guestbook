@@ -1,6 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { buildLegalAcceptanceFields } from "../../../src/lib/legal";
+import {
+  LEGAL_ACCEPTANCE_SOURCE_RENEWAL,
+  LEGAL_PRIVACY_VERSION,
+  LEGAL_TERMS_VERSION,
+  buildLegalAcceptanceFields
+} from "../../../src/lib/legal";
 import type { E2EFixture, E2EOwnerFixture } from "./fixture-store";
 import { getSupabaseEnv } from "./env";
 
@@ -316,4 +321,71 @@ export async function deleteAuthUserByEmail(email: string) {
   } catch {
     // ignore cleanup errors
   }
+}
+
+type SetUserLegalAcceptanceStateOptions = {
+  termsVersion: string;
+  privacyVersion?: string;
+  acceptedAt?: string;
+  source?: string;
+};
+
+export async function setUserLegalAcceptanceState(
+  userId: string,
+  {
+    termsVersion,
+    privacyVersion = termsVersion,
+    acceptedAt = new Date().toISOString(),
+    source = "register"
+  }: SetUserLegalAcceptanceStateOptions
+) {
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("users")
+    .update({
+      terms_version: termsVersion,
+      privacy_version: privacyVersion,
+      terms_accepted_at: acceptedAt,
+      privacy_accepted_at: acceptedAt,
+      legal_acceptance_source: source
+    })
+    .eq("id", userId);
+  if (error) {
+    throw new Error(`Unable to update legal acceptance for ${userId}: ${error.message}`);
+  }
+}
+
+export async function markUserLegalAcceptanceCurrent(userId: string) {
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("users")
+    .update(
+      buildLegalAcceptanceFields({
+        source: LEGAL_ACCEPTANCE_SOURCE_RENEWAL
+      })
+    )
+    .eq("id", userId);
+  if (error) {
+    throw new Error(`Unable to restore current legal acceptance for ${userId}: ${error.message}`);
+  }
+}
+
+export async function getUserLegalAcceptance(userId: string) {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("users")
+    .select("terms_version, privacy_version, terms_accepted_at, privacy_accepted_at, legal_acceptance_source")
+    .eq("id", userId)
+    .single();
+  if (error || !data) {
+    throw new Error(`Unable to read legal acceptance for ${userId}: ${error?.message ?? "not found"}`);
+  }
+  return {
+    termsVersion: data.terms_version,
+    privacyVersion: data.privacy_version,
+    termsAcceptedAt: data.terms_accepted_at,
+    privacyAcceptedAt: data.privacy_accepted_at,
+    source: data.legal_acceptance_source,
+    isCurrent: data.terms_version === LEGAL_TERMS_VERSION && data.privacy_version === LEGAL_PRIVACY_VERSION
+  };
 }
