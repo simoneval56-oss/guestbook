@@ -39,6 +39,17 @@ function mapRegistrationError(rawMessage: string) {
   }
 }
 
+const inputStyle = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: 12,
+  border: "1px solid #cdd9e1",
+  background: "#f6fafc",
+  color: "var(--brand-dark)",
+  WebkitTextFillColor: "var(--brand-dark)",
+  caretColor: "var(--brand-dark)"
+};
+
 export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const router = useRouter();
   const supabase = createBrowserSupabaseClient();
@@ -111,16 +122,6 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
   const title = mode === "register" ? "Crea un account" : "Accedi";
   const cta = mode === "register" ? "Registrati" : "Entra";
-  const inputStyle = {
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: 12,
-    border: "1px solid #cdd9e1",
-    background: "#f6fafc",
-    color: "var(--brand-dark)",
-    WebkitTextFillColor: "var(--brand-dark)",
-    caretColor: "var(--brand-dark)"
-  };
 
   return (
     <form className="card" onSubmit={handleSubmit} style={{ maxWidth: 440, margin: "0 auto" }}>
@@ -164,6 +165,14 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
             style={inputStyle}
           />
         </label>
+
+        {mode === "login" ? (
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Link href="/forgot-password" style={{ color: "#0e4b58", textDecoration: "underline", fontSize: 13 }}>
+              Password dimenticata?
+            </Link>
+          </div>
+        ) : null}
 
         {mode === "register" ? (
           <label
