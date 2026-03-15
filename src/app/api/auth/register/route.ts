@@ -32,6 +32,10 @@ function buildTrialEndsAt(now = new Date()) {
   return new Date(now.getTime() + LEGAL_TRIAL_DAYS * 24 * 60 * 60 * 1000).toISOString();
 }
 
+function isSignupRateLimited(rawMessage: string | undefined) {
+  return /rate limit/i.test(rawMessage ?? "");
+}
+
 export async function POST(request: Request) {
   let body: RegisterRequestBody | null = null;
 
@@ -65,6 +69,9 @@ export async function POST(request: Request) {
   });
 
   if (error) {
+    if (isSignupRateLimited(error.message)) {
+      return NextResponse.json({ error: "signup_rate_limited" }, { status: 429 });
+    }
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 

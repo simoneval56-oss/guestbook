@@ -20,6 +20,10 @@ function sanitizeRedirectPath(value: string | undefined) {
 }
 
 function mapRegistrationError(rawMessage: string) {
+  if (/rate limit/i.test(rawMessage)) {
+    return "Registrazione temporaneamente bloccata per troppi tentativi ravvicinati. Attendi qualche minuto, poi riprova oppure verifica se hai gia ricevuto l'email di conferma.";
+  }
+
   switch (rawMessage) {
     case "legal_acceptance_required":
       return "Per creare l'account devi accettare i Termini di servizio e prendere visione della Privacy.";
@@ -28,6 +32,8 @@ function mapRegistrationError(rawMessage: string) {
       return "Inserisci email e password valide per completare la registrazione.";
     case "profile_setup_failed":
       return "Registrazione non completata per un errore tecnico interno. Riprova tra poco.";
+    case "signup_rate_limited":
+      return "Registrazione temporaneamente bloccata per troppi tentativi ravvicinati. Attendi qualche minuto, poi riprova oppure verifica se hai gia ricevuto l'email di conferma.";
     default:
       return rawMessage || "Errore inatteso";
   }
