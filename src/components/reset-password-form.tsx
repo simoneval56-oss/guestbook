@@ -26,7 +26,7 @@ function readHashType() {
 
 export function ResetPasswordForm() {
   const router = useRouter();
-  const supabase = createBrowserSupabaseClient();
+  const [supabase] = useState(() => createBrowserSupabaseClient());
   const [status, setStatus] = useState<RecoveryStatus>("checking");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
