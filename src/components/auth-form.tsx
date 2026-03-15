@@ -20,6 +20,10 @@ function sanitizeRedirectPath(value: string | undefined) {
 }
 
 function mapRegistrationError(rawMessage: string) {
+  if (/rate limit/i.test(rawMessage)) {
+    return "Registrazione temporaneamente bloccata per troppi tentativi ravvicinati. Attendi qualche minuto, poi riprova oppure verifica se hai gia ricevuto l'email di conferma.";
+  }
+
   switch (rawMessage) {
     case "legal_acceptance_required":
       return "Per creare l'account devi accettare i Termini di servizio e prendere visione della Privacy.";
@@ -28,10 +32,23 @@ function mapRegistrationError(rawMessage: string) {
       return "Inserisci email e password valide per completare la registrazione.";
     case "profile_setup_failed":
       return "Registrazione non completata per un errore tecnico interno. Riprova tra poco.";
+    case "signup_rate_limited":
+      return "Registrazione temporaneamente bloccata per troppi tentativi ravvicinati. Attendi qualche minuto, poi riprova oppure verifica se hai gia ricevuto l'email di conferma.";
     default:
       return rawMessage || "Errore inatteso";
   }
 }
+
+const inputStyle = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: 12,
+  border: "1px solid #cdd9e1",
+  background: "#f6fafc",
+  color: "var(--brand-dark)",
+  WebkitTextFillColor: "var(--brand-dark)",
+  caretColor: "var(--brand-dark)"
+};
 
 export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const router = useRouter();
@@ -105,16 +122,6 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
   const title = mode === "register" ? "Crea un account" : "Accedi";
   const cta = mode === "register" ? "Registrati" : "Entra";
-  const inputStyle = {
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: 12,
-    border: "1px solid #cdd9e1",
-    background: "#f6fafc",
-    color: "var(--brand-dark)",
-    WebkitTextFillColor: "var(--brand-dark)",
-    caretColor: "var(--brand-dark)"
-  };
 
   return (
     <form className="card" onSubmit={handleSubmit} style={{ maxWidth: 440, margin: "0 auto" }}>
@@ -158,6 +165,14 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
             style={inputStyle}
           />
         </label>
+
+        {mode === "login" ? (
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Link href="/forgot-password" style={{ color: "#0e4b58", textDecoration: "underline", fontSize: 13 }}>
+              Password dimenticata?
+            </Link>
+          </div>
+        ) : null}
 
         {mode === "register" ? (
           <label

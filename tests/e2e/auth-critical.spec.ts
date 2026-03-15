@@ -40,6 +40,28 @@ test.describe("Auth e link ospite critici", () => {
     fixture = readFixtureOrThrow();
   });
 
+  test("login espone il recupero password e accetta la richiesta di reset", async ({ page }) => {
+    const runSuffix = fixture.runId.replace(/[^a-z0-9]/gi, "").slice(0, 12).toLowerCase();
+    const email = `e2e-reset-${runSuffix}-${Date.now().toString(36)}@guesthomebook.it`;
+
+    await page.goto("/login");
+    await page.getByRole("link", { name: "Password dimenticata?" }).click();
+    await page.waitForURL("**/forgot-password");
+
+    await page.locator('input[type="email"]').fill(email);
+    await page.getByRole("button", { name: "Invia link di reset" }).click();
+
+    await expect(
+      page.getByText("Se l'email esiste, ti abbiamo inviato un link per reimpostare la password.")
+    ).toBeVisible();
+  });
+
+  test("reset password senza token mostra link non valido", async ({ page }) => {
+    await page.goto("/reset-password");
+    await expect(page.getByText("Link non valido")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Richiedi un nuovo reset password" })).toBeVisible();
+  });
+
   test("registrazione, login e logout funzionano", async ({ page }) => {
     test.slow();
 
