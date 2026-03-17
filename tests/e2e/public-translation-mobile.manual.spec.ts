@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../../src/lib/database.types";
 import { readFixtureOrThrow, type E2EFixture } from "./utils/fixture-store";
 import { getEnv } from "./utils/env";
 import { setHomebookLayoutType } from "./utils/supabase-fixtures";
@@ -11,13 +12,18 @@ type HomebookTranslationPayload = {
 };
 
 type LayoutTranslationResult = {
+  text: string;
   lang: string;
   overflow: boolean;
   chipCount: number;
   activeFound: boolean;
   hasAutoTag: boolean;
-  markerFound: boolean;
-  markerSamples: string[];
+};
+
+type PublishTranslationSummary = {
+  requested: number;
+  ready: number;
+  failed: number;
 };
 
 const LAYOUTS = [
@@ -36,7 +42,7 @@ const LAYOUTS = [
 const MOBILE_VIEWPORT = { width: 390, height: 844 };
 
 let fixture: E2EFixture;
-let admin: ReturnType<typeof createClient>;
+let admin: ReturnType<typeof createAdminClient>;
 let homebookId: string;
 let publicSlug: string;
 let publicToken: string;
@@ -51,12 +57,12 @@ function createAdminClient() {
     throw new Error("SUPABASE env variables missing for e2e admin client");
   }
 
-  return createClient(url, serviceRoleKey, {
+  return createClient<Database>(url, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
     }
-  });
+  }) as any;
 }
 
 function normalizeText(value: string | null | undefined) {
@@ -128,7 +134,7 @@ async function ensureTranslationFixtureHomebook() {
       }
     },
     {
-      title: "Formalità",
+      title: "Formalita",
       order: 2,
       subsection: {
         title: "Documenti",
@@ -230,7 +236,7 @@ async function loginAsOwner(page: Page) {
   ]);
 }
 
-async function evaluateMobileLayout(page: Page, lang: string) {
+async function evaluateMobileLayout(page: Page, lang: string): Promise<LayoutTranslationResult> {
   const link = `${lang === "it" ? `/p/${publicSlug}?t=${publicToken}` : `/p/${publicSlug}?t=${publicToken}&lang=${lang}`}`;
 
   await page.setViewportSize(MOBILE_VIEWPORT);
@@ -238,12 +244,12 @@ async function evaluateMobileLayout(page: Page, lang: string) {
   await page.waitForLoadState("networkidle");
 
   return page.evaluate(({ langCode, sourceLang }) => {
-    const normalizeText = (value) => (value || "").replace(/\s+/g, " ").trim();
+    const normalizeText = (value: string | null | undefined) => (value || "").replace(/\s+/g, " ").trim();
     const bodyText = normalizeText(document.body.innerText || "");
     const viewportWidth = Math.ceil(window.innerWidth || 0);
     const scrollWidth = Math.ceil(document.documentElement.scrollWidth || 0);
 
-    const langLinks = Array.from(document.querySelectorAll("a")).filter((link) => {
+    const langLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("a")).filter((link) => {
       const href = link.getAttribute("href") || "";
       return href.includes("/p/") && href.includes("?t=");
     });
@@ -260,6 +266,7 @@ async function evaluateMobileLayout(page: Page, lang: string) {
     });
 
     return {
+      lang: langCode,
       text: bodyText,
       overflow: scrollWidth > viewportWidth + 2,
       chipCount: chips.length,
@@ -308,11 +315,15 @@ test.describe("Verifica traduzioni homebook in mobile", () => {
       });
       expect(publishResponse.status()).toBe(200);
 
-      const publishPayload = await publishResponse.json();
-      const translationSummary = (publishPayload as { data?: { translations?: { requested: number; ready: number; failed: number } } }).data?.translations;
-      expect(translationSummary?.requested).toBeGreaterThan(0);
-      expect(translationSummary?.ready).toBe(translationSummary.requested);
-      expect(translationSummary?.failed).toBe(0);
+      const publishPayload = (await publishResponse.json()) as { data?: { translations?: PublishTranslationSummary } };
+      const translationSummary = publishPayload.data?.translations;
+      expect(translationSummary).toBeTruthy();
+      if (!translationSummary) {
+        throw new Error(`Missing translation summary for layout ${layout}`);
+      }
+      expect(translationSummary.requested).toBeGreaterThan(0);
+      expect(translationSummary.ready).toBe(translationSummary.requested);
+      expect(translationSummary.failed).toBe(0);
 
       const { data: latestVersion } = await admin
         .from("homebook_versions")
@@ -323,7 +334,10 @@ test.describe("Verifica traduzioni homebook in mobile", () => {
         .maybeSingle();
 
       expect(latestVersion?.version_no).toBeGreaterThan(0);
-      const versionNo = latestVersion!.version_no as number;
+      if (!latestVersion?.version_no) {
+        throw new Error(`Missing latest version for layout ${layout}`);
+      }
+      const versionNo = latestVersion.version_no;
 
       const baseline = await evaluateMobileLayout(basePage, fixtureSourceLanguage);
       expect(baseline.overflow).toBe(false);
@@ -334,7 +348,7 @@ test.describe("Verifica traduzioni homebook in mobile", () => {
         const marks = await getTranslationMarkers(homebookId, versionNo, lang);
         expect(marks.length).toBeGreaterThan(0);
 
-        const result = (await evaluateMobileLayout(langPage, lang)) as LayoutTranslationResult;
+        const result = await evaluateMobileLayout(langPage, lang);
         expect(result.overflow).toBe(false);
         expect(result.chipCount).toBeGreaterThanOrEqual(2);
         expect(result.activeFound).toBe(true);
