@@ -167,6 +167,32 @@ export type Database = {
           updated_at?: string;
         };
       };
+      homebook_versions: {
+        Row: {
+          id: string;
+          homebook_id: string;
+          version_no: number;
+          snapshot: Json;
+          created_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          homebook_id: string;
+          version_no: number;
+          snapshot: Json;
+          created_by: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          homebook_id?: string;
+          version_no?: number;
+          snapshot?: Json;
+          created_by?: string;
+          created_at?: string;
+        };
+      };
       sections: {
         Row: {
           id: string;
