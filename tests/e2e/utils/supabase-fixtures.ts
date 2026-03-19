@@ -323,6 +323,67 @@ export async function deleteAuthUserByEmail(email: string) {
   }
 }
 
+export type UserBillingState = {
+  id: string;
+  email: string;
+  subscriptionStatus: string | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  subscriptionEndsAt: string | null;
+  trialEndsAt: string | null;
+};
+
+export async function getUserBillingStateByEmail(email: string): Promise<UserBillingState | null> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("users")
+    .select("id, email, subscription_status, stripe_customer_id, stripe_subscription_id, subscription_ends_at, trial_ends_at")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Unable to read billing state for ${email}: ${error.message}`);
+  }
+
+  if (!data?.id || !data?.email) return null;
+
+  return {
+    id: data.id as string,
+    email: data.email as string,
+    subscriptionStatus: (data.subscription_status as string | null | undefined) ?? null,
+    stripeCustomerId: (data.stripe_customer_id as string | null | undefined) ?? null,
+    stripeSubscriptionId: (data.stripe_subscription_id as string | null | undefined) ?? null,
+    subscriptionEndsAt: (data.subscription_ends_at as string | null | undefined) ?? null,
+    trialEndsAt: (data.trial_ends_at as string | null | undefined) ?? null
+  };
+}
+
+type WaitForUserBillingStateOptions = {
+  timeoutMs?: number;
+  intervalMs?: number;
+};
+
+export async function waitForUserBillingState(
+  email: string,
+  predicate: (state: UserBillingState | null) => boolean,
+  options: WaitForUserBillingStateOptions = {}
+) {
+  const timeoutMs = options.timeoutMs ?? 90_000;
+  const intervalMs = options.intervalMs ?? 1_000;
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const state = await getUserBillingStateByEmail(email);
+    if (predicate(state)) {
+      return state;
+    }
+    await wait(intervalMs);
+  }
+
+  const lastState = await getUserBillingStateByEmail(email);
+  throw new Error(`Timed out waiting for billing state of ${email}: ${JSON.stringify(lastState)}`);
+}
+
 type SetUserLegalAcceptanceStateOptions = {
   termsVersion: string;
   privacyVersion?: string;

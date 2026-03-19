@@ -3,6 +3,7 @@ node_modules/
 /.env.local
 /.env*
 !.env.example
+!.env.staging.example
 dist/
 *.log
 tmp/

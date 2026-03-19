@@ -17,6 +17,7 @@ import { DashboardLayoutShowcase } from "../../components/dashboard-layout-showc
 import { LegalLinks } from "../../components/legal-links";
 import { LEGAL_ACCEPTANCE_SOURCE_RENEWAL, LEGAL_LAST_UPDATED_LABEL } from "../../lib/legal";
 import { acceptCurrentLegalDocuments, getLegalAcceptanceState, requireCurrentLegalAcceptance } from "../../lib/legal-acceptance";
+import { getSiteUrl } from "../../lib/site-url";
 import { ensureUserBillingState } from "../../lib/subscription";
 import { syncStripeSubscriptionForUserSafely } from "../../lib/stripe-subscription-sync";
 
@@ -39,6 +40,7 @@ const CLASSICO_LIKE_LAYOUTS = new Set([
   "notturno"
 ]);
 const SUPABASE_TIMEOUT_MS = 10000;
+const SITE_URL = getSiteUrl();
 
 const CLASSICO_EXTRA_SECTIONS: Record<string, string[]> = {
   "check-in": CLASSICO_DEFAULT_SUBSECTIONS,
@@ -942,9 +944,7 @@ export default async function DashboardPage({
                   <div className="text-muted">Link ospiti</div>
                   {homebook.public_access_token ? (
                     <code style={{ background: "#0d1424", padding: "6px 8px", borderRadius: 8 }}>
-                      {`${process.env.NEXT_PUBLIC_BASE_URL ?? "https://homebook.app"}/p/${homebook.public_slug}?t=${
-                        homebook.public_access_token
-                      }`}
+                      {`${SITE_URL}/p/${homebook.public_slug}?t=${homebook.public_access_token}`}
                     </code>
                   ) : (
                     <div className="text-muted">Link non disponibile. Rigenera per crearne uno.</div>
@@ -952,9 +952,7 @@ export default async function DashboardPage({
                   <PublicLinkActions
                     url={
                       homebook.public_access_token
-                        ? `${process.env.NEXT_PUBLIC_BASE_URL ?? "https://homebook.app"}/p/${homebook.public_slug}?t=${
-                            homebook.public_access_token
-                          }`
+                        ? `${SITE_URL}/p/${homebook.public_slug}?t=${homebook.public_access_token}`
                         : ""
                     }
                     isEnabled={homebook.public_access_enabled !== false}

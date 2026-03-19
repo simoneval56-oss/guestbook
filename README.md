@@ -91,8 +91,33 @@ curl -X POST http://localhost:3000/api/sections \
   - `STRIPE_WEBHOOK_SECRET`
   - `STRIPE_PRICE_BASIC_1_5`
   - `STRIPE_PRICE_BASIC_6_10`
-  - `STRIPE_PRICE_EXTRA` (necessario quando l'utente supera 10 strutture)
+- `STRIPE_PRICE_EXTRA` (necessario quando l'utente supera 10 strutture)
 - Redirect dashboard con stato via query `?billing=...` (`checkout_success`, `checkout_cancel`, `checkout_error`, `portal_error`, ecc.).
+
+## Stripe test / staging
+- Usa un URL staging fisso, non un preview URL effimero. Su Vercel conviene assegnare un alias stabile tipo `https://staging.guesthomebook.it`.
+- Copia `.env.staging.example` in un file env dedicato allo staging e imposta:
+  - `NEXT_PUBLIC_BASE_URL` uguale all'URL staging
+  - `STRIPE_SECRET_KEY=sk_test_...`
+  - `STRIPE_WEBHOOK_SECRET=whsec_...`
+  - `STRIPE_PRICE_*` dei prodotti Stripe in test mode
+  - credenziali Supabase dello staging (o del progetto dedicato ai test)
+- Configura in Stripe test mode il webhook verso `POST https://staging.guesthomebook.it/api/stripe/webhook`.
+- Il resolver URL dell'app usa `NEXT_PUBLIC_BASE_URL` e, in fallback, gli host Vercel (`VERCEL_BRANCH_URL`, `VERCEL_URL`), cosi' metadata e link dashboard restano coerenti anche fuori dalla produzione.
+- Smoke remoto automatizzabile:
+
+```bash
+npm run test:e2e:stripe:staging
+```
+
+- La suite remota:
+  - rifiuta esplicitamente `E2E_BASE_URL` di produzione
+  - rifiuta chiavi Stripe live (`sk_live_...`)
+  - crea un utente test confermato via Supabase admin
+  - completa checkout Stripe in test mode
+  - verifica `stripe_customer_id`, `stripe_subscription_id` e `subscription_status` aggiornati via webhook
+  - apre il customer portal
+  - cancella la subscription in test mode e verifica il ritorno a stato `expired`
 
 ## Alert operativi (webhook)
 - Variabili:
