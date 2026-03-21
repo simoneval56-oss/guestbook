@@ -1,10 +1,8 @@
 import { defineConfig } from "@playwright/test";
+import { getEnv, getRequiredEnv } from "./tests/e2e/utils/env";
 
-const E2E_BASE_URL = process.env.E2E_BASE_URL?.trim().replace(/\/+$/, "");
-
-if (!E2E_BASE_URL) {
-  throw new Error("Missing E2E_BASE_URL for remote Playwright tests.");
-}
+const E2E_BASE_URL = getRequiredEnv("E2E_BASE_URL").trim().replace(/\/+$/, "");
+const E2E_VERCEL_BYPASS_SECRET = getEnv("E2E_VERCEL_BYPASS_SECRET")?.trim();
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -21,6 +19,11 @@ export default defineConfig({
     : [["list"], ["html", { open: "never" }]],
   use: {
     baseURL: E2E_BASE_URL,
+    extraHTTPHeaders: E2E_VERCEL_BYPASS_SECRET
+      ? {
+          "x-vercel-protection-bypass": E2E_VERCEL_BYPASS_SECRET
+        }
+      : undefined,
     trace: "on-first-retry"
   }
 });

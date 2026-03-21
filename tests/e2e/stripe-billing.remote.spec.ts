@@ -10,6 +10,7 @@ import { getEnv, getRequiredEnv } from "./utils/env";
 
 const REMOTE_BASE_URL = getRequiredEnv("E2E_BASE_URL").trim().replace(/\/+$/, "");
 const REMOTE_HOST = new URL(REMOTE_BASE_URL).hostname.toLowerCase();
+const E2E_VERCEL_BYPASS_SECRET = getEnv("E2E_VERCEL_BYPASS_SECRET")?.trim() ?? null;
 
 if (REMOTE_HOST === "guesthomebook.it" || REMOTE_HOST === "www.guesthomebook.it") {
   throw new Error("Remote Stripe smoke test must not run against production.");
@@ -33,8 +34,17 @@ function createStripeTestClient() {
   return new Stripe(STRIPE_SECRET_KEY);
 }
 
+function withVercelBypass(pathname: string) {
+  if (!E2E_VERCEL_BYPASS_SECRET) return pathname;
+
+  const target = new URL(pathname, `${REMOTE_BASE_URL}/`);
+  target.searchParams.set("x-vercel-protection-bypass", E2E_VERCEL_BYPASS_SECRET);
+  target.searchParams.set("x-vercel-set-bypass-cookie", "true");
+  return target.toString();
+}
+
 async function loginWithCredentials(page: Page, email: string, password: string) {
-  await page.goto("/login");
+  await page.goto(withVercelBypass("/login"));
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill(password);
   await Promise.all([

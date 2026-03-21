@@ -101,6 +101,7 @@ curl -X POST http://localhost:3000/api/sections \
   - `STRIPE_SECRET_KEY=sk_test_...`
   - `STRIPE_WEBHOOK_SECRET=whsec_...`
   - `STRIPE_PRICE_*` dei prodotti Stripe in test mode
+  - `E2E_VERCEL_BYPASS_SECRET=<bypass secret corrente>` se lo staging e' protetto da Vercel Authentication
   - credenziali Supabase dello staging (o del progetto dedicato ai test)
 - Configura in Stripe test mode il webhook verso `POST https://staging.guesthomebook.it/api/stripe/webhook`.
 - Il resolver URL dell'app usa `NEXT_PUBLIC_BASE_URL` e, in fallback, gli host Vercel (`VERCEL_BRANCH_URL`, `VERCEL_URL`), cosi' metadata e link dashboard restano coerenti anche fuori dalla produzione.
@@ -109,6 +110,8 @@ curl -X POST http://localhost:3000/api/sections \
 ```bash
 npm run test:e2e:stripe:staging
 ```
+
+- Se usi Vercel Deployment Protection, i test remoti passano automaticamente il bypass via header e bootstrap cookie usando `E2E_VERCEL_BYPASS_SECRET`.
 
 - La suite remota:
   - rifiuta esplicitamente `E2E_BASE_URL` di produzione
