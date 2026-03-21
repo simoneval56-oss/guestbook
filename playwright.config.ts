@@ -5,7 +5,7 @@ const E2E_BASE_URL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${E2E_PORT}`;
 
 export default defineConfig({
   testDir: "tests/e2e",
-  testIgnore: "**/*.manual.spec.ts",
+  testIgnore: ["**/*.manual.spec.ts", "**/*.remote.spec.ts"],
   timeout: 120_000,
   expect: {
     timeout: 10_000
