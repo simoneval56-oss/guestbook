@@ -57,7 +57,7 @@ test.describe("Auth e link ospite critici", () => {
   });
 
   test("reset password senza token mostra link non valido", async ({ page }) => {
-    await page.goto("/reset-password");
+    await page.goto("/reset-password", { waitUntil: "domcontentloaded" });
     await expect(page.getByText("Link non valido")).toBeVisible();
     await expect(page.getByRole("link", { name: "Richiedi un nuovo reset password" })).toBeVisible();
   });

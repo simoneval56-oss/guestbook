@@ -12,6 +12,8 @@
     "test:e2e:manual": "playwright test -c playwright.manual.config.ts",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:remote": "playwright test -c playwright.remote.config.ts",
+    "test:e2e:stripe:staging": "playwright test -c playwright.remote.config.ts tests/e2e/stripe-billing.remote.spec.ts",
     "test:e2e:install": "playwright install",
     "seo:check-live": "node ops/seo/check-live-seo.mjs --output-json ops/seo/live-seo-latest.json",
     "seo:weekly-monitor": "node ops/seo/run-seo-weekly-monitor.mjs"
