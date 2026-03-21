@@ -18,7 +18,7 @@ import { LegalLinks } from "../../components/legal-links";
 import { LEGAL_ACCEPTANCE_SOURCE_RENEWAL, LEGAL_LAST_UPDATED_LABEL } from "../../lib/legal";
 import { acceptCurrentLegalDocuments, getLegalAcceptanceState, requireCurrentLegalAcceptance } from "../../lib/legal-acceptance";
 import { getSiteUrl } from "../../lib/site-url";
-import { ensureUserBillingState } from "../../lib/subscription";
+import { TRIAL_DURATION_DAYS, ensureUserBillingState, type UserBillingState } from "../../lib/subscription";
 import { syncStripeSubscriptionForUserSafely } from "../../lib/stripe-subscription-sync";
 
 export const dynamic = "force-dynamic";
@@ -573,6 +573,42 @@ function getBannerStyles(tone: "success" | "warning" | "danger") {
   };
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function formatShortDate(date: Date) {
+  return new Intl.DateTimeFormat("it-IT", { dateStyle: "short" }).format(date);
+}
+
+function getTrialBanner(billingState: UserBillingState, now = new Date()) {
+  if (billingState.billingOverride === "friend_free") return null;
+  if (billingState.status !== "trial") return null;
+  if (!billingState.trialEndsAt) {
+    return {
+      tone: "warning" as const,
+      message: `Periodo di prova di ${TRIAL_DURATION_DAYS} giorni attivo. Alla scadenza perderai accesso a creazione, modifica, pubblicazione e link ospiti finche non attivi un abbonamento.`
+    };
+  }
+  const endDate = new Date(billingState.trialEndsAt);
+  if (Number.isNaN(endDate.getTime())) {
+    return {
+      tone: "warning" as const,
+      message: `Periodo di prova di ${TRIAL_DURATION_DAYS} giorni attivo. Alla scadenza perderai accesso a creazione, modifica, pubblicazione e link ospiti finche non attivi un abbonamento.`
+    };
+  }
+  const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / DAY_MS));
+  const when =
+    daysLeft === 0
+      ? "scade oggi"
+      : daysLeft === 1
+        ? "scade domani"
+        : `scade il ${formatShortDate(endDate)} (tra ${daysLeft} giorni)`;
+
+  return {
+    tone: "warning" as const,
+    message: `Periodo di prova di ${TRIAL_DURATION_DAYS} giorni attivo: ${when}. Alla scadenza perderai accesso a creazione, modifica, pubblicazione e link ospiti finche non attivi un abbonamento.`
+  };
+}
+
 export default async function DashboardPage({
   searchParams
 }: {
@@ -591,6 +627,7 @@ export default async function DashboardPage({
     const legalBannerCode = readQueryValue(resolvedSearchParams, "legal");
     const legalMessage =
       legalBannerCode === "required" && !legalState.requiresAcceptance ? null : getLegalBanner(legalBannerCode);
+    const trialMessage = getTrialBanner(billingState);
 
     const { data: billingUserRow } = await withTimeout(
       (admin.from("users") as any)
@@ -662,6 +699,11 @@ export default async function DashboardPage({
               {billingMessage.message}
             </div>
           ) : null}
+          {trialMessage ? (
+            <div className="card" style={getBannerStyles(trialMessage.tone)}>
+              {trialMessage.message}
+            </div>
+          ) : null}
           <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
             <div>
               <div className="pill">Bentornato</div>
@@ -730,6 +772,11 @@ export default async function DashboardPage({
         {billingMessage ? (
           <div className="card" style={getBannerStyles(billingMessage.tone)}>
             {billingMessage.message}
+          </div>
+        ) : null}
+        {trialMessage ? (
+          <div className="card" style={getBannerStyles(trialMessage.tone)}>
+            {trialMessage.message}
           </div>
         ) : null}
         <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
