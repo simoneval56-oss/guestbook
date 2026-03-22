@@ -11,6 +11,8 @@ type Mode = "login" | "register";
 type AuthFormProps = {
   mode: Mode;
   redirectTo?: string;
+  lockLoginUntilVerification?: boolean;
+  prefilledEmail?: string;
 };
 
 function sanitizeRedirectPath(value: string | undefined) {
@@ -50,10 +52,11 @@ const inputStyle = {
   caretColor: "var(--brand-dark)"
 };
 
-export function AuthForm({ mode, redirectTo }: AuthFormProps) {
+export function AuthForm({ mode, redirectTo, lockLoginUntilVerification = false, prefilledEmail }: AuthFormProps) {
   const router = useRouter();
   const supabase = createBrowserSupabaseClient();
   const safeRedirectPath = sanitizeRedirectPath(redirectTo);
+  const isLoginLocked = mode === "login" && lockLoginUntilVerification;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [acceptLegal, setAcceptLegal] = useState(false);
@@ -68,8 +71,19 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
     setAcceptLegal(false);
   }, [mode]);
 
+  useEffect(() => {
+    if (mode !== "login" || !prefilledEmail) return;
+    setEmail(prefilledEmail);
+  }, [mode, prefilledEmail]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isLoginLocked) {
+      setError("Conferma prima la registrazione dalla mail ricevuta, poi torna al login.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setMessage(null);
@@ -100,7 +114,13 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
         if (payload?.needsEmailConfirmation) {
           setPassword("");
-          setMessage("Ti abbiamo inviato un link di conferma via email. Aprilo e poi accedi con le tue credenziali.");
+          const loginParams = new URLSearchParams({
+            verification: "pending",
+            email,
+            next: safeRedirectPath
+          });
+          router.push(`/login?${loginParams.toString()}`);
+          router.refresh();
           return;
         }
       } else {
@@ -134,6 +154,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading || isLoginLocked}
             className="input"
             style={inputStyle}
           />
@@ -145,6 +166,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
+              disabled={loading || isLoginLocked}
               style={{
                 border: "none",
                 background: "transparent",
@@ -161,6 +183,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={loading || isLoginLocked}
             className="input"
             style={inputStyle}
           />
@@ -225,7 +248,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
           </div>
         )}
 
-        <button className="btn" type="submit" disabled={loading}>
+        <button className="btn" type="submit" disabled={loading || isLoginLocked}>
           {loading ? "Attendere..." : cta}
         </button>
 
