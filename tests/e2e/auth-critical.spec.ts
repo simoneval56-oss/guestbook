@@ -84,9 +84,15 @@ test.describe("Auth e link ospite critici", () => {
       const payload = await registerResponse.json().catch(() => ({}));
 
       if (registerResponse.ok() && payload?.needsEmailConfirmation) {
+        await page.waitForURL(/\/login\?/, { timeout: 30_000 });
         await expect(
-          page.getByText("Ti abbiamo inviato un link di conferma via email. Aprilo e poi accedi con le tue credenziali.")
+          page.getByText(
+            "Conferma prima la registrazione dalla mail ricevuta. Fino a conferma avvenuta, login e password restano bloccati."
+          )
         ).toBeVisible();
+        await expect(page.locator('input[type="email"]')).toBeDisabled();
+        await expect(page.locator('input[type="password"]')).toBeDisabled();
+        await expect(page.getByRole("button", { name: "Entra" })).toBeDisabled();
         await confirmAuthUserEmail(email);
         await loginWithCredentials(page, email, password);
       } else if (!registerResponse.ok() && /rate limit/i.test(String(payload?.error ?? ""))) {
