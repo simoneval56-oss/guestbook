@@ -5601,47 +5601,60 @@ button {
   color: #3f3833 !important;
 }
 
-/* Pastello: "Come raggiungerci" - evita tagli e lascia spazio al toggle */
+/* Pastello: "Come raggiungerci" riallineata alla stessa griglia delle altre card */
 .public-homebook--pastello .classico-card--slug-come-raggiungerci,
+.pastello-card.classico-card--slug-come-raggiungerci,
 .pastello-layout .classico-card--slug-come-raggiungerci,
 .pastello-editor-page .classico-card--slug-come-raggiungerci,
 .pastello-preview .classico-card--slug-come-raggiungerci {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto auto;
-  justify-items: center;
-  align-content: start;
-  gap: 4px;
-  padding: 24px 20px 22px;
-  width: min(360px, 100%);
-  max-width: 100%;
-  min-height: 260px;
-  height: auto;
-  grid-row: span 2;
-  grid-column: 1 / -1;
-  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 18px;
+  width: 100%;
+  max-width: none;
+  min-height: 180px;
+  height: 100%;
+  grid-row: auto !important;
+  grid-column: auto !important;
+  justify-self: stretch !important;
+  align-self: center;
   text-align: center;
 }
 
+/* Pastello: la card "reach" eredita overflow hidden globale e tronca il toggle visibilita'. */
+.public-homebook--pastello .classico-card--reach,
+.pastello-card.classico-card--reach,
+.pastello-layout .classico-card--reach,
+.pastello-editor-page .classico-card--reach,
+.pastello-preview .classico-card--reach {
+  overflow: visible;
+}
+
 .public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__title,
+.pastello-card.classico-card--slug-come-raggiungerci .classico-card__title,
 .pastello-layout .classico-card--slug-come-raggiungerci .classico-card__title,
 .pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__title,
 .pastello-preview .classico-card--slug-come-raggiungerci .classico-card__title {
+  flex: 0 0 auto;
   font-family: "Playfair Display", "Inter", system-ui, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: 24px;
-  line-height: 1.25;
+  font-size: 23px;
+  line-height: 1.2;
   letter-spacing: 0;
-  margin: -24px 0 0;
+  margin: 0;
   text-align: center;
   color: rgb(63, 56, 51);
   white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
   overflow-wrap: anywhere;
   word-break: normal;
   display: block;
   max-width: 100%;
-  overflow: visible;
 }
 
 .pastello-card:not(.classico-card--slug-come-raggiungerci) .classico-card__icon {
@@ -7810,37 +7823,49 @@ img[src*="/Moderno/servizi"] {
 
 /* Come Raggiungerci (Pastello): mostra l'icona sopra il titolo */
 .public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__icon,
+.pastello-card.classico-card--slug-come-raggiungerci .classico-card__icon,
 .pastello-layout .classico-card--slug-come-raggiungerci .classico-card__icon,
-.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon {
+.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon,
+.pastello-preview .classico-card--slug-come-raggiungerci .classico-card__icon {
   display: grid;
-  width: 96px;
-  height: 96px;
-  min-width: 96px;
-  min-height: 96px;
-  max-width: 120px;
-  max-height: 120px;
-  margin: 4px auto 4px;
+  width: 83.22px;
+  height: 124.88px;
+  min-width: 83.22px;
+  min-height: 124.88px;
+  max-width: none;
+  max-height: none;
+  margin-bottom: 6px;
   place-items: center;
   overflow: visible;
 }
 
 .public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__icon-img,
+.pastello-card.classico-card--slug-come-raggiungerci .classico-card__icon-img,
 .pastello-layout .classico-card--slug-come-raggiungerci .classico-card__icon-img,
-.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon-img {
+.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon-img,
+.pastello-preview .classico-card--slug-come-raggiungerci .classico-card__icon-img {
   display: block;
   width: 100%;
   height: 100%;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
   filter: none;
-  transform: none;
-  transform-origin: center;
+  transform: none !important;
+  transform-origin: center !important;
 }
 
 .public-homebook--pastello .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker,
+.pastello-card.classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker,
 .pastello-layout .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker,
-.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker {
-  transform: none;
-  transform-origin: center;
+.pastello-editor-page .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker,
+.pastello-preview .classico-card--slug-come-raggiungerci .classico-card__icon-img.icon-thicker {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  transform: none !important;
+  transform-origin: center !important;
 }
 
 /* Funzionamento (Pastello): stessa dimensione icona del Check-in */
