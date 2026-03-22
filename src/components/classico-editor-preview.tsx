@@ -2618,7 +2618,6 @@ function parseLinkWithDescription(m: MediaItem) {
                 const sectionIcon = normalizeTitle(canonicalSectionTitle);
                 const needsInlineTitleAndToggle =
                   isClassicLayout && (sectionIcon === "come raggiungerci" || sectionIcon === "funzionamento");
-                const needsOverlayToggle = isPastelloLayout && sectionIcon === "come raggiungerci";
                 const shouldGlow =
                   sectionIcon &&
                   ["check-in", "funzionamento", "regole struttura", "cosa visitare", "esperienze", "servizi", "numeri utili"].includes(sectionIcon);
@@ -2771,46 +2770,6 @@ function parseLinkWithDescription(m: MediaItem) {
                       </span>
                     ) : null}
                   </div>
-                ) : needsOverlayToggle ? (
-                  <>
-                    <span className="classico-card__title">{section.title}</span>
-                    {!isReadOnly ? (
-                      <>
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          style={{
-                            position: "absolute",
-                            top: 10,
-                            right: 10,
-                            padding: "4px 8px",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 6,
-                            fontSize: "12px",
-                            lineHeight: 1.1
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleVisibility(section.id);
-                          }}
-                          disabled={isPending || isReadOnly}
-                          aria-label={isSectionVisible ? `Nascondi ${section.title}` : `Mostra ${section.title}`}
-                          title={isSectionVisible ? `Nascondi ${section.title}` : `Mostra ${section.title}`}
-                        >
-                          {isSectionVisible ? <EyeOffIcon /> : <EyeIcon />}
-                        </button>
-                        {!isSectionVisible ? (
-                          <span
-                            className="classico-editor-modal__muted"
-                            style={{ position: "absolute", left: 10, bottom: 10, fontSize: 12 }}
-                          >
-                            Nascosta
-                          </span>
-                        ) : null}
-                      </>
-                    ) : null}
-                  </>
                 ) : (
                   <>
                     <span className="classico-card__title">{section.title}</span>
