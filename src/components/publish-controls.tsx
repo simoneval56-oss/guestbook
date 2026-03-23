@@ -218,11 +218,16 @@ export function PublishControls({ homebookId, initialIsPublished }: PublishContr
             onClick={handleTogglePublish}
             disabled={isBusy}
           >
-            {isPublished
-              ? "Metti in bozza"
-              : isChecklistLoading
-              ? "Controllo suggerimenti..."
-              : "Salva e pubblica"}
+            {isBusy ? (
+              <span className="btn__loading">
+                <span className="btn__spinner" aria-hidden="true" />
+                {isChecklistLoading ? "Controllo suggerimenti..." : isPublished ? "Aggiorno bozza..." : "Pubblico..."}
+              </span>
+            ) : isPublished ? (
+              "Metti in bozza"
+            ) : (
+              "Salva e pubblica"
+            )}
           </button>
           <button
             className="btn btn-secondary"
@@ -233,7 +238,14 @@ export function PublishControls({ homebookId, initialIsPublished }: PublishContr
             }}
             disabled={isBusy}
           >
-            Ripristina ultima versione pubblicata
+            {isPending ? (
+              <span className="btn__loading">
+                <span className="btn__spinner" aria-hidden="true" />
+                Ripristino...
+              </span>
+            ) : (
+              "Ripristina ultima versione pubblicata"
+            )}
           </button>
         </div>
       </div>
@@ -288,7 +300,14 @@ export function PublishControls({ homebookId, initialIsPublished }: PublishContr
                 Annulla
               </button>
               <button className="btn" type="button" onClick={confirmPublishAnyway} disabled={isPending}>
-                Pubblica comunque
+                {isPending ? (
+                  <span className="btn__loading">
+                    <span className="btn__spinner" aria-hidden="true" />
+                    Pubblico...
+                  </span>
+                ) : (
+                  "Pubblica comunque"
+                )}
               </button>
             </div>
           </div>
@@ -334,6 +353,12 @@ export function PublishControls({ homebookId, initialIsPublished }: PublishContr
                 onClick={confirmRestoreLatestPublished}
                 disabled={isPending}
               >
+                {isPending ? (
+                  <span className="btn__loading" style={{ marginRight: 8 }}>
+                    <span className="btn__spinner" aria-hidden="true" />
+                    Ripristino...
+                  </span>
+                ) : null}
                 Sì, ripristina
               </button>
             </div>

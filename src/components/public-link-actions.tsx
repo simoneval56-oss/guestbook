@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 type PublicLinkActionsProps = {
   url: string;
@@ -24,6 +24,8 @@ export function PublicLinkActions({
   const [showQr, setShowQr] = useState(false);
   const [qrSrc, setQrSrc] = useState("");
   const [qrState, setQrState] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [isRotatePending, startRotateTransition] = useTransition();
+  const [isTogglePending, startToggleTransition] = useTransition();
   const canShare = Boolean(url) && isEnabled && isPublished;
 
   const handleCopy = async () => {
@@ -122,20 +124,60 @@ export function PublicLinkActions({
             {tooltipQr}
           </span>
         </div>
-        <form action={rotateAction} className="tooltip-wrap">
+        <form
+          action={(formData) => {
+            startRotateTransition(() => {
+              void rotateAction(formData);
+            });
+          }}
+          className="tooltip-wrap"
+        >
           <input type="hidden" name="homebook_id" value={homebookId} />
-          <button type="submit" className="btn btn-secondary" aria-describedby={tooltipRotateId}>
-            Rigenera link
+          <button
+            type="submit"
+            className="btn btn-secondary"
+            disabled={isRotatePending}
+            aria-describedby={tooltipRotateId}
+          >
+            {isRotatePending ? (
+              <span className="btn__loading">
+                <span className="btn__spinner" aria-hidden="true" />
+                Rigenero...
+              </span>
+            ) : (
+              "Rigenera link"
+            )}
           </button>
           <span className="tooltip-bubble" role="tooltip" id={tooltipRotateId}>
             {tooltipRotate}
           </span>
         </form>
-        <form action={toggleAction} className="tooltip-wrap">
+        <form
+          action={(formData) => {
+            startToggleTransition(() => {
+              void toggleAction(formData);
+            });
+          }}
+          className="tooltip-wrap"
+        >
           <input type="hidden" name="homebook_id" value={homebookId} />
           <input type="hidden" name="public_access_enabled" value={String(!isEnabled)} />
-          <button type="submit" className="btn btn-secondary" aria-describedby={tooltipToggleId}>
-            {isEnabled ? "Disattiva accesso" : "Attiva accesso"}
+          <button
+            type="submit"
+            className="btn btn-secondary"
+            disabled={isTogglePending}
+            aria-describedby={tooltipToggleId}
+          >
+            {isTogglePending ? (
+              <span className="btn__loading">
+                <span className="btn__spinner" aria-hidden="true" />
+                Aggiorno...
+              </span>
+            ) : isEnabled ? (
+              "Disattiva accesso"
+            ) : (
+              "Attiva accesso"
+            )}
           </button>
           <span className="tooltip-bubble" role="tooltip" id={tooltipToggleId}>
             {tooltipToggle}

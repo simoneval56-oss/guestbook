@@ -188,7 +188,14 @@ export function ResetPasswordForm() {
         ) : null}
 
         <button className="btn" type="submit" disabled={loading}>
-          {loading ? "Aggiornamento..." : "Aggiorna password"}
+          {loading ? (
+            <span className="btn__loading">
+              <span className="btn__spinner" aria-hidden="true" />
+              Aggiornamento...
+            </span>
+          ) : (
+            "Aggiorna password"
+          )}
         </button>
       </div>
     </form>

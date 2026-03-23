@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createAdminClient, createServerSupabaseClient } from "../../../lib/supabase/server";
 import { LayoutCard } from "../../../components/layout-card";
+import { FormSubmitButton } from "../../../components/form-submit-button";
 import { DEFAULT_LAYOUT_ID, LAYOUTS } from "../../../lib/layouts";
 import { getDefaultSections } from "../../../lib/default-sections";
 import { Database } from "../../../lib/database.types";
@@ -137,9 +138,9 @@ export default async function NewHomebookPage({ searchParams }: NewHomebookPageP
               ))}
             </select>
           </div>
-          <button className="btn" type="submit">
+          <FormSubmitButton className="btn" pendingText="Creo homebook...">
             Crea e vai all&apos;editor
-          </button>
+          </FormSubmitButton>
         </form>
       </section>
     </div>

@@ -27,7 +27,14 @@ export function DeletePropertyButton({ propertyId, action }: Props) {
         style={{ background: "#fdecec", color: "#b42318", borderColor: "#f8b4a0" }}
         disabled={isPending}
       >
-        {isPending ? "Elimino..." : "Elimina struttura"}
+        {isPending ? (
+          <span className="btn__loading">
+            <span className="btn__spinner" aria-hidden="true" />
+            Elimino...
+          </span>
+        ) : (
+          "Elimina struttura"
+        )}
       </button>
     </form>
   );

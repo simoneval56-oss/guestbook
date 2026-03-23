@@ -84,7 +84,14 @@ export function ForgotPasswordForm() {
         ) : null}
 
         <button className="btn" type="submit" disabled={loading}>
-          {loading ? "Attendere..." : "Invia link di reset"}
+          {loading ? (
+            <span className="btn__loading">
+              <span className="btn__spinner" aria-hidden="true" />
+              Attendere...
+            </span>
+          ) : (
+            "Invia link di reset"
+          )}
         </button>
       </div>
     </form>
