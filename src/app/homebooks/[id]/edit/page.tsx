@@ -727,22 +727,15 @@ export default async function EditHomebookPage({ params }: Props) {
       </header>
       <section className="card" style={{ padding: 0, overflow: "hidden" }}>
           <div
-            style={{
-              position: "relative",
-              minHeight: 320,
-              aspectRatio: "16 / 9",
-              background: "linear-gradient(120deg, #e6edef, #dce8ec)",
-              borderRadius: "16px 16px 0 0",
-              overflow: "hidden"
-            }}
+            className="homebook-cover-frame"
           >
             {resolvedCoverImage ? (
               <Image
                 src={resolvedCoverImage}
                 alt={`Foto copertina di ${homebook.properties?.name ?? "struttura"}`}
                 fill
+                className="homebook-cover-image"
                 sizes="(max-width: 900px) 100vw, 1200px"
-                style={{ objectFit: "cover" }}
                 priority
                 unoptimized
               />

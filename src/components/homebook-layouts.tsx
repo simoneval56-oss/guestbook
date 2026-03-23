@@ -581,8 +581,8 @@ function BaseTemplateLayout({
               src={fallbackImage}
               alt=""
               fill
+              className="homebook-cover-image"
               sizes="(max-width: 900px) 100vw, 460px"
-              style={{ objectFit: "cover" }}
               priority
               unoptimized
             />
@@ -757,8 +757,8 @@ export function ClassicoLayout({
               src={coverImage}
               alt=""
               fill
+              className="homebook-cover-image"
               sizes="(max-width: 1200px) 100vw, 1040px"
-              style={{ objectFit: "cover" }}
               priority
               unoptimized
             />
