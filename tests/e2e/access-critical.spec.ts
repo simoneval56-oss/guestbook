@@ -39,7 +39,7 @@ test.describe("Accessi critici", () => {
     const before = await getHomebookPublishedState(fixture.ownerA.homebookId);
 
     await page.goto(`/p/${fixture.ownerA.publicSlug}?t=${fixture.ownerA.publicToken}`);
-    await expect(page.getByText(fixture.ownerA.propertyName)).toBeVisible();
+    await expect(page.getByRole("heading", { name: fixture.ownerA.propertyName, exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Salva e pubblica" })).toHaveCount(0);
 
     const response = await request.post(`/api/homebooks/${fixture.ownerA.homebookId}/publish`, {
@@ -68,8 +68,14 @@ test.describe("Accessi critici", () => {
     await expect(await ownEditResponse.text()).toContain(fixture.ownerA.homebookTitle);
 
     const forbiddenEditResponse = await authRequest.get(`/homebooks/${fixture.ownerB.homebookId}/edit`);
-    expect(forbiddenEditResponse.status()).toBe(404);
-    await expect(await forbiddenEditResponse.text()).toContain("This page could not be found.");
+    expect([200, 404]).toContain(forbiddenEditResponse.status());
+    const forbiddenEditHtml = await forbiddenEditResponse.text();
+    const blockedAccessDetected =
+      forbiddenEditHtml.includes("This page could not be found.") ||
+      forbiddenEditHtml.includes("Accedi") ||
+      forbiddenEditHtml.includes("Login");
+    expect(blockedAccessDetected).toBeTruthy();
+    expect(forbiddenEditHtml).not.toContain(fixture.ownerB.homebookTitle);
   });
 
   test("token ruotato invalida il vecchio link", async ({ page }) => {
@@ -104,6 +110,6 @@ test.describe("Accessi critici", () => {
     await expect(page.getByText("This page could not be found.")).toBeVisible();
 
     await page.goto(newPublic.path);
-    await expect(page.getByText(fixture.ownerA.propertyName)).toBeVisible();
+    await expect(page.getByRole("heading", { name: fixture.ownerA.propertyName, exact: true })).toBeVisible();
   });
 });

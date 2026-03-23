@@ -122,7 +122,7 @@ test.describe("Auth e link ospite critici", () => {
     await page.context().clearCookies();
     await page.goto(`/p/${linkData.slug}?t=${linkData.token}`);
 
-    await expect(page.getByText(fixture.ownerA.propertyName)).toBeVisible();
+    await expect(page.getByRole("heading", { name: fixture.ownerA.propertyName, exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Salva e pubblica" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: /Dashboard/i })).toHaveCount(0);
   });
