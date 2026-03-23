@@ -891,22 +891,15 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
         <div className={`public-homebook ${publicLayoutClass} ${previewPageClass}`}>
           <section className="card" style={{ padding: 0, overflow: "hidden" }}>
             <div
-              style={{
-                position: "relative",
-                minHeight: 320,
-                aspectRatio: "16 / 9",
-                background: "linear-gradient(120deg, #e6edef, #dce8ec)",
-                borderRadius: "16px 16px 0 0",
-                overflow: "hidden"
-              }}
+              className="homebook-cover-frame"
             >
               {coverImage ? (
                 <Image
                   src={coverImage}
                   alt=""
                   fill
+                  className="homebook-cover-image"
                   sizes="(max-width: 900px) 100vw, 1200px"
-                  style={{ objectFit: "cover" }}
                   priority
                   unoptimized
                 />

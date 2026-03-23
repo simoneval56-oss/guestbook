@@ -1930,6 +1930,20 @@ button {
   gap: 22px;
 }
 
+.homebook-cover-frame {
+  position: relative;
+  min-height: 320px;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(120deg, #e6edef, #dce8ec);
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}
+
+.homebook-cover-image {
+  object-fit: cover;
+  object-position: center;
+}
+
 .public-homebook-cover__body {
   padding: 20px 20px 12px;
   text-align: center;
@@ -7315,6 +7329,16 @@ img[src*="/Moderno/servizi"] {
 }
 
 @media (max-width: 720px) {
+  .homebook-cover-frame {
+    min-height: 240px;
+    aspect-ratio: 4 / 3;
+  }
+
+  .homebook-cover-image {
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+
   .classico-cover {
     aspect-ratio: 1.1;
     border-radius: 22px;
