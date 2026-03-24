@@ -249,7 +249,14 @@ export function AuthForm({ mode, redirectTo, lockLoginUntilVerification = false,
         )}
 
         <button className="btn" type="submit" disabled={loading || isLoginLocked}>
-          {loading ? "Attendere..." : cta}
+          {loading ? (
+            <span className="btn__loading">
+              <span className="btn__spinner" aria-hidden="true" />
+              Attendere...
+            </span>
+          ) : (
+            cta
+          )}
         </button>
 
         {mode === "register" ? (

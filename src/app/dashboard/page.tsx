@@ -15,6 +15,7 @@ import { DeletePropertyButton } from "../../components/delete-property-button";
 import { PropertyImagePicker } from "../../components/property-image-picker";
 import { DashboardLayoutShowcase } from "../../components/dashboard-layout-showcase";
 import { LegalLinks } from "../../components/legal-links";
+import { FormSubmitButton } from "../../components/form-submit-button";
 import { LEGAL_ACCEPTANCE_SOURCE_RENEWAL, LEGAL_LAST_UPDATED_LABEL } from "../../lib/legal";
 import { acceptCurrentLegalDocuments, getLegalAcceptanceState, requireCurrentLegalAcceptance } from "../../lib/legal-acceptance";
 import { getSiteUrl } from "../../lib/site-url";
@@ -752,9 +753,9 @@ export default async function DashboardPage({
             <LegalLinks compact />
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <form action={acceptUpdatedLegalDocumentsAction}>
-                <button className="btn" type="submit">
+                <FormSubmitButton className="btn" pendingText="Confermo...">
                   Accetta e continua
-                </button>
+                </FormSubmitButton>
               </form>
             </div>
           </section>
@@ -852,9 +853,9 @@ export default async function DashboardPage({
                 <input name="main_image_url" placeholder="URL immagine principale" className="input" />
                 <input name="short_description" placeholder="Descrizione breve" className="input" />
               </div>
-              <button className="btn" type="submit">
+              <FormSubmitButton className="btn" pendingText="Aggiungo struttura...">
                 Aggiungi struttura
-              </button>
+              </FormSubmitButton>
             </form>
           </div>
           <div className="card">
@@ -907,9 +908,9 @@ export default async function DashboardPage({
                           rows={2}
                         />
                         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                          <button className="btn btn-secondary" type="submit">
+                          <FormSubmitButton className="btn btn-secondary" pendingText="Salvo modifiche...">
                             Salva modifiche
-                          </button>
+                          </FormSubmitButton>
                         </div>
                       </form>
                       <DeletePropertyButton propertyId={property.id} action={deletePropertyAction} />
@@ -947,9 +948,9 @@ export default async function DashboardPage({
                   ))}
                 </select>
               </div>
-              <button className="btn" type="submit">
+              <FormSubmitButton className="btn" pendingText="Creo homebook...">
                 Crea homebook
-              </button>
+              </FormSubmitButton>
             </form>
           </div>
           <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>

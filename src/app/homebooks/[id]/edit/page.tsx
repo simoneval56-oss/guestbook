@@ -9,6 +9,7 @@ import { getDefaultSections } from "../../../../lib/default-sections";
 import { DEFAULT_LAYOUT_ID } from "../../../../lib/layouts";
 import { OwnerPreviewToggle } from "../../../../components/owner-preview-toggle";
 import { PublishControls } from "../../../../components/publish-controls";
+import { FormSubmitButton } from "../../../../components/form-submit-button";
 import { Database } from "../../../../lib/database.types";
 import { requireCurrentLegalAcceptance } from "../../../../lib/legal-acceptance";
 import { COVER_FILE_ACCEPT, validateUploadCandidate } from "../../../../lib/upload-limits";
@@ -821,9 +822,9 @@ export default async function EditHomebookPage({ params }: Props) {
                   rows={3}
                 />
               </label>
-              <button className="btn btn-secondary" type="submit">
+              <FormSubmitButton className="btn btn-secondary" pendingText="Aggiorno cover...">
                 Aggiorna cover
-              </button>
+              </FormSubmitButton>
             </form>
           </div>
         <div style={{ padding: "20px 20px 12px" }}>
