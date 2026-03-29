@@ -841,7 +841,18 @@ export default async function PublicHomebookPage({ params, searchParams }: Props
         }))
       : filteredSections;
 
-  const isGridPreview = ["classico", "rustico", "mediterraneo", "moderno", "illustrativo", "pastello", "oro", "futuristico", "notturno"].includes(layoutMeta.id);
+  const isGridPreview = [
+    "classico",
+    "rustico",
+    "mediterraneo",
+    "moderno",
+    "illustrativo",
+    "pastello",
+    "oro",
+    "futuristico",
+    "romantico",
+    "notturno"
+  ].includes(layoutMeta.id);
   const previewPageClass =
     layoutMeta.id === "classico"
       ? "classico-editor-page"
