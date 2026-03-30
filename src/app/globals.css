@@ -3703,24 +3703,29 @@ button {
   box-shadow: 0 20px 46px rgba(69, 37, 52, 0.16);
 }
 
-.public-homebook--romantico .section-modal__backdrop {
+.public-homebook--romantico .section-modal__backdrop,
+.public-homebook--romantico .classico-editor-modal__backdrop {
   background: rgba(59, 31, 43, 0.35);
 }
 
-.public-homebook--romantico .section-modal__card {
+.public-homebook--romantico .section-modal__card,
+.public-homebook--romantico .classico-editor-modal__card {
   background: linear-gradient(145deg, #fff2f6 0%, #f3d6e2 100%);
   border-top: 4px solid var(--romantico-rose);
   box-shadow: 0 24px 52px rgba(69, 37, 52, 0.18);
 }
 
-.public-homebook--romantico .section-modal__title {
+.public-homebook--romantico .section-modal__title,
+.public-homebook--romantico .classico-editor-modal__title,
+.public-homebook--romantico .classico-editor-modal__sub-heading {
   color: var(--romantico-ink);
   font-family: "Rosseville", "Playfair Display", "Lora", serif;
   font-weight: 400;
 }
 
 .public-homebook--romantico .section-modal__sub-title,
-.public-homebook--romantico .subsection-block__text {
+.public-homebook--romantico .subsection-block__text,
+.public-homebook--romantico .classico-editor-modal__sub-text {
   color: var(--romantico-muted);
 }
 
@@ -3735,7 +3740,9 @@ button {
 }
 
 .public-homebook--romantico .section-modal__card--regole-struttura .section-modal__title,
-.public-homebook--romantico .section-modal__card--regole-struttura .section-modal__sub-title {
+.public-homebook--romantico .section-modal__card--regole-struttura .section-modal__sub-title,
+.public-homebook--romantico .classico-editor-modal__card--regole-struttura .classico-editor-modal__title,
+.public-homebook--romantico .classico-editor-modal__card--regole-struttura .classico-editor-modal__sub-heading {
   color: #000000 !important;
 }
 
