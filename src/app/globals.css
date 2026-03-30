@@ -8470,19 +8470,20 @@ img[src*="/Moderno/servizi"] {
     grid-template-columns: 1fr;
   }
 
-  /* Pastello mobile: "Come raggiungerci" deve seguire la stessa colonna delle altre card. */
+  /* Pastello mobile: "Come raggiungerci" deve avere le stesse misure delle altre card. */
   .public-homebook--pastello .classico-sections__grid .classico-card--slug-come-raggiungerci,
   .pastello-layout .classico-sections__grid .classico-card--slug-come-raggiungerci,
   .pastello-editor-page .classico-sections__grid .classico-card--slug-come-raggiungerci,
   .pastello-preview .classico-sections__grid .classico-card--slug-come-raggiungerci {
-    width: 220px !important;
-    max-width: 220px !important;
-    min-height: 140px !important;
-    height: 140px !important;
-    padding: 36px 8px 8px !important;
-    gap: 6px !important;
-    justify-self: center !important;
-    align-self: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 180px !important;
+    height: 180px !important;
+    padding: 28px 18px !important;
+    gap: 8px !important;
+    justify-self: stretch !important;
+    align-self: stretch !important;
+    grid-column: auto !important;
   }
 }
 
